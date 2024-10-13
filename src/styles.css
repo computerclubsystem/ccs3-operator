@@ -1,0 +1,51 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+  --gap: 1em;
+  --half-gap: calc(var(--gap) / 2);
+  --double-gap: calc(var(--gap) * 2);
+  --no-gap: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+fieldset {
+  border: none;
+}
+
+.ccs3-op-flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.ccs3-op-half-gap {
+  gap: var(--half-gap);
+}
+
+.ccs3-op-double-gap {
+  gap: var(--double-gap);
+}
+
+.ccs3-op-align-items-center {
+  align-items: center;
+}
+
+.ccs3-op-full-width {
+  width: 100%;
+}
+
+.ccs3-op-full-height {
+  height: 100%;
+}
+
+.ccs-op-justify-content-center {
+  justify-content: center;
+}
