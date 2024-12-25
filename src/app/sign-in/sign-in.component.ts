@@ -15,9 +15,8 @@ import { SubjectsService } from '../shared/subjects.service';
 import { WebAppConfig } from '../shared/web-app-config';
 
 @Component({
-  standalone: true,
-  imports: [ReactiveFormsModule, AsyncPipe, MatInputModule, MatButtonModule, TranslocoDirective],
-  templateUrl: './sign-in.component.html',
+    imports: [ReactiveFormsModule, AsyncPipe, MatInputModule, MatButtonModule, TranslocoDirective],
+    templateUrl: './sign-in.component.html'
 })
 export class SignInComponent implements OnInit {
   formGroup!: FormGroup<SignInFormControls>;
