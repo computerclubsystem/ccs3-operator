@@ -2,7 +2,7 @@ import { ApplicationConfig, isDevMode } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideTransloco } from '@ngneat/transloco';
+import { provideTransloco } from '@jsverse/transloco';
 
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './transloco-loader';
@@ -22,6 +22,17 @@ export const appConfig: ApplicationConfig = {
       },
       loader: TranslocoHttpLoader
     }),
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
+    provideHttpClient(),
+    provideTransloco({
+        config: {
+          availableLangs: ['en'],
+          defaultLang: 'en',
+          // Remove this option if your application doesn't support changing language in runtime.
+          reRenderOnLangChange: true,
+          prodMode: !isDevMode(),
+        },
+        loader: TranslocoHttpLoader
+      })
   ]
 };
