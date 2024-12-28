@@ -1,0 +1,30 @@
+<section
+  class="ccs3-op-sign-in-component ccs3-op-flex-column ccs3-op-align-items-center ccs3-op-full-height ccs-op-justify-content-center"
+  *transloco="let t">
+  <!-- @if (webAppConfig$ | async; as cfg) {
+  <h1>{{cfg.system.name}}</h1>
+  } -->
+  <form [formGroup]="formGroup" class="ccs3-op-sign-in-form">
+    <fieldset class="ccs3-op-flex-column">
+      <mat-form-field>
+        <mat-label>
+          <span>{{t('Username')}}</span>
+        </mat-label>
+        <input [formControl]="formGroup.controls.username" matInput name="username" autocomplete="username" autofocus />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>
+          <span>{{t('Password')}}</span>
+        </mat-label>
+        <input [formControl]="formGroup.controls.password" matInput type="password" name="password" autocomplete="current-password" />
+      </mat-form-field>
+      <button (click)="onSignIn()" mat-raised-button [disabled]="formGroup.invalid" color="primary" type="submit"
+        class="ccs3-op-full-width">
+        {{t('Sign in')}}
+      </button>
+      @if(signals.showAuthFailed()) {
+        <mat-error>{{t('Authentication failed')}}</mat-error>
+      }
+    </fieldset>
+  </form>
+</section>

@@ -1,0 +1,122 @@
+:root {
+  --ccs3-op-gap: 1em;
+  --ccs3-op-half-gap: calc(var(--ccs3-op-gap) / 2);
+  --ccs3-op-double-gap: calc(var(--ccs3-op-gap) * 2);
+  --ccs3-op-no-gap: 0;
+  --ccs3-op-padding: 1em;
+  --ccs3-op-half-padding: calc(var(--ccs3-op-padding) / 2);
+  --ccs3-op-double-padding: calc(var(--ccs3-op-padding) * 2);
+  --ccs3-op-no-padding: 0;
+  /* TODO: Investigate colors like --mat-sys-... */
+  --ccs3-op-notification-success-color: #202020;
+  --ccs3-op-notification-success-background-color: #00ff88;
+  --ccs3-op-notification-info-color: #202020;
+  --ccs3-op-notification-info-background-color: #99c2ff;
+  --ccs3-op-notification-warn-color: #202020;
+  --ccs3-op-notification-warn-background-color: #ffe799;
+  --ccs3-op-notification-error-color: #202020;
+  --ccs3-op-notification-error-background-color: #fac0c0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* Flex */
+.ccs3-op-flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--ccs3-op-gap);
+  align-items: center;
+}
+
+.ccs3-op-flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ccs3-op-gap);
+}
+
+.ccs3-op-flex-justify-space-between {
+  justify-content: space-between;
+}
+
+/* Padding */
+.ccs3-op-padding {
+  padding: var(--ccs3-op-padding);
+}
+
+.ccs3-op-half-padding {
+  padding: var(--ccs3-op-half-padding);
+}
+
+.ccs3-op-double-padding {
+  padding: var(--ccs3-op-double-padding);
+}
+
+.ccs3-op-no-padding {
+  padding: var(--ccs3-op-no-padding);
+}
+
+/* Spacing */
+.ccs3-op-no-gap {
+  gap: 0;
+}
+
+.ccs3-op-half-gap {
+  gap: var(--ccs3-op-half-gap);
+}
+
+.ccs3-op-double-gap {
+  gap: var(--ccs3-op-double-gap);
+}
+
+/* Align and justify */
+.ccs3-op-align-items-center {
+  align-items: center;
+}
+
+/* Size */
+.ccs3-op-full-width {
+  width: 100%;
+}
+
+.ccs3-op-full-height {
+  height: 100%;
+}
+
+/* Colors */
+.ccs3-op-background-color {
+  background-color: var(--mat-sys-background);
+}
+
+/* Elements */
+fieldset {
+  border: none;
+}
+
+/* Notifications */
+.mdc-snackbar.mat-mdc-snack-bar-container.ccs3-op-notification-type-success .mat-mdc-snackbar-surface {
+  color: var(--ccs3-op-notification-success-color);
+  background-color: var(--ccs3-op-notification-success-background-color);
+}
+
+.mdc-snackbar.mat-mdc-snack-bar-container.ccs3-op-notification-type-info .mat-mdc-snackbar-surface {
+  color: var(--ccs3-op-notification-info-color);
+  background-color: var(--ccs3-op-notification-info-background-color);
+}
+
+.mdc-snackbar.mat-mdc-snack-bar-container.ccs3-op-notification-type-warn .mat-mdc-snackbar-surface {
+  color: var(--ccs3-op-notification-warn-color);
+  background-color: var(--ccs3-op-notification-warn-background-color);
+}
+
+.mdc-snackbar.mat-mdc-snack-bar-container.ccs3-op-notification-type-error .mat-mdc-snackbar-surface {
+  color: var(--ccs3-op-notification-error-color);
+  background-color: var(--ccs3-op-notification-error-background-color);
+}

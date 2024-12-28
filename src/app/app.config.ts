@@ -1,5 +1,4 @@
-import { ApplicationConfig, isDevMode } from '@angular/core';
-import { provideHttpClient } from '@angular/common/http';
+import { ApplicationConfig, isDevMode, provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideTransloco } from '@jsverse/transloco';
@@ -9,30 +8,18 @@ import { TranslocoHttpLoader } from './transloco-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideExperimentalZonelessChangeDetection(),
     provideRouter(routes),
-    provideHttpClient(),
+    provideAnimationsAsync(),
     provideTransloco({
       config: {
-        availableLangs: ['en', 'bg'],
+        availableLangs: ['en'],
         defaultLang: 'en',
-        fallbackLang: 'en',
         // Remove this option if your application doesn't support changing language in runtime.
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
       },
       loader: TranslocoHttpLoader
     }),
-    provideAnimationsAsync(),
-    provideHttpClient(),
-    provideTransloco({
-        config: {
-          availableLangs: ['en'],
-          defaultLang: 'en',
-          // Remove this option if your application doesn't support changing language in runtime.
-          reRenderOnLangChange: true,
-          prodMode: !isDevMode(),
-        },
-        loader: TranslocoHttpLoader
-      })
   ]
 };

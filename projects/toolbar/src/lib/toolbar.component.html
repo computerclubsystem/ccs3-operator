@@ -1,0 +1,25 @@
+<mat-toolbar class="ccs3-op-flex-justify-space-between">
+  <div class="ccs3-op-flex-row ccs3-op-no-gap">
+    <button mat-icon-button [matMenuTriggerFor]="mainMenu">
+      <mat-icon>{{iconName.menu}}</mat-icon>
+    </button>
+    <span>CCS3</span>
+  </div>
+  <div class="ccs3-op-flex-row ccs3-op-no-gap">
+    <button (click)="onShowNotifications()" mat-icon-button>
+      <mat-icon>{{iconName.notifications}}</mat-icon>
+    </button>
+    <button mat-icon-button [matMenuTriggerFor]="accountMenu">
+      <mat-icon>{{iconName.account_circle}}</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
+
+<mat-menu #mainMenu="matMenu">
+  <button mat-menu-item>Main menu item 1</button>
+  <button mat-menu-item>Main menu item 2</button>
+</mat-menu>
+
+<mat-menu #accountMenu="matMenu">
+  <button mat-menu-item>Item 1</button>
+</mat-menu>

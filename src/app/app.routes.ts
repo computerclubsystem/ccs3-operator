@@ -3,6 +3,6 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: 'sign-in',
-    loadComponent: () => import('./sign-in/sign-in.component').then(x => x.SignInComponent),
+    loadComponent: () => import('@ccs3-operator/sign-in').then(x => x.SignInComponent),
   },
 ];
