@@ -1,19 +1,22 @@
 import { inject, Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
-import { IconName } from '@ccs3-operator/shared';
+import { IconName, InternalSubjectsService } from '@ccs3-operator/shared';
 import { NotificationComponentData, NotificationItem, NotificationType } from './declarations';
 import { NotificationComponent } from './notification.component';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsService {
-  private snackBar = inject(MatSnackBar);
+  private readonly internalSubjectsSvc = inject(InternalSubjectsService);
+  private readonly snackBar = inject(MatSnackBar);
   private notificationsBufferSize = 200;
   private notifications: NotificationItem[] = [];
   private duration = 10000;
+  private idSequence = 0;
 
   show(type: NotificationType, title: string, description?: string | null, icon?: IconName | null, customData?: any): void {
     const item: NotificationItem = {
+      id: this.getNextId(),
       addedAt: this.getNow(),
       description: description,
       title: title,
@@ -32,6 +35,7 @@ export class NotificationsService {
       duration: this.duration,
     };
     this.snackBar.openFromComponent(NotificationComponent, config);
+    this.internalSubjectsSvc.setNotificationsChanged(this.notifications);
   }
 
   private addNotificationItem(item: NotificationItem): void {
@@ -47,5 +51,10 @@ export class NotificationsService {
 
   private getNow(): number {
     return Date.now();
+  }
+
+  private getNextId(): string {
+    this.idSequence++;
+    return `${this.idSequence}`;
   }
 }

@@ -16,10 +16,10 @@
 </mat-toolbar>
 
 <mat-menu #mainMenu="matMenu">
-  <button mat-menu-item>Main menu item 1</button>
-  <button mat-menu-item>Main menu item 2</button>
+  <!-- <button mat-menu-item>Main menu item 1</button>
+  <button mat-menu-item>Main menu item 2</button> -->
 </mat-menu>
 
 <mat-menu #accountMenu="matMenu">
-  <button mat-menu-item>Item 1</button>
+  <button (click)="onSignIn()" mat-menu-item>Sign in</button>
 </mat-menu>

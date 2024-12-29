@@ -8,6 +8,7 @@ export enum NotificationType {
 }
 
 export interface NotificationItem {
+  id: string;
   type: NotificationType;
   icon?: IconName | null;
   title: string;

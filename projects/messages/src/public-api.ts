@@ -10,3 +10,6 @@ export * from './lib/auth-request.message';
 export * from './lib/auth-reply.message';
 export * from './lib/configuration.message';
 export * from './lib/ping-request.message';
+export * from './lib/refresh-token-request.message';
+export * from './lib/refresh-token-reply.message';
+export * from './lib/not-authenticated.message';

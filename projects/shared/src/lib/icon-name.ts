@@ -5,4 +5,5 @@ export enum IconName {
   wifi = 'wifi',
   wifi_off = 'wifi_off',
   check = 'check',
+  priority_high = 'priority_high',
 }

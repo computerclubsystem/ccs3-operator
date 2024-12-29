@@ -14,6 +14,10 @@ export class MessageTransportService {
     this.token = token;
   }
 
+  getToken(): string | undefined {
+    return this.token;
+  }
+
   sendMessage<TBody>(message: Message<TBody>): void {
     // The sole purpose of this method is to act as message send interceptor and set the token to every message
     message.header.token = this.token;

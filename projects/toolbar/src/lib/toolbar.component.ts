@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-import { IconName } from '@ccs3-operator/shared';
+import { IconName, InternalSubjectsService } from '@ccs3-operator/shared';
 
 @Component({
   selector: 'ccs3-op-toolbar',
@@ -14,9 +14,15 @@ import { IconName } from '@ccs3-operator/shared';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToolbarComponent {
+  internalSubjectsSvc = inject(InternalSubjectsService);
+
   iconName = IconName;
 
   onShowNotifications(): void {
+    this.internalSubjectsSvc.navigateToNotificationsRequested();
+  }
 
+  onSignIn(): void {
+    this.internalSubjectsSvc.signInRequested();
   }
 }

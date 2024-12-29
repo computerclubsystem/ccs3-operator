@@ -7,7 +7,8 @@ import { filter, take } from 'rxjs';
 import { ConnectorService, ConnectorSettings } from '@ccs3-operator/connector';
 import {
   Message, MessageType, AuthReplyMessage, AuthReplyMessageBody, ConfigurationMessage,
-  createPingRequestMessage, createAuthRequestMessage
+  createPingRequestMessage, createAuthRequestMessage, createRefreshTokenRequestMessage,
+  RefreshTokenReplyMessage, NotAuthenticatedMessage,
 } from '@ccs3-operator/messages';
 import { IconName, MessageSubjectsService, PermissionsService } from '@ccs3-operator/shared';
 import { ToolbarComponent } from '@ccs3-operator/toolbar';
@@ -41,6 +42,7 @@ export class AppComponent implements OnInit {
     // this.loadWebAppConfig();
     this.subscribeToMessageTransportService();
     this.subscribeToConnectorService();
+    this.subscribeToInternalSubjects();
     this.startConnectorService();
 
     // Check if we have token and authenticate with it
@@ -58,6 +60,11 @@ export class AppComponent implements OnInit {
     this.connectorSvc.getClosedObservable().subscribe(ev => this.processConnectorConnectionClosed(ev));
     this.connectorSvc.getErrorObservable().subscribe(ev => this.processConnectorError(ev));
     this.connectorSvc.getMessageErrorObservable().subscribe(ev => this.processConnectorMessageError(ev));
+  }
+
+  subscribeToInternalSubjects(): void {
+    this.internalSubjectsSvc.getSignInRequested().subscribe(() => this.processSignInRequested());
+    this.internalSubjectsSvc.getNavigateToNotificationsRequested().subscribe(() => this.processNavigateToNotificationsRequested());
   }
 
   startConnectorService(): void {
@@ -118,15 +125,34 @@ export class AppComponent implements OnInit {
       case MessageType.configuration:
         this.processConfigurationMessage(message as ConfigurationMessage);
         break;
+      case MessageType.refreshTokenReply:
+        this.processRefreshTokenReplyMessage(message as RefreshTokenReplyMessage);
+        break;
+      case MessageType.notAuthenticated:
+        this.processNotAuthenticatedMessage(message as NotAuthenticatedMessage);
+        break;
       default:
         this.notificationsSvc.show(NotificationType.warn, 'Unknown message received', type, null, message);
         break;
     }
   }
 
+  private processNotAuthenticatedMessage(message: NotAuthenticatedMessage): void {
+    this.notificationsSvc.show(NotificationType.warn, 'Not authenticated', 'Sign in to authenticate', IconName.priority_high, message);
+  }
+
+  private processRefreshTokenReplyMessage(message: RefreshTokenReplyMessage): void {
+    this.messageTransportSvc.setToken(message.body.token);
+    if (!message.body.success) {
+      this.notificationsSvc.show(NotificationType.warn, 'Authentication error', `Can't refresh the token. Sign in again.`, IconName.priority_high);
+    } else {
+      this.setUpRefreshTokenTimer(message.body.tokenExpiresAt!);
+    }
+  }
+
   private processConfigurationMessage(message: ConfigurationMessage): void {
     this.internalSubjectsSvc.setConfigurationMessage(message);
-    this.setUpPing(message.body.pingInterval);
+    this.startPing(message.body.pingInterval);
   }
 
   private processAuthReplyMessage(message: AuthReplyMessage): void {
@@ -134,11 +160,39 @@ export class AppComponent implements OnInit {
     this.messageTransportSvc.setToken(message.body.token);
     if (message.body.success) {
       this.storeAuthReplyMessage(message);
-      this.notificationsSvc.show(NotificationType.success, 'Logged in', null, IconName.check)
+      this.notificationsSvc.show(NotificationType.success, 'Signed in', null, IconName.check)
       this.internalSubjectsSvc.setLoggedIn(true);
+      this.setUpRefreshTokenTimer(message.body.tokenExpiresAt!);
     } else {
       this.removeStoredAuthReplyMessage();
     }
+  }
+
+  private processSignInRequested(): void {
+    this.router.navigate([RouteName.signIn]);
+  }
+
+  private processNavigateToNotificationsRequested(): void {
+    this.router.navigate([RouteName.notifications]);
+  }
+
+  private setUpRefreshTokenTimer(tokenExpiresAt: number): void {
+    if (!tokenExpiresAt) {
+      return;
+    }
+    window.clearTimeout(this.state.refreshTokenTimeHandle);
+    const now = Date.now();
+    const diff = tokenExpiresAt - now;
+    // When 90% of the remaining time elapses, refresh the token
+    const interval = (90 * diff) / 100;
+    this.state.refreshTokenTimeHandle = window.setTimeout(() => {
+      const token = this.messageTransportSvc.getToken();
+      if (token) {
+        const refreshTokenMsg = createRefreshTokenRequestMessage();
+        refreshTokenMsg.body.currentToken = token;
+        this.messageTransportSvc.sendMessage(refreshTokenMsg);
+      }
+    }, interval);
   }
 
   private processConnectorConnected(ev: any): void {
@@ -196,7 +250,7 @@ export class AppComponent implements OnInit {
     return result;
   }
 
-  private setUpPing(interval: number): void {
+  private startPing(interval: number): void {
     window.clearInterval(this.state.pingTimerHandle);
     this.state.pingTimerHandle = window.setInterval(() => {
       const pingMsg = createPingRequestMessage();
@@ -211,6 +265,7 @@ export class AppComponent implements OnInit {
   createState(): AppComponentState {
     const state: AppComponentState = {
       pingTimerHandle: 0,
+      refreshTokenTimeHandle: 0,
     };
     return state;
   }

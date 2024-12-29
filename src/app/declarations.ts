@@ -1,5 +1,6 @@
 export enum RouteName {
   signIn = 'sign-in',
+  notifications = 'notifications',
 }
 
 export enum StorageKey {
@@ -8,4 +9,5 @@ export enum StorageKey {
 
 export interface AppComponentState {
   pingTimerHandle: number;
+  refreshTokenTimeHandle: number;
 }
