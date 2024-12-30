@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Permission } from './permission';
+import { Permission } from './types/permission';
 
 @Injectable({ providedIn: 'root' })
 export class PermissionsService {

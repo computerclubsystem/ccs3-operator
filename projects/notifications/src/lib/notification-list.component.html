@@ -1,16 +1,43 @@
 <div class="ccs3-op-notification-list-component">
-  <mat-list>
+  <mat-accordion multi>
     @for (item of items$ | async; track item.id) {
-      <mat-list-item>
-        <div class="ccs3-op-flex-row">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="ccs3-op-flex-row">
+              <span>{{item.addedAt | date:'MMM-dd HH:mm:ss'}}</span>
+              @if (item.icon) {
+                <mat-icon>{{item.icon}}</mat-icon>
+              }
+              <span>{{item.title}}</span>
+            </div>
+          </mat-panel-title>
+          <!-- <mat-panel-description>
+            <span>{{item.description}}</span>
+          </mat-panel-description> -->
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <div class="ccs3-op-two-col-grid">
+            <span>{{'Type' | transloco}}</span>
+            <span>{{item.type}}</span>
+            <span>{{'Description' | transloco}}</span>
+            <span>{{item.description}}</span>
+            <span>{{'Custom data' | transloco}}</span>
+            <span>{{item.customData | json}}</span>
+          </div>
+        </ng-template>
+      </mat-expansion-panel>
+        <!-- <div class="ccs3-op-flex-row">
           <span>{{item.addedAt | date:'MMM-dd HH:mm:ss'}}</span>
           @if (item.icon) {
             <mat-icon>{{item.icon}}</mat-icon>
           }
           <span>{{item.title}}</span>
           <span>{{item.description}}</span>
-        </div>
-    </mat-list-item>
+          @if (item.customData) {
+            <span>{{item.customData | json}}</span>
+          }
+        </div> -->
     }
-  </mat-list>
+  </mat-accordion>
 </div>

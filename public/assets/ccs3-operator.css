@@ -46,6 +46,13 @@ body {
   justify-content: space-between;
 }
 
+/* Grid */
+.ccs3-op-two-col-grid {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--ccs3-op-gap);
+}
+
 /* Padding */
 .ccs3-op-padding {
   padding: var(--ccs3-op-padding);
@@ -93,6 +100,10 @@ body {
 /* Colors */
 .ccs3-op-background-color {
   background-color: var(--mat-sys-background);
+}
+
+.ccs3-op-error-color {
+  color: var(--mat-sys-error-container);
 }
 
 /* Elements */

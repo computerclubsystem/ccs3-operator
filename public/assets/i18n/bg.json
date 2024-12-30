@@ -1,6 +1,25 @@
 {
   "Username": "Име",
   "Password": "Парола",
-  "Sign in": "Влизане",
-  "Authentication failed": "Грешно име или паролал"
+  "Sign in": "Логване",
+  "Authentication failed": "Грешно име или парола",
+  "Main menu": "Главно меню",
+  "Notifications": "Нотификации",
+  "Account menu": "Меню за акаунта",
+  "Not authenticated": "Не сте логнат",
+  "Sign in to authenticate": "Логнете се",
+  "Authentication error": "Грешка при логването",
+  "Can't refresh the token. Sign in again.": "Не може да се обнови токъна. Логнете се отново.",
+  "Signed in": "Логнати сте",
+  "Connected": "Свързан",
+  "Disconnected": "Връзката прекъсна",
+  "Connection error": "Грешка във връзката",
+  "Send message error": "Грешка при изпращане на съобщение",
+  "Error occured when sending message to the server": "Възникна грешка при изпращане на съобщение до сървъра",
+  "Computers": "Компютри",
+  "Sign out": "Излизане",
+  "Language": "Език",
+  "English": "English",
+  "Bulgarian": "Български",
+  "Settings": "Настройки"
 }

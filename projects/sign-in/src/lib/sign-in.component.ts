@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, WritableSignal, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, Signal, WritableSignal, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslocoDirective, TranslocoModule } from '@jsverse/transloco';
 import { filter } from 'rxjs';
 
-import { MessageType, Message, AuthReplyMessage } from '@ccs3-operator/messages';
-import { createAuthRequestMessage } from '@ccs3-operator/messages';
-import { MessageTransportService } from '@ccs3-operator/shared';
+import { AuthReplyMessage, createAuthRequestMessage, MessageType } from '@ccs3-operator/messages';
+import { InternalSubjectsService, MessageTransportService } from '@ccs3-operator/shared';
 
 @Component({
   imports: [
@@ -26,30 +25,25 @@ export class SignInComponent implements OnInit {
   formGroup!: FormGroup<SignInFormControls>;
   formBuilder = inject(FormBuilder);
   messageTransportSvc = inject(MessageTransportService);
+  internalSubjectsSvc = inject(InternalSubjectsService);
   signals = this.createSignals();
 
-  private destroyRef = inject(DestroyRef);
+  private readonly destroyRef = inject(DestroyRef);
+  private signInInitiated = false;
 
   ngOnInit(): void {
     this.formGroup = this.createForm();
-    this.subscribeToSubjects();
   }
 
   async onSignIn(): Promise<void> {
+    this.signInInitiated = true;
+    this.subscribeToSubjects();
     this.signals.showAuthFailed.set(false);
     const formValue = this.formGroup.value;
-    const msg = createAuthRequestMessage();
-    msg.body.username = formValue.username!;
-    msg.body.passwordHash = await this.getSha512(formValue.password!);
-    this.messageTransportSvc.sendMessage(msg);
-  }
-
-  createForm(): FormGroup {
-    const formGroup = this.formBuilder.group<SignInFormControls>({
-      username: new FormControl('', Validators.required),
-      password: new FormControl('', Validators.required),
-    });
-    return formGroup;
+    const authRequestMsg = createAuthRequestMessage();
+    authRequestMsg.body.username = formValue.username!;
+    authRequestMsg.body.passwordHash = await this.getSha512(formValue.password!);
+    this.internalSubjectsSvc.setSignInRequested(authRequestMsg);
   }
 
   subscribeToSubjects(): void {
@@ -59,18 +53,20 @@ export class SignInComponent implements OnInit {
     ).subscribe(msg => this.processAuthReplyMessage(msg as AuthReplyMessage));
   }
 
-  // processAppMessage<TBody>(message: Message<TBody>): void {
-  //   const type = message.header.type;
-  //   switch (type) {
-  //     case MessageType.authReply:
-  //       this.processAuthReplyMessage(message as AuthReplyMessage);
-  //       break;
-  //   }
-  // }
-
   processAuthReplyMessage(message: AuthReplyMessage): void {
-    this.messageTransportSvc.setToken(message.body.token);
     this.signals.showAuthFailed.set(!message.body.success);
+    if (this.signInInitiated && message.body.success) {
+      // If the user initiated the sign in and the authentication is successful, navigate away the sign-in route
+      this.internalSubjectsSvc.setManualAuthSucceeded();
+    }
+  }
+
+  createForm(): FormGroup {
+    const formGroup = this.formBuilder.group<SignInFormControls>({
+      username: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.required),
+    });
+    return formGroup;
   }
 
   async getSha512(text: string): Promise<string> {
@@ -87,6 +83,7 @@ export class SignInComponent implements OnInit {
   createSignals(): Signals {
     const signals: Signals = {
       showAuthFailed: signal(false),
+      isConnected: toSignal(this.internalSubjectsSvc.getConnected()),
     };
     return signals;
   }
@@ -99,4 +96,5 @@ interface SignInFormControls {
 
 interface Signals {
   showAuthFailed: WritableSignal<boolean>;
+  isConnected: Signal<boolean | undefined>;
 }

@@ -1,4 +1,4 @@
-import { IconName } from '@ccs3-operator/shared';
+import { IconName } from '@ccs3-operator/shared/types';
 
 export enum NotificationType {
   success = 'success',

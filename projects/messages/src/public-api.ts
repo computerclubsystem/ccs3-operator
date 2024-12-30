@@ -13,3 +13,5 @@ export * from './lib/ping-request.message';
 export * from './lib/refresh-token-request.message';
 export * from './lib/refresh-token-reply.message';
 export * from './lib/not-authenticated.message';
+export * from './lib/sign-out-request.message';
+export * from './lib/sign-out-reply.message';

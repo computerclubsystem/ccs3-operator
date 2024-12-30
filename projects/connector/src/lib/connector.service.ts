@@ -12,7 +12,7 @@ export class ConnectorService {
   private messageSubject = new Subject<any>();
   private connectedSubject = new Subject<void>();
   private errorSubject = new Subject<any>();
-  private messageErrorSubject = new Subject<any>();
+  private sendMessageErrorSubject = new Subject<any>();
   private closeSubject = new Subject<any>();
   private state!: ConnectorServiceState;
 
@@ -28,12 +28,16 @@ export class ConnectorService {
     if (!this.state.ws) {
       return false;
     }
+    if (this.state.ws.readyState !== this.state.ws.OPEN) {
+      this.sendMessageErrorSubject.next(new Error(`Connection is not established (state is ${this.state.ws.readyState})`));
+      return false;
+    }
     try {
       const stringifiedMsg = JSON.stringify(msg);
       this.state.ws.send(stringifiedMsg);
       return true;
     } catch (err) {
-      this.messageErrorSubject.next(err);
+      this.sendMessageErrorSubject.next(err);
       return false;
     }
   }
@@ -42,8 +46,8 @@ export class ConnectorService {
     return this.messageSubject.asObservable();
   }
 
-  getMessageErrorObservable(): Observable<any> {
-    return this.messageErrorSubject.asObservable();
+  getSendMessageErrorObservable(): Observable<any> {
+    return this.sendMessageErrorSubject.asObservable();
   }
 
   getConnectedObservable(): Observable<void> {

@@ -17,11 +17,20 @@
       "@ccs3-operator/shared": [
         "projects/shared/src/public-api.ts"
       ],
+      "@ccs3-operator/shared/types": [
+        "projects/shared/src/lib/types/index.ts"
+      ],
       "@ccs3-operator/toolbar": [
         "projects/toolbar/src/public-api.ts"
       ],
       "@ccs3-operator/notifications": [
         "projects/notifications/src/public-api.ts"
+      ],
+      "@ccs3-operator/computers-status": [
+        "projects/computers-status/src/public-api.ts"
+      ],
+      "@ccs3-operator/signed-out-session-stats": [
+        "projects/signed-out-session-stats/src/public-api.ts"
       ],
     },
     "outDir": "./dist/out-tsc",

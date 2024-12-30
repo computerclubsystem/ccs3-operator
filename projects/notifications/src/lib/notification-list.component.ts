@@ -1,18 +1,19 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { AsyncPipe, DatePipe, JsonPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { Observable } from 'rxjs';
 
 import { InternalSubjectsService } from '@ccs3-operator/shared';
 import { NotificationItem } from './declarations';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'ccs3-op-notification-list-component',
   templateUrl: 'notification-list.component.html',
   standalone: true,
-  imports: [MatListModule, MatIconModule, DatePipe, AsyncPipe],
+  imports: [MatListModule, MatIconModule, MatExpansionModule, DatePipe, AsyncPipe, JsonPipe, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationListComponent implements OnInit {

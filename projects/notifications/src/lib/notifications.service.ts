@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 
-import { IconName, InternalSubjectsService } from '@ccs3-operator/shared';
+import { InternalSubjectsService } from '@ccs3-operator/shared';
+import { IconName } from '@ccs3-operator/shared/types';
 import { NotificationComponentData, NotificationItem, NotificationType } from './declarations';
 import { NotificationComponent } from './notification.component';
 

@@ -1,0 +1,17 @@
+<div class="ccs3-op-signed-out-session-stats-component">
+  @let data = signedOutReplyMessage();
+  @if (data) {
+    <div class="ccs3-op-two-col-grid">
+      <span>{{'Session start' | transloco}}</span>
+      <span>{{data.body.sessionStart | date:'dd-MMM HH:mm:ss'}}</span>
+      <span>{{'Session end' | transloco}}</span>
+      <span>{{data.body.sessionEnd | date:'dd-MMM HH:mm:ss'}}</span>
+      <span>{{'Received messages' | transloco}}</span>
+      <span>{{data.body.receivedMessagesCount}}</span>
+      <span>{{'Sent messages' | transloco}}</span>
+      <span>{{data.body.sentMessagesCount}}</span>
+      <span>{{'Sent "ping" messages' | transloco}}</span>
+      <span>{{data.body.sentPingMessagesCount}}</span>
+    </div>
+  }
+</div>
