@@ -13,7 +13,7 @@ import {
   AuthRequestMessage,
   SignOutReplyMessage,
 } from '@ccs3-operator/messages';
-import { MessageSubjectsService, PermissionsService } from '@ccs3-operator/shared';
+import { MessageSubjectsService, Permission, PermissionsService } from '@ccs3-operator/shared';
 import { AccountMenuItem, AccountMenuItemId, IconName, MainMenuItem, MainMenuItemId, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';
 import { ToolbarComponent } from '@ccs3-operator/toolbar';
 import { MessageTransportService } from '@ccs3-operator/shared';
@@ -30,7 +30,6 @@ import { NotificationsHelperService } from './notifications-helper.service';
   standalone: true,
   imports: [RouterOutlet, ToolbarComponent],
   templateUrl: 'app.component.html',
-  styleUrl: 'app.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
@@ -105,11 +104,14 @@ export class AppComponent implements OnInit {
 
   processMainMenuSelected(mainMenuItem: MainMenuItem): void {
     switch (mainMenuItem.id) {
+      case MainMenuItemId.copmutersStatus:
+        this.router.navigate([RouteName.computersStatus]);
+        break;
       case MainMenuItemId.notifications:
         this.router.navigate([RouteName.notifications]);
         break;
-      case MainMenuItemId.copmutersStatus:
-        this.router.navigate([RouteName.computersStatus]);
+      case MainMenuItemId.systemSettings:
+        this.router.navigate([RouteName.systemSettings]);
         break;
     }
   }
@@ -246,7 +248,8 @@ export class AppComponent implements OnInit {
   }
 
   private processAuthReplyMessage(message: AuthReplyMessage): void {
-    this.permissionsSvc.setPermissions(message?.body?.permissions || []);
+    const permissions = (message?.body?.permissions || []) as Permission[];
+    this.permissionsSvc.setPermissions(permissions);
     this.messageTransportSvc.setToken(message.body.token);
     if (message.body.success) {
       this.storeAuthReplyMessage(message);
@@ -266,6 +269,8 @@ export class AppComponent implements OnInit {
     const signedInMainMenuItems: MainMenuItem[] = [
       { id: MainMenuItemId.copmutersStatus, icon: IconName.dvr, translationKey: 'Computers' },
       { id: MainMenuItemId.notifications, icon: IconName.notifications, translationKey: 'Notifications' },
+      // TODO: Check for any of the required permission
+      { id: MainMenuItemId.systemSettings, icon: IconName.settings, translationKey: 'System settings' },
     ];
     this.internalSubjectsSvc.setMainMenuItems(signedInMainMenuItems);
   }

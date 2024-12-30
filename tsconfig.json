@@ -32,6 +32,15 @@
       "@ccs3-operator/signed-out-session-stats": [
         "projects/signed-out-session-stats/src/public-api.ts"
       ],
+      "@ccs3-operator/system-settings": [
+        "projects/system-settings/src/public-api.ts"
+      ],
+      "@ccs3-operator/system-settings/devices": [
+        "projects/system-settings/src/lib/devices/public-api.ts"
+      ],
+      "@ccs3-operator/system-settings/users": [
+        "projects/system-settings/src/lib/users/public-api.ts"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

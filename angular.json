@@ -90,7 +90,6 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -124,8 +123,6 @@
           "options": {
             "tsConfig": "projects/connector/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         }
@@ -157,8 +154,6 @@
           "options": {
             "tsConfig": "projects/messages/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         }
@@ -190,8 +185,6 @@
           "options": {
             "tsConfig": "projects/sign-in/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         }
@@ -223,8 +216,6 @@
           "options": {
             "tsConfig": "projects/shared/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         }
@@ -256,8 +247,6 @@
           "options": {
             "tsConfig": "projects/toolbar/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         }
@@ -289,8 +278,6 @@
           "options": {
             "tsConfig": "projects/notifications/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         }
@@ -322,8 +309,6 @@
           "options": {
             "tsConfig": "projects/computers-status/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         }
@@ -355,8 +340,37 @@
           "options": {
             "tsConfig": "projects/signed-out-session-stats/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "system-settings": {
+      "projectType": "library",
+      "root": "projects/system-settings",
+      "sourceRoot": "projects/system-settings/src",
+      "prefix": "ccs3-op",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/system-settings/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/system-settings/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/system-settings/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/system-settings/tsconfig.spec.json",
+            "polyfills": [
             ]
           }
         }

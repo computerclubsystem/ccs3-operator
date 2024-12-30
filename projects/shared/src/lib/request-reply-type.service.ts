@@ -15,6 +15,7 @@ export class RequestReplyTypeService {
     map.set(MessageType.authRequest, MessageType.authReply);
     map.set(MessageType.refreshTokenRequest, MessageType.refreshTokenReply);
     map.set(MessageType.signOutRequest, MessageType.signOutReply);
+    map.set(MessageType.getAllDevicesRequest, MessageType.getAllDevicesReply);
     return map;
   }
 }

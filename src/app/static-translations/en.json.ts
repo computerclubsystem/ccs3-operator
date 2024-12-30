@@ -1,4 +1,4 @@
-{
+export const en = {
   "Username": "Username",
   "Password": "Password",
   "Sign in": "Sign in",

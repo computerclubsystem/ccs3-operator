@@ -26,6 +26,9 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  /* Fix for dark font color on dark background */
+  color: var(--mat-sys-on-surface);
+  background-color: var(--mat-sys-background);
 }
 
 /* Flex */
@@ -44,6 +47,16 @@ body {
 
 .ccs3-op-flex-justify-space-between {
   justify-content: space-between;
+}
+
+.ccs3-op-flex-wrap {
+  flex-wrap: wrap;
+}
+
+/* Routing */
+a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
+  border-width: 1px;
+  border-style: dashed;
 }
 
 /* Grid */
@@ -130,4 +143,10 @@ fieldset {
 .mdc-snackbar.mat-mdc-snack-bar-container.ccs3-op-notification-type-error .mat-mdc-snackbar-surface {
   color: var(--ccs3-op-notification-error-color);
   background-color: var(--ccs3-op-notification-error-background-color);
+}
+
+/* Material */
+button[mat-button].mat-tonal-button {
+  background-color: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
 }

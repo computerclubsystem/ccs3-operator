@@ -10,7 +10,7 @@ export class PermissionsService {
     return this.permissionsSet.has(Permission.all) || this.permissionsSet.has(permission);
   }
 
-  setPermissions(permissions: string[]): void {
+  setPermissions(permissions: Permission[]): void {
     this.permissionsSet = new Set<string>(permissions);
   }
 }

@@ -1,0 +1,31 @@
+@let devices = signals.allDevices();
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>{{'Name' | transloco}}</th>
+      <th>{{'Appoved' | transloco}}</th>
+      <th>{{'Enabled' | transloco}}</th>
+      <th>{{'Created at' | transloco}}</th>
+      <th>{{'Description' | transloco}}</th>
+      <th>{{'Certificate thumbprint' | transloco}}</th>
+      <th>{{'IP address' | transloco}}</th>
+      <th>{{'Group Id' | transloco}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (device of devices; track device.id) {
+    <tr>
+      <td>{{device.id}}</td>
+      <td>{{device.name}}</td>
+      <td>{{device.approved}}</td>
+      <td>{{device.enabled}}</td>
+      <td>{{device.createdAt | noYearDate}}</td>
+      <td>{{device.description}}</td>
+      <td>{{device.certificateThumbprint}}</td>
+      <td>{{device.ipAddress}}</td>
+      <td>{{device.deviceGroupId}}</td>
+    </tr>
+    }
+  </tbody>
+</table>

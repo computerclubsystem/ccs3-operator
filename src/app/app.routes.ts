@@ -5,6 +5,9 @@ export enum RouteName {
   notifications = 'notifications',
   computersStatus = 'computers-status',
   signedOutSessionStats = 'signed-out-session-stats',
+  systemSettings = 'system-settings',
+  systemSettingsDevices = 'devices',
+  systemSettingsUsers = 'users',
 }
 
 export const routes: Routes = [
@@ -23,5 +26,19 @@ export const routes: Routes = [
   {
     path: RouteName.signedOutSessionStats,
     loadComponent: () => import('@ccs3-operator/signed-out-session-stats').then(x => x.SignedOutSessionStatsComponent),
+  },
+  {
+    path: RouteName.systemSettings,
+    loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.SystemSettingsComponent),
+    children: [
+      {
+        path: RouteName.systemSettingsDevices,
+        loadComponent: () => import('@ccs3-operator/system-settings/devices').then(x => x.DevicesComponent),
+      },
+      {
+        path: RouteName.systemSettingsUsers,
+        loadComponent: () => import('@ccs3-operator/system-settings/users').then(x => x.UsersComponent),
+      }
+    ]
   },
 ];

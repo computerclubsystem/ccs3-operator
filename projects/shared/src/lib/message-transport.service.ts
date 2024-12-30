@@ -40,7 +40,7 @@ export class MessageTransportService {
    * @param requestMessage
    * @returns First received message that has mathing type
    */
-  sendAndAwaitForReplyByType<TRequestMessageBody>(requestMessage: Message<TRequestMessageBody>, timeoutDuration?: number): Observable<any> {
+  sendAndAwaitForReplyByType<TRequestMessageBody>(requestMessage: Message<TRequestMessageBody>, timeoutDuration?: number): Observable<Message<any>> {
     const replyType = this.requestReplyTypeSvc.getReplyType(requestMessage.header.type);
     const timeoutValue = timeoutDuration || this.timeout;
     const sentAt = Date.now();

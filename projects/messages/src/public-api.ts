@@ -15,3 +15,5 @@ export * from './lib/refresh-token-reply.message';
 export * from './lib/not-authenticated.message';
 export * from './lib/sign-out-request.message';
 export * from './lib/sign-out-reply.message';
+export * from './lib/get-all-devices-request.message';
+export * from './lib/get-all-devices-reply.message';
