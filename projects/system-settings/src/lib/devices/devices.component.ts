@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { filter, first } from 'rxjs';
 
@@ -7,27 +9,33 @@ import {
   createGetAllDevicesRequestMessage, Device, GetAllDevicesReplyMessage, GetAllDevicesRequestMessageBody
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NoYearDatePipe } from '@ccs3-operator/shared';
+import { IconName } from '@ccs3-operator/shared/types';
 
 @Component({
   selector: 'ccs3-op-system-settings-devices',
   templateUrl: 'devices.component.html',
   standalone: true,
-  imports: [TranslocoPipe, NoYearDatePipe],
+  imports: [MatButtonModule, MatIconModule, TranslocoPipe, NoYearDatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DevicesComponent implements OnInit {
   readonly messageTransportSvc = inject(MessageTransportService);
-  readonly internalSubjectsService = inject(InternalSubjectsService);
+  readonly internalSubjectsSvc = inject(InternalSubjectsService);
   readonly signals = this.createSignals();
+  readonly iconName = IconName;
 
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    this.internalSubjectsService.getSignedIn().pipe(
+    this.internalSubjectsSvc.getSignedIn().pipe(
       filter(isSignedIn => isSignedIn),
       first(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.requestAllDevices());
+  }
+
+  onEditDevice(device: Device): void {
+    this.internalSubjectsSvc.navigateToEditDeviceRequested(device.id);
   }
 
   requestAllDevices(): void {

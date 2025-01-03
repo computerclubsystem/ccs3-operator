@@ -7,7 +7,7 @@ import { Message } from '@ccs3-operator/messages';
   providedIn: 'root'
 })
 export class MessageSubjectsService {
-  private readonly appMessageReceivedSubject = new ReplaySubject<any>(1);
+  private readonly appMessageReceivedSubject = new Subject<any>();
   private readonly appMessageSendSubject = new Subject<any>();
 
   /**
@@ -27,7 +27,7 @@ export class MessageSubjectsService {
     return this.appMessageSendSubject.asObservable();
   }
 
-  getAppMessageReceivedSubject(): ReplaySubject<any> {
+  getAppMessageReceivedSubject(): Subject<any> {
     return this.appMessageReceivedSubject;
   }
 

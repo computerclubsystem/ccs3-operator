@@ -1,19 +1,27 @@
-import { ChangeDetectionStrategy, Component, Inject, inject, Input, Optional } from '@angular/core';
-import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 import { NotificationComponentData, NotificationItem } from './declarations';
+import { IconName } from '@ccs3-operator/shared/types';
 
 @Component({
   selector: 'ccs3-op-notification-component',
   templateUrl: 'notification.component.html',
   standalone: true,
-  imports: [MatIconModule],
+  imports: [MatIconModule, MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotificationComponent {
-  // data = inject(MAT_SNACK_BAR_DATA);
   @Input()
   notification?: NotificationItem;
-  data: NotificationComponentData = inject(MAT_SNACK_BAR_DATA, { optional: true });
+
+  readonly data: NotificationComponentData = inject(MAT_SNACK_BAR_DATA, { optional: true });
+  readonly snackBarRef = inject(MatSnackBarRef);
+  readonly iconName = IconName;
+
+  onClose(): void {
+    this.snackBarRef.dismiss();
+  }
 }

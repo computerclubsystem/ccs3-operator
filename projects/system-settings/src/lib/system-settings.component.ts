@@ -15,6 +15,7 @@ export class SystemSettingsComponent {
   createSignals(): Signals {
     const links: Link[] = [
       { routerLink: 'devices', translationKey: 'Devices' },
+      { routerLink: 'tariffs', translationKey: 'Tariffs' },
       { routerLink: 'users', translationKey: 'Users' },
       { routerLink: 'roles', translationKey: 'Roles' },
       { routerLink: 'system-variables', translationKey: 'System variables' },

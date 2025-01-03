@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
+import { filter, first, Observable, ReplaySubject, Subject } from 'rxjs';
 
-import { AuthRequestMessage, ConfigurationMessage, SignOutReplyMessage } from '@ccs3-operator/messages';
+import { AuthRequestMessage, ConfigurationMessage, Device, SignOutReplyMessage } from '@ccs3-operator/messages';
 import { AccountMenuItem, MainMenuItem, MessageTimedOutErrorData } from './types';
 
 @Injectable({ providedIn: 'root' })
@@ -21,6 +21,24 @@ export class InternalSubjectsService {
   private readonly manualAuthSucceededSubject = new Subject<void>();
   private readonly signOutReplyMessageSubject = new ReplaySubject<SignOutReplyMessage>(1);
   private readonly messageTimedOutSubject = new Subject<MessageTimedOutErrorData>();
+  private readonly navigateToEditDeviceRequestedSubject = new Subject<number>();
+  private readonly navigateToCreateNewTariffRequestedSubject = new Subject<void>();
+
+  navigateToCreateNewTariffRequested(): void {
+    this.navigateToCreateNewTariffRequestedSubject.next();
+  }
+
+  getNavigateToCreateNewTariffRequested(): Observable<void> {
+    return this.navigateToCreateNewTariffRequestedSubject.asObservable();
+  }
+
+  navigateToEditDeviceRequested(deviceId: number): void {
+    this.navigateToEditDeviceRequestedSubject.next(deviceId);
+  }
+
+  getNavigateToEditDeviceRequested(): Observable<number> {
+    return this.navigateToEditDeviceRequestedSubject.asObservable();
+  }
 
   setMessageTimedOut(messageTimedOutErrorData: MessageTimedOutErrorData): void {
     this.messageTimedOutSubject.next(messageTimedOutErrorData);
@@ -140,5 +158,12 @@ export class InternalSubjectsService {
 
   getSignedIn(): Observable<boolean> {
     return this.signedInSubject.asObservable();
+  }
+
+  whenSignedIn(): Observable<any> {
+    return this.signedInSubject.pipe(
+      filter(isSignedIn => isSignedIn),
+      first(),
+    );
   }
 }

@@ -1,0 +1,40 @@
+<mat-card *transloco="let t">
+  @let device = signals.device();
+
+  @if (device) {
+  <mat-card-header>
+    <mat-card-title>{{t('Edit device')}} ID {{device.id}}</mat-card-title>
+    <mat-card-subtitle>
+      <span>{{t('Created at')}} {{device.createdAt | fullDate}}</span>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="form" class="ccs3-op-flex-column ccs3-op-no-gap ccs3-op-max-width-large-text">
+      <mat-form-field>
+        <mat-label>{{t('Name')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.name" />
+      </mat-form-field>
+      <mat-checkbox [formControl]="form.controls.approved">{{t('Approved')}}</mat-checkbox>
+      <mat-checkbox [formControl]="form.controls.enabled">{{t('Enabled')}}</mat-checkbox>
+      <mat-form-field>
+        <mat-label>{{t('Description')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.description" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{t('Certificate thumbprint')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.certificateThumbprint" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{t('IP address')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.ipAddress" />
+      </mat-form-field>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <section class="ccs3-op-flex-row">
+      <button (click)="onSave()" mat-flat-button>{{t('Save')}}</button>
+      <button (click)="onCancel()" mat-raised-button>{{t('Cancel')}}</button>
+    </section>
+  </mat-card-actions>
+  }
+</mat-card>

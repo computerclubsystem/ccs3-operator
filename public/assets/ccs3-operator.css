@@ -101,6 +101,10 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   align-items: center;
 }
 
+.ccs3-op-align-items-baseline {
+  align-items: baseline;
+}
+
 /* Size */
 .ccs3-op-full-width {
   width: 100%;
@@ -108,6 +112,18 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
 
 .ccs3-op-full-height {
   height: 100%;
+}
+
+.ccs3-op-max-width-small-text {
+  max-width: 20ch;
+}
+
+.ccs3-op-max-width-medium-text {
+  max-width: 40ch;
+}
+
+.ccs3-op-max-width-large-text {
+  max-width: 60ch;
 }
 
 /* Colors */

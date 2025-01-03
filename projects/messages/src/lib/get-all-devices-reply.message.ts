@@ -1,16 +1,5 @@
 import { Message } from './declarations/message';
-
-export interface Device {
-  id: number;
-  certificateThumbprint: string;
-  ipAddress: string;
-  name?: string;
-  description?: string;
-  createdAt: string;
-  approved: boolean;
-  enabled: boolean;
-  deviceGroupId?: number;
-}
+import { Device } from './entities/device';
 
 export interface GetAllDevicesReplyMessageBody {
   devices: Device[];

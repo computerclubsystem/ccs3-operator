@@ -11,4 +11,7 @@ export enum IconName {
   logout = 'logout',
   language = 'language',
   settings = 'settings',
+  edit = 'edit',
+  close = 'close',
+  error = 'error',
 }

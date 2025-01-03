@@ -8,3 +8,5 @@ export { InternalSubjectsService } from './lib/internal-subjects.service';
 export { Permission } from './lib/types/permission';
 export { PermissionsService } from './lib/permissions.service';
 export { NoYearDatePipe } from './lib/no-year-date.pipe';
+export { FullDatePipe } from './lib/full-date.pipe';
+export { SecondsToTimePipe } from './lib/seconds-to-time.pipe';

@@ -12,7 +12,7 @@ export class NotificationsService {
   private readonly snackBar = inject(MatSnackBar);
   private notificationsBufferSize = 200;
   private notifications: NotificationItem[] = [];
-  private duration = 10000;
+  private duration = 8000;
   private idSequence = 0;
 
   show(type: NotificationType, title: string, description?: string | null, icon?: IconName | null, customData?: any): void {

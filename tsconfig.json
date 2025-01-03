@@ -38,6 +38,15 @@
       "@ccs3-operator/system-settings/devices": [
         "projects/system-settings/src/lib/devices/public-api.ts"
       ],
+      "@ccs3-operator/system-settings/devices/edit": [
+        "projects/system-settings/src/lib/devices/edit/public-api.ts"
+      ],
+      "@ccs3-operator/system-settings/tariffs": [
+        "projects/system-settings/src/lib/tariffs/public-api.ts"
+      ],
+      "@ccs3-operator/system-settings/tariffs/create": [
+        "projects/system-settings/src/lib/tariffs/create/public-api.ts"
+      ],
       "@ccs3-operator/system-settings/users": [
         "projects/system-settings/src/lib/users/public-api.ts"
       ],

@@ -2,6 +2,7 @@
 <table>
   <thead>
     <tr>
+      <th>{{'Edit' | transloco}}</th>
       <th>Id</th>
       <th>{{'Name' | transloco}}</th>
       <th>{{'Appoved' | transloco}}</th>
@@ -16,6 +17,13 @@
   <tbody>
     @for (device of devices; track device.id) {
     <tr>
+      <td>
+        @let editTranslated = 'Edit' | transloco;
+        <button mat-icon-button (click)="onEditDevice(device)" title="{{editTranslated}}"
+          [attr.aria-label]="editTranslated">
+          <mat-icon>{{iconName.edit}}</mat-icon>
+        </button>
+      </td>
       <td>{{device.id}}</td>
       <td>{{device.name}}</td>
       <td>{{device.approved}}</td>

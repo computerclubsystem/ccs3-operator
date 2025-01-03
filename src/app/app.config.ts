@@ -6,6 +6,7 @@ import { provideTransloco } from '@jsverse/transloco';
 
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './transloco-loader';
+import { SecondsToTimePipe } from '@ccs3-operator/shared';
 
 export const appConfig: ApplicationConfig = {
   providers: [

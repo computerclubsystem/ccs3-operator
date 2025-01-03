@@ -1,6 +1,7 @@
-<div class="ccs3-op-computers-status-component">
-  @let items = statusItems();
-  @for (item of items; track item) {
+<ng-container *transloco="let t;">
+  <div class="ccs3-op-computers-status-component">
+    @let items = signals.deviceStatusItems();
+    @for (item of items; track item.deviceStatus.deviceId) {
     <ng-container [ngTemplateOutlet]="standardCard" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
     <!-- <mat-card appearance="outlined">
       <mat-card-header>
@@ -27,34 +28,52 @@
       </mat-card-actions>
       <mat-card-footer>Footer</mat-card-footer>
     </mat-card> -->
-  }
-</div>
+    }
+  </div>
 
-<ng-template #standardCard let-templateContext>
-  @let item = computerCardDataIdentity(templateContext);
-  <mat-card appearance="outlined">
-    <mat-card-header>
-      <mat-card-title>
-        <div class="ccs3-op-flex-row">
-          <span>{{item.name}}</span>
-          <span>-</span>
-          <span>{{item.total}}</span>
-        </div>
-      </mat-card-title>
-      <mat-card-subtitle>{{item.tariffName}}</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content></mat-card-content>
-    <mat-card-actions>
-      <div class="ccs3-op-flex-row">
-        @if (item.isStarted) {
-          <button mat-button class="mat-tonal-button" >Start</button>
-          <button mat-stroked-button disabled>Stop</button>
-        } @else {
-          <button mat-button disabled>Start</button>
-          <button mat-stroked-button>Stop</button>
-        }
-      </div>
-    </mat-card-actions>
-    <mat-card-footer></mat-card-footer>
-  </mat-card>
-</ng-template>
+  <ng-template #standardCard let-templateContext>
+    @let item = deviceStatusItemIdentity(templateContext);
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>
+          <div class="ccs3-op-flex-row">
+            <span>{{item.deviceName}}</span>
+            <span>-</span>
+            <span>{{item.deviceStatus.totalSum}}</span>
+            @if (item.deviceStatus.started) {
+            <span>{{item.deviceStatus.remainingSeconds | secondsToTime}}</span>
+            }
+          </div>
+        </mat-card-title>
+        <mat-card-subtitle>{{item.tariffName}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content></mat-card-content>
+      <mat-card-actions>
+        <section class="ccs3-op-flex-column">
+          <section class="ccs3-op-flex-row">
+            @if (item.deviceStatus.started) {
+            <button mat-button disabled>{{t('Select')}}</button>
+            <button mat-stroked-button>Stop</button>
+            } @else {
+            <button (click)="toggleStartExpanded(item)" mat-button class="mat-tonal-button">{{t('Select')}}</button>
+            <button mat-stroked-button disabled>Stop</button>
+            }
+          </section>
+          @if (item.isStartExpanded) {
+          <section class="ccs3-op-flex-row ccs3-op-align-items-baseline">
+            <mat-form-field>
+              <mat-select [(value)]="item.selectedTariffItem">
+                @for (tariff of allEnabledTariffs; track tariff.id) {
+                <mat-option [value]="tariff" [title]="tariff.name">{{tariff.name}}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <button (click)="onStart(item)" mat-button class="mat-tonal-button">{{t('Start')}}</button>
+          </section>
+          }
+        </section>
+      </mat-card-actions>
+      <mat-card-footer></mat-card-footer>
+    </mat-card>
+  </ng-template>
+</ng-container>

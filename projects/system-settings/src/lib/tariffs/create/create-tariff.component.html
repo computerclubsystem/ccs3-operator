@@ -1,0 +1,88 @@
+<mat-card *transloco="let t;">
+  <mat-card-header>
+    <mat-card-title>{{t('Create tariff')}}</mat-card-title>
+    <mat-card-subtitle>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="form" class="ccs3-op-flex-column ccs3-op-max-width-large-text">
+      <mat-form-field>
+        <mat-label>{{t('Name')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.name" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{t('Type')}}</mat-label>
+        <mat-select [formControl]="form.controls.type">
+          @for (tariffType of tariffTypeItems; track tariffType.id) {
+          <mat-option [value]="tariffType">{{tariffType.name}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      @if (signals.showDurationTypeSettings()) {
+      <mat-form-field>
+        <mat-label>{{t('Duration')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.duration" />
+        <mat-hint>{{t('Duration in "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-hint>
+        @if (signals.durationHasNotTwoPartsError()) {
+        <mat-error>{{t('Use "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-error>
+        }
+        @if (signals.durationHasOutOfRangeError()) {
+        <mat-error>{{t('Hours must be 0 or greater. Minutes must be between 0 and 59')}}</mat-error>
+        }
+        @if (signals.durationHasInvalidCharError()) {
+        <mat-error>{{t('Invalid character. Use "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-error>
+        }
+      </mat-form-field>
+      }
+      @if (signals.showFromToTypeSettings()) {
+      <mat-form-field>
+        <mat-label>{{t('From')}}</mat-label>
+        <input matInput type="time" matNativeControl [formControl]="form.controls.fromTime" />
+        <mat-hint>{{t('Start of the tariff period')}}</mat-hint>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{t('To')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.toTime" />
+        <mat-hint>{{t('End of the tariff period')}}</mat-hint>
+      </mat-form-field>
+      }
+      <mat-form-field>
+        <mat-label>{{t('Price')}}</mat-label>
+        <input matInput type="number" [formControl]="form.controls.price" />
+        <mat-hint>Use dot as separator - 1.50, 4.00, 10.50 etc.</mat-hint>
+        @if (signals.priceHasError()) {
+        <mat-error>{{t('Invalid number. Use only digits and dot as separator - 1.50, 4.00, 10.50 etc.')}}</mat-error>
+        }
+      </mat-form-field>
+      <mat-checkbox [formControl]="form.controls.enabled">{{t('Enabled')}}</mat-checkbox>
+      <mat-form-field>
+        <mat-label>{{t('Description')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.description" />
+      </mat-form-field>
+      <!-- <mat-form-field>
+        <mat-label>{{t('Name')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.name" />
+      </mat-form-field>
+      <mat-checkbox [formControl]="form.controls.approved">{{t('Approved')}}</mat-checkbox>
+      <mat-checkbox [formControl]="form.controls.enabled">{{t('Enabled')}}</mat-checkbox>
+      <mat-form-field>
+        <mat-label>{{t('Description')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.description" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{t('Certificate thumbprint')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.certificateThumbprint" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{t('IP address')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.ipAddress" />
+      </mat-form-field> -->
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <section class="ccs3-op-flex-row">
+      <button (click)="onSave()" mat-flat-button [disabled]="form.invalid">{{t('Save')}}</button>
+      <button (click)="onCancel()" mat-raised-button>{{t('Cancel')}}</button>
+    </section>
+  </mat-card-actions>
+</mat-card>

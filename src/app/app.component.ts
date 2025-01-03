@@ -81,6 +81,16 @@ export class AppComponent implements OnInit {
     this.internalSubjectsSvc.getLanguageSelected().subscribe(language => this.processLanguageSelected(language));
     this.internalSubjectsSvc.getManualAuthSucceeded().subscribe(() => this.processManualAuthSucceeded());
     this.internalSubjectsSvc.getMessageTimedOut().subscribe(messageTimedOutErrorData => this.processMessageTimedOutErrorData(messageTimedOutErrorData));
+    this.internalSubjectsSvc.getNavigateToEditDeviceRequested().subscribe(deviceId => this.processNavigateToEditDeviceRequested(deviceId));
+    this.internalSubjectsSvc.getNavigateToCreateNewTariffRequested().subscribe(() => this.processNavigateToCreateNewTariffRequested());
+  }
+
+  processNavigateToCreateNewTariffRequested(): void {
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsTariffs, RouteName.systemSettingsTariffsCreate]);
+  }
+
+  processNavigateToEditDeviceRequested(deviceId: number): void {
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsDevices, deviceId, RouteName.systemSettingsDevicesEdit]);
   }
 
   processMessageTimedOutErrorData(messageTimedOutErrorData: MessageTimedOutErrorData): void {

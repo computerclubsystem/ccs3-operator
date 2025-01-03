@@ -1,9 +1,14 @@
-<div class="ccs3-notification-component-content ccs3-op-flex-row">
+<div (click)="onClose()" class="ccs3-notification-component-content ccs3-op-flex-row">
   @if (data.item.icon) {
-    <mat-icon>{{data.item.icon}}</mat-icon>
+  <mat-icon>{{data.item.icon}}</mat-icon>
   }
   <div class="ccs3-op-flex-column">
-    <span class="ccs3-op-notification-title">{{data.item.title}}</span>
+    <section class="ccs3-op-flex-row ccs3-op-flex-justify-space-between">
+      <span class="ccs3-op-notification-title">{{data.item.title}}</span>
+      <!-- <button (click)="onClose()" mat-icon-button style="color: black;">
+        <mat-icon>{{iconName.close}}</mat-icon>
+      </button> -->
+    </section>
     <span class="ccs3-op-notification-description">{{data.item.description}}</span>
   </div>
 </div>

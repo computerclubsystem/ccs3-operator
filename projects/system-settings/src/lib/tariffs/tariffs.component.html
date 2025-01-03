@@ -1,0 +1,49 @@
+<ng-container *transloco="let t;">
+  @let tariffDisplayItems = signals.tariffDisplayItems();
+  <table>
+    <thead>
+      <tr>
+        <th>{{t('Edit')}}</th>
+        <th>Id</th>
+        <th>{{t('Name')}}</th>
+        <th>{{t('Type')}}</th>
+        <th>{{t('Duration')}}</th>
+        <th>{{t('From time')}}</th>
+        <th>{{t('To time')}}</th>
+        <th>{{t('Price')}}</th>
+        <th>{{t('Enabled')}}</th>
+        <th>{{t('Description')}}</th>
+        <th>{{t('Created at')}}</th>
+        <th>{{t('Updated at')}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (tariffDisplayItem of tariffDisplayItems; track tariffDisplayItem.tariff.id) {
+      @let tariff = tariffDisplayItem.tariff;
+      <tr>
+        <td>
+          @let editTranslated = t('Edit');
+          <button mat-icon-button (click)="onEditTariff(tariff)" title="{{editTranslated}}"
+            [attr.aria-label]="editTranslated">
+            <mat-icon>{{iconName.edit}}</mat-icon>
+          </button>
+        </td>
+        <th>{{tariff.id}}</th>
+        <th>{{tariff.name}}</th>
+        <th>{{tariffDisplayItem.tariffTypeName}}</th>
+        <th>{{tariffDisplayItem.tariffDurationText}}</th>
+        <th>{{tariffDisplayItem.tariffFromTimeText}}</th>
+        <th>{{tariffDisplayItem.tariffToTimeText}}</th>
+        <th>{{tariff.price}}</th>
+        <th>{{tariff.enabled}}</th>
+        <th>{{tariff.description}}</th>
+        <th>{{tariff.createdAt | fullDate}}</th>
+        <th>{{tariff.updatedAt | fullDate}}</th>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <section class="ccs3-op-flex-row">
+    <button (click)="onCreateNew()" mat-flat-button>{{t('Create')}}</button>
+  </section>
+</ng-container>
