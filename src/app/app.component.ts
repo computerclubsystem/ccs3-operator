@@ -12,16 +12,15 @@ import {
   RefreshTokenReplyMessage, NotAuthenticatedMessage,
   AuthRequestMessage,
   SignOutReplyMessage,
+  createSignOutRequestMessage,
 } from '@ccs3-operator/messages';
-import { MessageSubjectsService, Permission, PermissionsService } from '@ccs3-operator/shared';
+import { MessageSubjectsService, Permission, PermissionsService, RequestReplyTypeService } from '@ccs3-operator/shared';
 import { AccountMenuItem, AccountMenuItemId, IconName, MainMenuItem, MainMenuItemId, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';
 import { ToolbarComponent } from '@ccs3-operator/toolbar';
 import { MessageTransportService } from '@ccs3-operator/shared';
-import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
+import { NotificationsService } from '@ccs3-operator/notifications';
 import { InternalSubjectsService } from '@ccs3-operator/shared';
 import { AppComponentState, StorageKey } from './declarations';
-import { RequestReplyTypeService } from 'projects/shared/src/lib/request-reply-type.service';
-import { createSignOutRequestMessage } from 'projects/messages/src/lib/sign-out-request.message';
 import { RouteName } from './app.routes';
 import { NotificationsHelperService } from './notifications-helper.service';
 

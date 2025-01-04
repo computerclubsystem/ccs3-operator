@@ -8,7 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
 import { filter } from 'rxjs';
 
-import { createGetAllDevicesRequestMessage, createGetAllTariffsRequestMessage, createStartDeviceRequestMessage, Device, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage, GetAllTariffsReplyMessage, MessageType, NotificationMessageType, StartDeviceReplyMessage, Tariff, TariffType } from '@ccs3-operator/messages';
+import { createGetAllDevicesRequestMessage, createGetAllTariffsRequestMessage, createGetDeviceStatusesRequestMessage, createStartDeviceRequestMessage, Device, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage, GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, MessageType, NotificationMessageType, StartDeviceReplyMessage, Tariff, TariffType } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, SecondsToTimePipe } from '@ccs3-operator/shared';
 import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
@@ -22,12 +22,12 @@ import { IconName } from '@ccs3-operator/shared/types';
 })
 export class ComputersStatusComponent implements OnInit {
   readonly signals = this.createSignals();
+  private readonly state = this.createState();
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
   private readonly notificationsSvc = inject(NotificationsService);
   private readonly destroyRef = inject(DestroyRef);
   private allDevicesMap = new Map<number, Device>();
-  private allDevices: Device[] = [];
   allTariffsMap = new Map<number, Tariff>();
   allEnabledTariffs: Tariff[] = [];
 
@@ -42,6 +42,10 @@ export class ComputersStatusComponent implements OnInit {
   init(): void {
     this.loadEntities();
     this.subscribeToSubjects();
+    const getDeviceStatusesRequestMsg = createGetDeviceStatusesRequestMessage();
+    this.messageTransportSvc.sendAndAwaitForReplyByType(getDeviceStatusesRequestMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(getDeviceStatusesReplyMsg => this.processGetDeviceStatusesReplyMessage(getDeviceStatusesReplyMsg));
   }
 
   onStart(item: DeviceStatusItem): void {
@@ -51,6 +55,21 @@ export class ComputersStatusComponent implements OnInit {
     this.messageTransportSvc.sendAndAwaitForReplyByType(startDeviceRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(startDeviceReplyMsg => this.processStartDeviceReplyMessage(startDeviceReplyMsg));
+  }
+
+  processGetDeviceStatusesReplyMessage(getDeviceStatusesReplyMsg: GetDeviceStatusesReplyMessage): void {
+    // Convert it to notification and call existing function that will process it
+    const deviceStatusesNotificationMsg: DeviceStatusesNotificationMessage = {
+      body: {
+        deviceStatuses: getDeviceStatusesReplyMsg.body.deviceStatuses,
+      },
+      header: {
+        type: NotificationMessageType.deviceStatusesNotification,
+        errors: getDeviceStatusesReplyMsg.header.errors,
+        failure: getDeviceStatusesReplyMsg.header.failure,
+      },
+    };
+    this.processDeviceStatusesNotificationMessage(deviceStatusesNotificationMsg);
   }
 
   processStartDeviceReplyMessage(startDeviceReplyMsg: StartDeviceReplyMessage): void {
@@ -78,6 +97,15 @@ export class ComputersStatusComponent implements OnInit {
       return;
     }
     this.allDevicesMap = new Map<number, Device>(allDevicesReplyMsg.body.devices.map(device => [device.id, device]));
+    // When all devices are available, we must refresh the signals.deviceStatusItems to show device names
+    this.refreshDeviceStatusItemsWithLastNotificationMessage();
+  }
+
+  refreshDeviceStatusItemsWithLastNotificationMessage(): void {
+    if (this.state.lastDeviceStatusesNotificationMessage) {
+      const deviceStatusItems = this.createDeviceStatusItems(this.state.lastDeviceStatusesNotificationMessage.body.deviceStatuses);
+      this.signals.deviceStatusItems.set(deviceStatusItems);
+    }
   }
 
   processAllTariffsReplyMessage(allTariffsReplyMsg: GetAllTariffsReplyMessage): void {
@@ -86,6 +114,8 @@ export class ComputersStatusComponent implements OnInit {
     }
     this.allTariffsMap = new Map<number, Tariff>(allTariffsReplyMsg.body.tariffs.map(tariff => [tariff.id, tariff]));
     this.allEnabledTariffs = allTariffsReplyMsg.body.tariffs.filter(x => x.enabled);
+    // When all tariffs are available, we must refresh the signals.deviceStatusItems to show tariff names
+    this.refreshDeviceStatusItemsWithLastNotificationMessage();
   }
 
   subscribeToSubjects(): void {
@@ -96,8 +126,14 @@ export class ComputersStatusComponent implements OnInit {
   }
 
   processDeviceStatusesNotificationMessage(deviceStatusesMsg: DeviceStatusesNotificationMessage): void {
+    this.state.lastDeviceStatusesNotificationMessage = deviceStatusesMsg;
+    const deviceStatusItems = this.createDeviceStatusItems(deviceStatusesMsg.body.deviceStatuses);
+    this.signals.deviceStatusItems.set(deviceStatusItems);
+  }
+
+  createDeviceStatusItems(deviceStatuses: DeviceStatus[]): DeviceStatusItem[] {
     const deviceStatusItems: DeviceStatusItem[] = [];
-    for (const deviceStatus of deviceStatusesMsg.body.deviceStatuses) {
+    for (const deviceStatus of deviceStatuses) {
       const deviceStatusItem = {
         deviceName: this.getDeviceName(deviceStatus.deviceId),
         deviceStatus: deviceStatus,
@@ -106,7 +142,7 @@ export class ComputersStatusComponent implements OnInit {
       this.mergeCurrentDeviceStatusItemCustomProperties(deviceStatusItem);
       deviceStatusItems.push(deviceStatusItem);
     }
-    this.signals.deviceStatusItems.set(deviceStatusItems);
+    return deviceStatusItems;
   }
 
   mergeCurrentDeviceStatusItemCustomProperties(deviceStatusItem: DeviceStatusItem): void {
@@ -138,6 +174,13 @@ export class ComputersStatusComponent implements OnInit {
     };
     return signals;
   }
+
+  createState(): ComputersStatusComponentState {
+    const state: ComputersStatusComponentState = {
+      lastDeviceStatusesNotificationMessage: null,
+    };
+    return state;
+  }
 }
 
 interface Signals {
@@ -150,4 +193,8 @@ interface DeviceStatusItem {
   tariffName: string;
   isStartExpanded: boolean;
   selectedTariffItem: Tariff;
+}
+
+interface ComputersStatusComponentState {
+  lastDeviceStatusesNotificationMessage?: DeviceStatusesNotificationMessage | null;
 }

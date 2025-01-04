@@ -42,7 +42,7 @@
       </mat-form-field>
       <mat-form-field>
         <mat-label>{{t('To')}}</mat-label>
-        <input matInput type="text" [formControl]="form.controls.toTime" />
+        <input matInput type="time" [formControl]="form.controls.toTime" />
         <mat-hint>{{t('End of the tariff period')}}</mat-hint>
       </mat-form-field>
       }
@@ -59,30 +59,12 @@
         <mat-label>{{t('Description')}}</mat-label>
         <input matInput type="text" [formControl]="form.controls.description" />
       </mat-form-field>
-      <!-- <mat-form-field>
-        <mat-label>{{t('Name')}}</mat-label>
-        <input matInput type="text" [formControl]="form.controls.name" />
-      </mat-form-field>
-      <mat-checkbox [formControl]="form.controls.approved">{{t('Approved')}}</mat-checkbox>
-      <mat-checkbox [formControl]="form.controls.enabled">{{t('Enabled')}}</mat-checkbox>
-      <mat-form-field>
-        <mat-label>{{t('Description')}}</mat-label>
-        <input matInput type="text" [formControl]="form.controls.description" />
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{t('Certificate thumbprint')}}</mat-label>
-        <input matInput type="text" [formControl]="form.controls.certificateThumbprint" />
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{t('IP address')}}</mat-label>
-        <input matInput type="text" [formControl]="form.controls.ipAddress" />
-      </mat-form-field> -->
     </form>
   </mat-card-content>
   <mat-card-actions>
     <section class="ccs3-op-flex-row">
       <button (click)="onSave()" mat-flat-button [disabled]="form.invalid">{{t('Save')}}</button>
-      <button (click)="onCancel()" mat-raised-button>{{t('Cancel')}}</button>
+      <button (click)="onGoToList()" mat-raised-button>{{t('Go back to list')}}</button>
     </section>
   </mat-card-actions>
 </mat-card>

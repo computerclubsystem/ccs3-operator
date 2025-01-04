@@ -30,10 +30,22 @@
         </td>
         <th>{{tariff.id}}</th>
         <th>{{tariff.name}}</th>
-        <th>{{tariffDisplayItem.tariffTypeName}}</th>
-        <th>{{tariffDisplayItem.tariffDurationText}}</th>
-        <th>{{tariffDisplayItem.tariffFromTimeText}}</th>
-        <th>{{tariffDisplayItem.tariffToTimeText}}</th>
+        <th>{{t(tariffDisplayItem.tariff.type | tariffTypeToName)}}</th>
+        <th>
+          @if (tariffDisplayItem.tariff.type === tariffType.duration) {
+          {{tariffDisplayItem.tariff.duration | minutesToTime}}
+          }
+        </th>
+        <th>
+          @if (tariffDisplayItem.tariff.type === tariffType.fromTo) {
+          {{tariffDisplayItem.tariff.fromTime | minutesToTime}}
+          }
+        </th>
+        <th>
+          @if (tariffDisplayItem.tariff.type === tariffType.fromTo) {
+          {{tariffDisplayItem.tariff.toTime | minutesToTime}}
+          }
+        </th>
         <th>{{tariff.price}}</th>
         <th>{{tariff.enabled}}</th>
         <th>{{tariff.description}}</th>

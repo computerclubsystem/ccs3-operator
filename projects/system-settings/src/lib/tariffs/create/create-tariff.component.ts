@@ -11,11 +11,9 @@ import { translate, TranslocoDirective } from '@jsverse/transloco';
 
 import { IconName, NumericIdWithName } from '@ccs3-operator/shared/types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Tariff } from '@ccs3-operator/messages';
+import { createCreateTariffRequestMessage, CreateTariffReplyMessage, Tariff } from '@ccs3-operator/messages';
 import { CreateTariffService } from './create-tariff.service';
 import { MessageTransportService } from '@ccs3-operator/shared';
-import { createCreateTariffRequestMessage } from 'projects/messages/src/lib/create-tariff-request.message';
-import { CreateTariffReplyMessage } from 'projects/messages/src/lib/create-tariff-reply.message';
 import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
 
 @Component({
@@ -66,7 +64,7 @@ export class CreateTariffComponent implements OnInit {
     }
   }
 
-  onCancel(): void {
+  onGoToList(): void {
     this.router.navigate(['../'], { relativeTo: this.activatedRoute });
   }
 

@@ -5,21 +5,25 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 import {
-  createGetAllTariffsRequestMessage, GetAllTariffsReplyMessage, GetAllTariffsRequestMessageBody, Tariff
+  createGetAllTariffsRequestMessage, GetAllTariffsReplyMessage, GetAllTariffsRequestMessageBody, Tariff,
+  TariffType
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, FullDatePipe } from '@ccs3-operator/shared';
+import {
+  InternalSubjectsService, MessageTransportService, FullDatePipe, MinutesToTimePipe, TariffTypeToNamePipe
+} from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
 
 @Component({
   selector: 'ccs3-op-tariffs',
   templateUrl: 'tariffs.component.html',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, TranslocoDirective, FullDatePipe],
+  imports: [MatButtonModule, MatIconModule, TranslocoDirective, FullDatePipe, MinutesToTimePipe, TariffTypeToNamePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TariffsComponent implements OnInit {
   readonly signals = this.createSignals();
   readonly iconName = IconName;
+  readonly tariffType = TariffType;
 
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
   private readonly messageTransportSvc = inject(MessageTransportService);

@@ -22,6 +22,8 @@ export const enum MessageType {
   updateTariffReply = 'update-tariff-reply',
   startDeviceRequest = 'start-device-request',
   startDeviceReply = 'start-device-reply',
+  getDeviceStatusesRequest = 'get-device-statuses-request',
+  getDeviceStatusesReply = 'get-device-statuses-reply',
 }
 
 export const enum ReplyMessageType {

@@ -5,13 +5,20 @@ export class SecondsToTimePipe implements PipeTransform {
 
   transform(value: any, ...args: any[]) {
     const totalSeconds = +value;
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
-    const seconds = totalSeconds - (hours * 3600) - (minutes * 60);
+    if (isNaN(totalSeconds) || totalSeconds === 0) {
+      return '0:00';
+    }
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor(totalSeconds / 60) % 60
+    const seconds = totalSeconds % 60
 
-    const minutesAndSecondsText = [minutes, seconds].map(x => x.toString().padStart(2, '0'));
-    const prefix = hours > 0 ? `${hours}:` : '';
-    const result = prefix + minutesAndSecondsText.join(':');
+    const zeroPaddedMinutes = this.padValue(minutes);
+    const zeroPaddedSeconds = this.padValue(seconds);
+    const result = `${hours}:${zeroPaddedMinutes}:${zeroPaddedSeconds}`;
     return result;
+  }
+
+  padValue(value: number): string {
+    return value.toString().padStart(2, '0');
   }
 }

@@ -22,6 +22,7 @@ export class RequestReplyTypeService {
     map.set(MessageType.createTariffRequest, MessageType.createTariffReply);
     map.set(MessageType.updateTariffRequest, MessageType.updateTariffReply);
     map.set(MessageType.startDeviceRequest, MessageType.startDeviceReply);
+    map.set(MessageType.getDeviceStatusesRequest, MessageType.getDeviceStatusesReply);
     return map;
   }
 }

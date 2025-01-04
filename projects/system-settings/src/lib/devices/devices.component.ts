@@ -8,14 +8,14 @@ import { filter, first } from 'rxjs';
 import {
   createGetAllDevicesRequestMessage, Device, GetAllDevicesReplyMessage, GetAllDevicesRequestMessageBody
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, NoYearDatePipe } from '@ccs3-operator/shared';
+import { InternalSubjectsService, MessageTransportService, FullDatePipe } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
 
 @Component({
   selector: 'ccs3-op-system-settings-devices',
   templateUrl: 'devices.component.html',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, TranslocoPipe, NoYearDatePipe],
+  imports: [MatButtonModule, MatIconModule, TranslocoPipe, FullDatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DevicesComponent implements OnInit {

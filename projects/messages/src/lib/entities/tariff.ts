@@ -1,4 +1,4 @@
-export const enum TariffType {
+export enum TariffType {
   duration = 1,
   fromTo = 2,
 }

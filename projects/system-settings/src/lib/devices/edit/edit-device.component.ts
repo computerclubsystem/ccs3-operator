@@ -91,7 +91,7 @@ export class EditDeviceComponent implements OnInit {
     }
   }
 
-  onCancel(): void {
+  onGoToList(): void {
     this.router.navigate(['../..'], { relativeTo: this.activatedRoute });
   }
 

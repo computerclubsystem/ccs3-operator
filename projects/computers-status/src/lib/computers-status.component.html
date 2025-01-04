@@ -3,31 +3,6 @@
     @let items = signals.deviceStatusItems();
     @for (item of items; track item.deviceStatus.deviceId) {
     <ng-container [ngTemplateOutlet]="standardCard" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
-    <!-- <mat-card appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>
-          <div class="ccs3-op-flex-row">
-            <span>PC {{item.name}}</span>
-            <span>-</span>
-            <span>{{item.total}}</span>
-          </div>
-        </mat-card-title>
-        <mat-card-subtitle>Нощен пакет</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content></mat-card-content>
-      <mat-card-actions>
-        <div class="ccs3-op-flex-row">
-          @if (item.isStarted) {
-            <button mat-flat-button>Start</button>
-            <button mat-stroked-button disabled>Stop</button>
-          } @else {
-            <button mat-flat-button disabled>Start</button>
-            <button mat-stroked-button>Stop</button>
-          }
-        </div>
-      </mat-card-actions>
-      <mat-card-footer>Footer</mat-card-footer>
-    </mat-card> -->
     }
   </div>
 
