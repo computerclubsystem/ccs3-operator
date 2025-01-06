@@ -4,6 +4,7 @@ import { translate } from '@jsverse/transloco';
 import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
 import { IconName, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';
 import { NotAuthenticatedMessage, SignOutReplyMessage } from '@ccs3-operator/messages';
+import { OnCloseEventArgs, OnErrorEventArgs } from '@ccs3-operator/connector';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsHelperService {
@@ -17,12 +18,12 @@ export class NotificationsHelperService {
     this.ntfSvc.show(NotificationType.warn, translate('Send message error'), translate('Error occured when sending message to the server'), IconName.priority_high, err);
   }
 
-  showConnectionError(): void {
-    this.ntfSvc.show(NotificationType.warn, translate('Connection error'));
+  showConnectionError(args: OnErrorEventArgs): void {
+    this.ntfSvc.show(NotificationType.warn, translate('Connection error'), `State ${args.readyState}`, IconName.priority_high, args);
   }
 
-  showDisconnected(): void {
-    this.ntfSvc.show(NotificationType.warn, translate('Disconnected'), null, IconName.wifi_off);
+  showDisconnected(args: OnCloseEventArgs): void {
+    this.ntfSvc.show(NotificationType.warn, translate('Disconnected'), `Code ${args.code}`, IconName.wifi_off, args);
   }
 
   showConnected(): void {

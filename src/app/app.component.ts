@@ -5,7 +5,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { filter } from 'rxjs';
 import { translate, TranslocoService } from '@jsverse/transloco';
 
-import { ConnectorService, ConnectorSettings } from '@ccs3-operator/connector';
+import { ConnectorService, ConnectorSettings, OnCloseEventArgs, OnErrorEventArgs } from '@ccs3-operator/connector';
 import {
   Message, MessageType, AuthReplyMessage, AuthReplyMessageBody, ConfigurationMessage,
   createPingRequestMessage, createAuthRequestMessage, createRefreshTokenRequestMessage,
@@ -344,14 +344,14 @@ export class AppComponent implements OnInit {
     this.internalSubjectsSvc.setConnected(true);
   }
 
-  private processConnectorConnectionClosed(ev: any): void {
-    this.notificationsHelperSvc.showDisconnected();
+  private processConnectorConnectionClosed(args: OnCloseEventArgs): void {
+    this.notificationsHelperSvc.showDisconnected(args);
     this.stopPing();
     this.internalSubjectsSvc.setConnected(false);
   }
 
-  private processConnectorError(ev: any): void {
-    this.notificationsHelperSvc.showConnectionError();
+  private processConnectorError(args: OnErrorEventArgs): void {
+    this.notificationsHelperSvc.showConnectionError(args);
   }
 
   private processConnectorSendMessageError(err: any): void {

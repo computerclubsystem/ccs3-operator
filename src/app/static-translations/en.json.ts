@@ -21,5 +21,9 @@ export const en = {
   "Language": "Language",
   "English": "English",
   "Bulgarian": "Български",
-  "Settings": "Settings"
-}
+  "Settings": "Settings",
+  "System settings": "System settings",
+  "Select": "Select",
+  "Start": "Start",
+  "The tariff '{{tariffName}}' can't be used right now": "The tariff '{{tariffName}}' can't be used right now"
+};

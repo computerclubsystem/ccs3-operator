@@ -5,6 +5,12 @@
     <ng-container [ngTemplateOutlet]="standardCard" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
     }
   </div>
+  @let totalTranslation = t('Total');
+  @let elapsedTimeTranslation = t('Elapsed time');
+  @let remainingTimeTranslation = t('Remaining time');
+  @let startedTranslation = t('Started');
+  @let stoppedTranslation = t('Stopped');
+  @let tariffTranslation = t('Tariff');
 
   <ng-template #standardCard let-templateContext>
     @let item = deviceStatusItemIdentity(templateContext);
@@ -14,13 +20,45 @@
           <div class="ccs3-op-flex-row">
             <span>{{item.deviceName}}</span>
             <span>-</span>
-            <span>{{item.deviceStatus.totalSum}}</span>
-            @if (item.deviceStatus.started) {
-            <span>{{item.deviceStatus.remainingSeconds | secondsToTime}}</span>
-            }
+            <span [title]="totalTranslation" [attr.aria-label]="totalTranslation">{{item.deviceStatus.totalSum}}</span>
           </div>
         </mat-card-title>
-        <mat-card-subtitle>{{item.tariffName}}</mat-card-subtitle>
+        <mat-card-subtitle>
+          <section class="ccs3-op-two-col-grid ccs3-op-half-gap">
+            <span>{{tariffTranslation}}</span>
+            <span class="tariff-name">{{item.tariffName}}</span>
+            @if (item.deviceStatus.started) {
+            <span>{{elapsedTimeTranslation}}</span>
+            <span class="elapsed-time">{{item.deviceStatus.totalTime | secondsToTime}}</span>
+            <span>{{remainingTimeTranslation}}</span>
+            <span class="remaining-time">{{item.deviceStatus.remainingSeconds | secondsToTime}}</span>
+            }
+          </section>
+          <!-- <section>
+            <span>{{tariffTranslation}}</span>: <span class="tariff-name">{{item.tariffName}}</span>
+          </section>
+          <section class="ccs3-op-flex-row">
+            @if (item.deviceStatus.started) {
+            <span class="elapsed-time" [title]="elapsedTimeTranslation" [attr.aria-label]="elapsedTimeTranslation">
+              {{item.deviceStatus.totalTime | secondsToTime}}
+            </span>
+            <span class="remaining-time" [title]="remainingTimeTranslation"
+              [attr.aria-label]="remainingTimeTranslation">
+              {{item.deviceStatus.remainingSeconds | secondsToTime}}
+            </span>
+            }
+          </section>
+          <section>
+            <section>
+              <span>{{startedTranslation}}</span>: <span>{{item.deviceStatus.startedAt | noYearDate}}</span>
+            </section>
+            @if (item.deviceStatus.stoppedAt) {
+            <section>
+              <span>{{stoppedTranslation}}</span>: <span>{{item.deviceStatus.stoppedAt| noYearDate}}</span>
+            </section>
+            }
+          </section> -->
+        </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content></mat-card-content>
       <mat-card-actions>
@@ -37,8 +75,8 @@
           @if (item.isStartExpanded) {
           <section class="ccs3-op-flex-row ccs3-op-align-items-baseline">
             <mat-form-field>
-              <mat-select [(value)]="item.selectedTariffItem">
-                @for (tariff of allEnabledTariffs; track tariff.id) {
+              <mat-select (valueChange)="onTariffSelected($event, item)" [(value)]="item.selectedTariffItem">
+                @for (tariff of signals.allEnabledTariffs(); track tariff.id) {
                 <mat-option [value]="tariff" [title]="tariff.name">{{tariff.name}}</mat-option>
                 }
               </mat-select>
