@@ -11,9 +11,9 @@ export class ConnectorService {
   private settings!: ConnectorSettings;
   private messageSubject = new Subject<any>();
   private connectedSubject = new Subject<void>();
-  private errorSubject = new Subject<any>();
-  private sendMessageErrorSubject = new Subject<any>();
-  private closeSubject = new Subject<any>();
+  private errorSubject = new Subject<OnErrorEventArgs>();
+  private sendMessageErrorSubject = new Subject<SendMessageErrorArgs>();
+  private closeSubject = new Subject<OnCloseEventArgs>();
   private state!: ConnectorServiceState;
 
   start(settings: ConnectorSettings): void {
@@ -29,7 +29,11 @@ export class ConnectorService {
       return false;
     }
     if (this.state.ws.readyState !== this.state.ws.OPEN) {
-      this.sendMessageErrorSubject.next(new Error(`Connection is not established (state is ${this.state.ws.readyState})`));
+      const errorArgs: SendMessageErrorArgs = {
+        code: 'connection-not-established',
+        description: `Connection is not established (state is ${this.state.ws.readyState})`,
+      };
+      this.sendMessageErrorSubject.next(errorArgs);
       return false;
     }
     try {
@@ -37,7 +41,11 @@ export class ConnectorService {
       this.state.ws.send(stringifiedMsg);
       return true;
     } catch (err) {
-      this.sendMessageErrorSubject.next(err);
+      const errorArgs: SendMessageErrorArgs = {
+        code: 'cannot-send-message',
+        description: err?.toString(),
+      };
+      this.sendMessageErrorSubject.next(errorArgs);
       return false;
     }
   }
@@ -83,11 +91,17 @@ export class ConnectorService {
     };
     ws.onerror = ev => {
       this.scheduleConnect();
-      this.errorSubject.next(ev);
+      const eventArgs: OnErrorEventArgs = {
+        readyState: (ev.target as WebSocket)?.readyState,
+      };
+      this.errorSubject.next(eventArgs);
     };
     ws.onclose = ev => {
       this.scheduleConnect();
-      this.closeSubject.next(ev);
+      const eventArgs: OnCloseEventArgs = {
+        code: ev.code,
+      };
+      this.closeSubject.next(eventArgs);
     };
   }
 
@@ -111,6 +125,19 @@ export class ConnectorService {
 export interface ConnectorSettings {
   url: string;
   reconnectDelay: number;
+}
+
+export interface SendMessageErrorArgs {
+  code?: string;
+  description?: string;
+}
+
+export interface OnErrorEventArgs {
+  readyState: number;
+}
+
+export interface OnCloseEventArgs {
+  code: number;
 }
 
 interface ConnectorServiceState {

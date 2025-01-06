@@ -62,7 +62,7 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
 /* Grid */
 .ccs3-op-two-col-grid {
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: auto 1fr;
   gap: var(--ccs3-op-gap);
 }
 

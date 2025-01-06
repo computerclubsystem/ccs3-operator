@@ -21,5 +21,8 @@
   "Language": "Език",
   "English": "English",
   "Bulgarian": "Български",
-  "Settings": "Настройки"
+  "Settings": "Настройки",
+  "System settings": "Системни настройки",
+  "Select": "Избор",
+  "The tariff '{{tariffName}}' can't be used right now": "Тарифата '{{tariffName}}' не може да се използва в момента"
 }
