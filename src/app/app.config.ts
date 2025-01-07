@@ -1,4 +1,4 @@
-import { ApplicationConfig, isDevMode, provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, isDevMode, provideExperimentalZonelessChangeDetection, provideZoneChangeDetection } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
@@ -6,7 +6,6 @@ import { provideTransloco } from '@jsverse/transloco';
 
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './transloco-loader';
-import { SecondsToTimePipe } from '@ccs3-operator/shared';
 
 export const appConfig: ApplicationConfig = {
   providers: [

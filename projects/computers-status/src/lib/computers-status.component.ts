@@ -20,6 +20,7 @@ import {
 import { InternalSubjectsService, MessageTransportService, NoYearDatePipe, SecondsToTimePipe } from '@ccs3-operator/shared';
 import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
+import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { TariffService } from './tariff.service';
 
 @Component({
@@ -27,7 +28,7 @@ import { TariffService } from './tariff.service';
   standalone: true,
   imports: [
     MatCardModule, MatButtonModule, MatInputModule, MatSelectModule, TranslocoDirective,
-    NgTemplateOutlet, SecondsToTimePipe, NoYearDatePipe,
+    NgTemplateOutlet, SecondsToTimePipe, NoYearDatePipe, MoneyFormatterComponent,
   ],
   templateUrl: 'computers-status.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,6 +40,7 @@ export class ComputersStatusComponent implements OnInit {
   private readonly notificationsSvc = inject(NotificationsService);
   private readonly tariffSvc = inject(TariffService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   deviceStatusItemIdentity = (obj: DeviceStatusItem) => obj;
 
@@ -98,8 +100,7 @@ export class ComputersStatusComponent implements OnInit {
       this.notificationsSvc.show(NotificationType.error, translate(`Can't start the computer`), errorsText, IconName.error, startDeviceReplyMsg);
       return;
     }
-    // TODO: Update device status - the reply message shoud contain the new device status
-    this.requestDeviceStatuses();
+    this.refreshDeviceStatusItem(startDeviceReplyMsg.body.deviceStatus);
   }
 
   loadEntities(): void {
@@ -128,6 +129,16 @@ export class ComputersStatusComponent implements OnInit {
     this.signals.allDevicesMap.set(new Map<number, Device>(mapItems));
     // When all devices are available, we must refresh the signals.deviceStatusItems to show device names
     this.refreshDeviceStatusItemsWithLastNotificationMessage();
+  }
+
+  refreshDeviceStatusItem(deviceStatus: DeviceStatus): void {
+    const updatedDeviceStatusItem = this.createDeviceStatusItems([deviceStatus])[0];
+    const currentDeviceStatusItems = this.signals.deviceStatusItems();
+    const index = currentDeviceStatusItems.findIndex(x => x.deviceStatus.deviceId === deviceStatus.deviceId);
+    if (index >= 0) {
+      currentDeviceStatusItems[index] = updatedDeviceStatusItem;
+      this.setDeviceStatusItems(currentDeviceStatusItems);
+    }
   }
 
   refreshDeviceStatusItemsWithLastNotificationMessage(): void {
@@ -163,6 +174,7 @@ export class ComputersStatusComponent implements OnInit {
 
   setDeviceStatusItems(deviceStatusItems: DeviceStatusItem[]): void {
     this.signals.deviceStatusItems.set(deviceStatusItems);
+    this.changeDetectorRef.markForCheck();
   }
 
   createDeviceStatusItems(deviceStatuses: DeviceStatus[]): DeviceStatusItem[] {

@@ -9,10 +9,8 @@ import { ConnectorService, ConnectorSettings, OnCloseEventArgs, OnErrorEventArgs
 import {
   Message, MessageType, AuthReplyMessage, AuthReplyMessageBody, ConfigurationMessage,
   createPingRequestMessage, createAuthRequestMessage, createRefreshTokenRequestMessage,
-  RefreshTokenReplyMessage, NotAuthenticatedMessage,
-  AuthRequestMessage,
-  SignOutReplyMessage,
-  createSignOutRequestMessage,
+  RefreshTokenReplyMessage, NotAuthenticatedMessage, AuthRequestMessage,
+  SignOutReplyMessage, createSignOutRequestMessage,
 } from '@ccs3-operator/messages';
 import { MessageSubjectsService, Permission, PermissionsService, RequestReplyTypeService } from '@ccs3-operator/shared';
 import { AccountMenuItem, AccountMenuItemId, IconName, MainMenuItem, MainMenuItemId, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';

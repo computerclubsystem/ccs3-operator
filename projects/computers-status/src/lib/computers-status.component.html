@@ -20,7 +20,8 @@
           <div class="ccs3-op-flex-row">
             <span>{{item.deviceName}}</span>
             <span>-</span>
-            <span [title]="totalTranslation" [attr.aria-label]="totalTranslation">{{item.deviceStatus.totalSum}}</span>
+            <ccs3-op-money-formatter [title]="totalTranslation"
+              [value]="item.deviceStatus.totalSum"></ccs3-op-money-formatter>
           </div>
         </mat-card-title>
         <mat-card-subtitle>
@@ -28,36 +29,18 @@
             <span>{{tariffTranslation}}</span>
             <span class="tariff-name">{{item.tariffName}}</span>
             @if (item.deviceStatus.started) {
-            <span>{{elapsedTimeTranslation}}</span>
-            <span class="elapsed-time">{{item.deviceStatus.totalTime | secondsToTime}}</span>
             <span>{{remainingTimeTranslation}}</span>
             <span class="remaining-time">{{item.deviceStatus.remainingSeconds | secondsToTime}}</span>
+            <span>{{elapsedTimeTranslation}}</span>
+            <span class="elapsed-time">{{item.deviceStatus.totalTime | secondsToTime}}</span>
             }
-          </section>
-          <!-- <section>
-            <span>{{tariffTranslation}}</span>: <span class="tariff-name">{{item.tariffName}}</span>
-          </section>
-          <section class="ccs3-op-flex-row">
-            @if (item.deviceStatus.started) {
-            <span class="elapsed-time" [title]="elapsedTimeTranslation" [attr.aria-label]="elapsedTimeTranslation">
-              {{item.deviceStatus.totalTime | secondsToTime}}
-            </span>
-            <span class="remaining-time" [title]="remainingTimeTranslation"
-              [attr.aria-label]="remainingTimeTranslation">
-              {{item.deviceStatus.remainingSeconds | secondsToTime}}
-            </span>
-            }
-          </section>
-          <section>
-            <section>
-              <span>{{startedTranslation}}</span>: <span>{{item.deviceStatus.startedAt | noYearDate}}</span>
-            </section>
+            <span>{{startedTranslation}}</span>
+            <span class="started-at">{{item.deviceStatus.startedAt | noYearDate}}</span>
             @if (item.deviceStatus.stoppedAt) {
-            <section>
-              <span>{{stoppedTranslation}}</span>: <span>{{item.deviceStatus.stoppedAt| noYearDate}}</span>
-            </section>
+            <span>{{stoppedTranslation}}</span>
+            <span class="stopped-at">{{item.deviceStatus.stoppedAt| noYearDate}}</span>
             }
-          </section> -->
+          </section>
         </mat-card-subtitle>
       </mat-card-header>
       <mat-card-content></mat-card-content>
