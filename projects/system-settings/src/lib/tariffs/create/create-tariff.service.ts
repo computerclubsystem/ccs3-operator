@@ -143,7 +143,8 @@ export class CreateTariffService {
 
     const padValue = (value: number): string => value.toString().padStart(2, '0');
     const zeroPaddedMinutes = padValue(minutes);
-    const result = `${hours}:${zeroPaddedMinutes}`;
+    const zeroPaddedHours = padValue(hours);
+    const result = `${zeroPaddedHours}:${zeroPaddedMinutes}`;
     return result;
   }
 }
