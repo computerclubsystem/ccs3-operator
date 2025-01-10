@@ -87,6 +87,10 @@ export class CreateTariffComponent implements OnInit {
           restrictStart: tariff.restrictStartTime,
           restrictStartFromTime: this.createTariffSvc.convertMinutesToTime(tariff.restrictStartFromTime),
           restrictStartToTime: this.createTariffSvc.convertMinutesToTime(tariff.restrictStartToTime),
+        },
+        fromToTypeGroup: {
+          fromTime: this.createTariffSvc.convertMinutesToTime(tariff.fromTime),
+          toTime: this.createTariffSvc.convertMinutesToTime(tariff.toTime),
         }
       });
       this.signals.isLoading.set(false);
@@ -133,7 +137,13 @@ export class CreateTariffComponent implements OnInit {
   }
 
   onGoToList(): void {
-    this.router.navigate(['../'], { relativeTo: this.activatedRoute });
+    if (this.signals.tariff()) {
+      // We are in edit mode - go back more steps
+      this.router.navigate(['../../'], { relativeTo: this.activatedRoute });
+    } else {
+      // We are in create mode
+      this.router.navigate(['../'], { relativeTo: this.activatedRoute });
+    }
   }
 
   createTariff(): Tariff {
