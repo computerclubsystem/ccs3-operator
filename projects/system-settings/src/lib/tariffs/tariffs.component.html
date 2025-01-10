@@ -1,56 +1,67 @@
 <ng-container *transloco="let t;">
   @let tariffDisplayItems = signals.tariffDisplayItems();
-  <table>
+  <table class="ccs3-op-border-spacing">
     <thead>
       <tr>
-        <th>{{t('Edit')}}</th>
-        <th>Id</th>
-        <th>{{t('Name')}}</th>
-        <th>{{t('Type')}}</th>
-        <th>{{t('Duration')}}</th>
-        <th>{{t('From time')}}</th>
-        <th>{{t('To time')}}</th>
-        <th>{{t('Price')}}</th>
-        <th>{{t('Enabled')}}</th>
-        <th>{{t('Description')}}</th>
-        <th>{{t('Created at')}}</th>
-        <th>{{t('Updated at')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Edit')}}</th>
+        <th class="ccs3-op-align-text-start">Id</th>
+        <th class="ccs3-op-align-text-start">{{t('Name')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Type')}}</th>
+        <th class="ccs3-op-align-text-end">{{t('Duration')}}</th>
+        <th class="ccs3-op-align-text-end">{{t('From time')}}</th>
+        <th class="ccs3-op-align-text-end">{{t('To time')}}</th>
+        <th class="ccs3-op-align-text-end">{{t('Price')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Restrict start')}}</th>
+        <th class="ccs3-op-align-text-end">{{t('Restrict start from time')}}</th>
+        <th class="ccs3-op-align-text-end">{{t('Restrict start to time')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Enabled')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Description')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Created at')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Updated at')}}</th>
       </tr>
     </thead>
     <tbody>
       @for (tariffDisplayItem of tariffDisplayItems; track tariffDisplayItem.tariff.id) {
       @let tariff = tariffDisplayItem.tariff;
       <tr>
-        <td>
+        <td class="ccs3-op-align-text-start">
           @let editTranslated = t('Edit');
           <button mat-icon-button (click)="onEditTariff(tariff)" title="{{editTranslated}}"
             [attr.aria-label]="editTranslated">
             <mat-icon>{{iconName.edit}}</mat-icon>
           </button>
         </td>
-        <th>{{tariff.id}}</th>
-        <th>{{tariff.name}}</th>
-        <th>{{t(tariffDisplayItem.tariff.type | tariffTypeToName)}}</th>
-        <th>
+        <td class="ccs3-op-align-text-start">{{tariff.id}}</td>
+        <td class="ccs3-op-align-text-start">{{tariff.name}}</td>
+        <td class="ccs3-op-align-text-start">{{t(tariffDisplayItem.tariff.type | tariffTypeToName)}}</td>
+        <td class="ccs3-op-align-text-end">
           @if (tariffDisplayItem.tariff.type === tariffType.duration) {
           {{tariffDisplayItem.tariff.duration | minutesToTime}}
           }
-        </th>
-        <th>
+        </td>
+        <td class="ccs3-op-align-text-end">
           @if (tariffDisplayItem.tariff.type === tariffType.fromTo) {
           {{tariffDisplayItem.tariff.fromTime | minutesToTime}}
           }
-        </th>
-        <th>
+        </td>
+        <td class="ccs3-op-align-text-end">
           @if (tariffDisplayItem.tariff.type === tariffType.fromTo) {
           {{tariffDisplayItem.tariff.toTime | minutesToTime}}
           }
-        </th>
-        <th>{{tariff.price}}</th>
-        <th>{{tariff.enabled}}</th>
-        <th>{{tariff.description}}</th>
-        <th>{{tariff.createdAt | fullDate}}</th>
-        <th>{{tariff.updatedAt | fullDate}}</th>
+        </td>
+        <td class="ccs3-op-align-text-end">{{tariff.price}}</td>
+        <td class="ccs3-op-align-text-start">{{tariff.restrictStartTime}}</td>
+        @if (tariff.restrictStartTime){
+        <td class="ccs3-op-align-text-end">{{tariff.restrictStartFromTime | minutesToTime}}</td>
+        <td class="ccs3-op-align-text-end">{{tariff.restrictStartToTime | minutesToTime}}</td>
+        } @else {
+        <td class="ccs3-op-align-text-end"></td>
+        <td class="ccs3-op-align-text-end"></td>
+        }
+        <td class="ccs3-op-align-text-start">{{tariff.enabled}}</td>
+        <td class="ccs3-op-align-text-start">{{tariff.description}}</td>
+        <td class="ccs3-op-align-text-start">{{tariff.createdAt | fullDate}}</td>
+        <td class="ccs3-op-align-text-start">{{tariff.updatedAt | fullDate}}</td>
       </tr>
       }
     </tbody>

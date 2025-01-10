@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Router, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Params, Router, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatIconRegistry } from '@angular/material/icon';
 import { filter } from 'rxjs';
 import { translate, TranslocoService } from '@jsverse/transloco';
@@ -19,7 +19,7 @@ import { MessageTransportService } from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
 import { InternalSubjectsService } from '@ccs3-operator/shared';
 import { AppComponentState, StorageKey } from './declarations';
-import { RouteName } from './app.routes';
+import { QueryParamName, RouteName } from './app.routes';
 import { NotificationsHelperService } from './notifications-helper.service';
 
 @Component({
@@ -80,6 +80,11 @@ export class AppComponent implements OnInit {
     this.internalSubjectsSvc.getMessageTimedOut().subscribe(messageTimedOutErrorData => this.processMessageTimedOutErrorData(messageTimedOutErrorData));
     this.internalSubjectsSvc.getNavigateToEditDeviceRequested().subscribe(deviceId => this.processNavigateToEditDeviceRequested(deviceId));
     this.internalSubjectsSvc.getNavigateToCreateNewTariffRequested().subscribe(() => this.processNavigateToCreateNewTariffRequested());
+    this.internalSubjectsSvc.getNavigateToEditTariffRequested().subscribe(tariffId => this.processNavigateToEditTariffRequested(tariffId));
+  }
+
+  processNavigateToEditTariffRequested(tariffId: number): void {
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsTariffs, tariffId, RouteName.systemSettingsTariffsEdit]);
   }
 
   processNavigateToCreateNewTariffRequested(): void {
@@ -96,8 +101,15 @@ export class AppComponent implements OnInit {
 
   processManualAuthSucceeded(): void {
     // User manually signed in successfully - this is emitted by the sign-in component requesting navigating away
-    // TODO: Maintain "returnUrl" parameter to know where to navigate to
-    //       Also check permissions and decide where to navigate to
+    const url = new URL(window.location.href);
+    const returnUrl = url.searchParams.get(QueryParamName.returnUrl);
+    if (returnUrl) {
+      // We already have returnUrl parameter - navigate
+      window.location.href = returnUrl;
+      return;
+    }
+    // No returnUrl parameter - navigate to the default for the user
+    // Also check permissions and decide where to navigate to
     this.router.navigate([RouteName.computersStatus]);
   }
 
@@ -126,7 +138,7 @@ export class AppComponent implements OnInit {
   processAccountMenuSelected(accountMenuItem: AccountMenuItem): void {
     switch (accountMenuItem.id) {
       case AccountMenuItemId.signIn:
-        this.router.navigate([RouteName.signIn]);
+        this.navigateToSignIn();
         break;
       case AccountMenuItemId.signOut:
         this.processSignOutAccountMenuSelected();
@@ -194,15 +206,13 @@ export class AppComponent implements OnInit {
       if (storedAuthReplyMessage?.body?.success) {
         const authRequestMsg = createAuthRequestMessage();
         authRequestMsg.body.token = storedAuthReplyMessage.body.token;
-        this.messageTransportSvc.sendAndAwaitForReplyByType(authRequestMsg).subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg));
+        this.messageTransportSvc.sendAndAwaitForReplyByType(authRequestMsg)
+          .subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg));
+      } else {
+        this.internalSubjectsSvc.setSignedIn(false);
+        this.navigateToSignInWithReturnUrl();
       }
     });
-
-    const storedAuthReplyMessage = this.getStoredAuthReplyMessage();
-    if (!storedAuthReplyMessage?.body?.success) {
-      this.internalSubjectsSvc.setSignedIn(false);
-      this.router.navigate([RouteName.signIn]);
-    }
   }
 
   private async processConnectorMessage(data: any): Promise<void> {
@@ -265,10 +275,20 @@ export class AppComponent implements OnInit {
       this.setSignedInMainMenuItems();
       this.setSignedInAccountMenuItems();
       this.setUpRefreshTokenTimer(message.body.tokenExpiresAt!);
+      this.redirectToReturnUrl();
     } else {
       this.setNotSignedInMainMenuItems();
       this.setNotSignedInAccountMenuItems();
       this.removeStoredAuthReplyMessage();
+      this.navigateToSignInWithReturnUrl();
+    }
+  }
+
+  private redirectToReturnUrl(): void {
+    const url = new URL(window.location.href);
+    const returnUrl = url.searchParams.get(QueryParamName.returnUrl);
+    if (returnUrl) {
+      window.location.href = returnUrl;
     }
   }
 
@@ -304,8 +324,35 @@ export class AppComponent implements OnInit {
     this.internalSubjectsSvc.setAccountMenuItems(notSignedInAccountMenuItems);
   }
 
-  private processNavigateToSignInRequested(): void {
+  private navigateToSignInWithReturnUrl(): void {
+    const url = new URL(window.location.href);
+    const returnUrl = url.searchParams.get(QueryParamName.returnUrl);
+    if (returnUrl) {
+      // Already have returnUrl
+      // This can happen if the user is currently on log-in screen with returnUrl parameter
+      // and connection is disconnected and connected again
+      // This causes processStoredAuthReplyMessage getConnected observable callback to be called
+      // which ends up here
+      // We will just reuse the returnUrl
+      const queryParams = { [QueryParamName.returnUrl]: returnUrl };
+      this.router.navigate([RouteName.signIn], { queryParams: queryParams });
+      return;
+    }
+    // No returnUrl in the location - add it
+    const currentLocationPathname = window.location.pathname;
+    let queryParams: Params = {};
+    if (currentLocationPathname !== `/${RouteName.signIn}`) {
+      queryParams = { [QueryParamName.returnUrl]: window.location.href };
+    }
+    this.router.navigate([RouteName.signIn], { queryParams: queryParams });
+  }
+
+  private navigateToSignIn(): void {
     this.router.navigate([RouteName.signIn]);
+  }
+
+  private processNavigateToSignInRequested(): void {
+    this.navigateToSignIn();
   }
 
   private processNavigateToNotificationsRequested(): void {

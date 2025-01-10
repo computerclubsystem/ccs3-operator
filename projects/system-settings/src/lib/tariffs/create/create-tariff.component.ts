@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
-import { AbstractControl, Form, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -10,11 +11,12 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
 
 import { IconName, NumericIdWithName } from '@ccs3-operator/shared/types';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { createCreateTariffRequestMessage, CreateTariffReplyMessage, Tariff } from '@ccs3-operator/messages';
-import { CreateTariffService } from './create-tariff.service';
-import { MessageTransportService } from '@ccs3-operator/shared';
+import { createCreateTariffRequestMessage, createGetTariffByIdRequestMessage, CreateTariffReplyMessage, GetTariffByIdReplyMessage, Tariff, TariffType, UpdateTariffReplyMessage } from '@ccs3-operator/messages';
+import { InternalSubjectsService, MessageTransportService } from '@ccs3-operator/shared';
 import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
+import { CreateTariffService } from './create-tariff.service';
+import { DurationFormControls, FormControls, FromToFormControls, Signals } from './declarations';
+import { createUpdateTariffRequestMessage } from 'projects/messages/src/lib/update-tariff-request.message';
 
 @Component({
   selector: 'ccs3-op-create-tariff',
@@ -27,31 +29,97 @@ import { NotificationsService, NotificationType } from '@ccs3-operator/notificat
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateTariffComponent implements OnInit {
-  readonly tariffTypeDurationItem = { id: 1, name: translate('Duration') };
-  readonly tariffTypeFromToItem = { id: 2, name: translate('From-To') };
-  readonly tariffTypeItems = [this.tariffTypeDurationItem, this.tariffTypeFromToItem];
   readonly signals = this.createSignals();
+  private readonly createTariffSvc = inject(CreateTariffService);
+  readonly tariffTypeItems = this.createTariffSvc.tariffTypeItems;
   form!: FormGroup<FormControls>;
 
-  private readonly formBuilder = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
-  private readonly createTariffSvc = inject(CreateTariffService);
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly notificationsSvc = inject(NotificationsService);
+  private readonly internalSubjectsSvc = inject(InternalSubjectsService);
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
-    this.form = this.createForm();
+    this.form = this.createTariffSvc.createForm();
     this.subscribeToFormChanges();
-    this.processTariffTypeChanges(this.form.controls.type.value);
+    this.processTariffTypeItemChanges(this.form.controls.type.value);
+    const tariffId = this.activatedRoute.snapshot.paramMap.get('tariffId');
+    this.signals.isCreate.set(!tariffId);
+    if (tariffId) {
+      this.loadTariff(+tariffId);
+    }
+  }
+
+  loadTariff(tariffId: number): void {
+    this.signals.isLoading.set(true);
+    this.internalSubjectsSvc.whenSignedIn().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => this.processLoadTariff(tariffId));
+  }
+
+  processLoadTariff(tariffId: number): void {
+    const getTariffRequestMsg = createGetTariffByIdRequestMessage();
+    getTariffRequestMsg.body.tariffId = tariffId;
+    this.messageTransportSvc.sendAndAwaitForReplyByType(getTariffRequestMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(getTariffByIdReplyMsg => this.processGetTariffByIdReplyMessage(getTariffByIdReplyMsg));
+  }
+
+  processGetTariffByIdReplyMessage(getTariffByIdReplyMsg: GetTariffByIdReplyMessage): void {
+    if (getTariffByIdReplyMsg.header.failure) {
+      const errors = getTariffByIdReplyMsg.header.errors?.map(x => `Error code ${x.code}: ${x.description}`);
+      const errorsText = errors?.join(' ; ');
+      this.notificationsSvc.show(NotificationType.error, translate(`Can't load tariff`), errorsText, IconName.error, getTariffByIdReplyMsg);
+    } else {
+      // Apply tariff to the form
+      const tariff = getTariffByIdReplyMsg.body.tariff;
+      this.signals.tariff.set(tariff);
+      this.form.patchValue({
+        description: tariff.description,
+        enabled: tariff.enabled,
+        name: tariff.name,
+        price: tariff.price,
+        type: this.tariffTypeItems.find(x => x.id === tariff.type),
+        durationTypeGroup: {
+          duration: this.createTariffSvc.convertMinutesToTime(tariff.duration),
+          restrictStart: tariff.restrictStartTime,
+          restrictStartFromTime: this.createTariffSvc.convertMinutesToTime(tariff.restrictStartFromTime),
+          restrictStartToTime: this.createTariffSvc.convertMinutesToTime(tariff.restrictStartToTime),
+        }
+      });
+      this.signals.isLoading.set(false);
+    }
   }
 
   onSave(): void {
-    const requestMsg = createCreateTariffRequestMessage();
-    requestMsg.body.tariff = this.createTariff();
-    this.messageTransportSvc.sendAndAwaitForReplyByType(requestMsg)
-      .subscribe(replyMsg => this.processCreateTariffReplyMessage(replyMsg));
+    const tariff = this.signals.tariff();
+    if (tariff) {
+      // Update tariff
+      const requestMsg = createUpdateTariffRequestMessage();
+      requestMsg.body.tariff = this.createTariff();
+      requestMsg.body.tariff.id = tariff.id;
+      this.messageTransportSvc.sendAndAwaitForReplyByType(requestMsg).pipe(
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe(replyMsg => this.processUpdateTariffReplyMessage(replyMsg));
+    } else {
+      const requestMsg = createCreateTariffRequestMessage();
+      requestMsg.body.tariff = this.createTariff();
+      this.messageTransportSvc.sendAndAwaitForReplyByType(requestMsg).pipe(
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe(replyMsg => this.processCreateTariffReplyMessage(replyMsg));
+    }
+  }
+
+  processUpdateTariffReplyMessage(updateTariffReplyMsg: UpdateTariffReplyMessage): void {
+    if (updateTariffReplyMsg.header.failure) {
+      const errors = updateTariffReplyMsg.header.errors?.map(x => `Error code ${x.code}: ${x.description}`);
+      const errorsText = errors?.join(' ; ');
+      this.notificationsSvc.show(NotificationType.error, translate(`Can't update tariff`), errorsText, IconName.error, updateTariffReplyMsg);
+    } else {
+      this.notificationsSvc.show(NotificationType.success, translate('Tariff updated'), null, IconName.check, updateTariffReplyMsg);
+    }
   }
 
   processCreateTariffReplyMessage(createTariffReplyMsg: CreateTariffReplyMessage): void {
@@ -70,15 +138,26 @@ export class CreateTariffComponent implements OnInit {
 
   createTariff(): Tariff {
     const formValue = this.form.value;
+    const isDuration = formValue.type?.id === TariffType.duration;
+    const isFromTo = formValue.type?.id === TariffType.fromTo;
+    const tariffDuration = isDuration ? this.createTariffSvc.convertTimeToMinutes(formValue.durationTypeGroup!.duration!) : null;
+    const restrictStartTime = isDuration ? formValue.durationTypeGroup?.restrictStart : null;
+    const restrictStartFromTime = (isDuration && restrictStartTime) ? this.createTariffSvc.convertTimeToMinutes(formValue.durationTypeGroup!.restrictStartFromTime!) : null;
+    const restrictStartToTime = (isDuration && restrictStartTime) ? this.createTariffSvc.convertTimeToMinutes(formValue.durationTypeGroup!.restrictStartToTime!) : null;
+    const tariffFromTime = isFromTo ? this.createTariffSvc.convertTimeToMinutes(formValue.fromToTypeGroup?.fromTime!) : null;
+    const tariffToTime = isFromTo ? this.createTariffSvc.convertTimeToMinutes(formValue.fromToTypeGroup?.toTime!) : null;
     const tariff = {
-      name: formValue.name,
+      name: formValue.name!,
       type: formValue.type!.id,
-      enabled: formValue.enabled,
-      duration: this.createTariffSvc.convertDurationToNumber(formValue.duration!),
-      price: formValue.price,
+      enabled: !!formValue.enabled,
+      duration: tariffDuration,
+      restrictStartTime: restrictStartTime,
+      restrictStartFromTime: restrictStartFromTime,
+      restrictStartToTime: restrictStartToTime,
+      price: formValue.price!,
       description: formValue.description,
-      fromTime: this.createTariffSvc.convertDurationToNumber(formValue.fromTime!),
-      toTime: this.createTariffSvc.convertDurationToNumber(formValue.toTime!),
+      fromTime: tariffFromTime,
+      toTime: tariffToTime,
     } as Tariff;
     return tariff;
   }
@@ -86,17 +165,26 @@ export class CreateTariffComponent implements OnInit {
   subscribeToFormChanges(): void {
     this.form.controls.type.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(tariffTypeItem => this.processTariffTypeChanges(tariffTypeItem));
-    this.form.controls.duration.valueChanges.pipe(
+    ).subscribe(tariffTypeItem => this.processTariffTypeItemChanges(tariffTypeItem));
+    this.form.controls.durationTypeGroup.controls.duration.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(durationValue => this.processDurationValueChanges(durationValue));
     this.form.controls.price.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(priceValue => this.processPriceValueChanges(priceValue));
+    this.form.controls.durationTypeGroup.controls.restrictStart.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(restrictStartValue => this.processRestrictDurationStartChanges(restrictStartValue));
+  }
+
+  processRestrictDurationStartChanges(restrictStartValue: boolean | null): void {
+    const showRestrictStartSettings = !!restrictStartValue;
+    this.signals.showRestrictStartPeriodSettings.set(showRestrictStartSettings);
+    this.createTariffSvc.modifyDurationGroupValidators(this.form.controls.durationTypeGroup.controls, this.form.value.type?.id!);
   }
 
   processDurationValueChanges(durationValue: string | null): void {
-    const durationConrol = this.form.controls.duration;
+    const durationConrol = this.form.controls.durationTypeGroup.controls.duration;
     this.signals.durationHasNotTwoPartsError.set(durationConrol.hasError('notTwoParts'));
     this.signals.durationHasOutOfRangeError.set(durationConrol.hasError('outOfRange'));
     this.signals.durationHasInvalidCharError.set(durationConrol.hasError('invalidChar'));
@@ -107,41 +195,23 @@ export class CreateTariffComponent implements OnInit {
     this.signals.priceHasError.set(priceControl.invalid);
   }
 
-  processTariffTypeChanges(tariffType: NumericIdWithName | null): void {
-    const type = tariffType?.id;
-    const showDuration = type === this.tariffTypeDurationItem.id;
-    const showFromTo = type === this.tariffTypeFromToItem.id;
+  processTariffTypeItemChanges(tariffTypeItem: NumericIdWithName | null): void {
+    const tariffType = tariffTypeItem?.id!;
+    const showDuration = tariffType === this.createTariffSvc.tariffTypeDurationItem.id;
+    const showFromTo = tariffType === this.createTariffSvc.tariffTypeFromToItem.id;
     this.signals.showDurationTypeSettings.set(showDuration);
     this.signals.showFromToTypeSettings.set(showFromTo);
-    const controls = this.form.controls;
-    if (showDuration) {
-      controls.fromTime.removeValidators([durationValidator]);
-      controls.toTime.removeValidators([durationValidator]);
-      controls.duration.setValidators([durationValidator]);
-    }
-    if (showFromTo) {
-      controls.fromTime.setValidators([durationValidator]);
-      controls.toTime.setValidators([durationValidator]);
-      controls.duration.removeValidators([durationValidator]);
-    }
-    controls.fromTime.updateValueAndValidity();
-    controls.toTime.updateValueAndValidity();
-    controls.duration.updateValueAndValidity();
+
+    this.createTariffSvc.modifyDurationGroupValidators(this.form.controls.durationTypeGroup.controls, tariffType);
+    this.createTariffSvc.modifyFromToGroupValidators(this.form.controls.fromToTypeGroup.controls, tariffType);
   }
 
-  createForm(): FormGroup<FormControls> {
-    const formControls: FormControls = {
-      name: new FormControl('', { validators: [Validators.required] }),
-      description: new FormControl(),
-      type: new FormControl(this.tariffTypeItems[0]),
-      duration: new FormControl('', { validators: [durationValidator] }),
-      fromTime: new FormControl(''),
-      toTime: new FormControl(''),
-      price: new FormControl(0, { validators: [priceValidator] }),
-      enabled: new FormControl(true),
-    };
-    const form = this.formBuilder.group(formControls);
-    return form;
+  getDurationFormControls(): DurationFormControls {
+    return this.form.controls.durationTypeGroup.controls;
+  }
+
+  getFromToFormControls(): FromToFormControls {
+    return this.form.controls.fromToTypeGroup.controls;
   }
 
   createSignals(): Signals {
@@ -151,79 +221,13 @@ export class CreateTariffComponent implements OnInit {
       durationHasOutOfRangeError: signal(false),
       durationHasInvalidCharError: signal(false),
       showFromToTypeSettings: signal(false),
+      showRestrictStartPeriodSettings: signal(false),
       priceHasError: signal(false),
       priceHasMoreThanTwoFractionalDigitsError: signal(false),
+      isCreate: signal(true),
+      isLoading: signal(false),
+      tariff: signal(null),
     };
     return signals;
   }
 }
-
-interface FormControls {
-  name: FormControl<string | null>;
-  description: FormControl<string | null>;
-  type: FormControl<NumericIdWithName | null>;
-  duration: FormControl<string | null>;
-  fromTime: FormControl<string | null>;
-  toTime: FormControl<string | null>;
-  price: FormControl<number | null>;
-  enabled: FormControl<boolean | null>;
-}
-
-interface Signals {
-  showDurationTypeSettings: WritableSignal<boolean>;
-  durationHasNotTwoPartsError: WritableSignal<boolean>;
-  durationHasOutOfRangeError: WritableSignal<boolean>;
-  durationHasInvalidCharError: WritableSignal<boolean>;
-  showFromToTypeSettings: WritableSignal<boolean>;
-  priceHasError: WritableSignal<boolean>;
-  priceHasMoreThanTwoFractionalDigitsError: WritableSignal<boolean>;
-}
-
-const durationValidator = (control: AbstractControl): ValidationErrors => {
-  if (typeof control.value !== 'string') {
-    return { notString: true } as ValidationErrors;
-  }
-  const valueAsString = control.value as string;
-  if (!valueAsString?.trim()) {
-    return { notString: true } as ValidationErrors;
-  }
-  const parts = valueAsString.trim().split(':');
-  if (parts.length !== 2) {
-    return { notTwoParts: true } as ValidationErrors;
-  }
-  if (!parts[0].trim() || !parts[1].trim()) {
-    return { notTwoParts: true } as ValidationErrors;
-  }
-
-  for (const ch of valueAsString) {
-    const isAllowed = ch === ':' || (ch >= '0' && ch <= '9');
-    if (!isAllowed) {
-      return { invalidChar: true } as ValidationErrors;
-    }
-  }
-
-  const hours = parseInt(parts[0]);
-  const minutes = parseInt(parts[1]);
-  if (hours < 0 || minutes < 0 || minutes > 59) {
-    return { outOfRange: true } as ValidationErrors;
-  }
-  return {};
-};
-
-const priceValidator = (control: AbstractControl): ValidationErrors => {
-  const valueAsNumber: number = control.value;
-  if (isNaN(valueAsNumber)) {
-    return { notNumber: true } as ValidationErrors;
-  }
-  if (valueAsNumber <= 0) {
-    return { notPositive: true } as ValidationErrors;
-  }
-  const parts = valueAsNumber.toString().split('.');
-  if (parts.length > 2) {
-    return { notNumber: true } as ValidationErrors;
-  }
-  if (parts.length === 2 && parts[1].length > 2) {
-    return { moreThanTwoFractionalDigits: true } as ValidationErrors;
-  }
-  return {};
-};

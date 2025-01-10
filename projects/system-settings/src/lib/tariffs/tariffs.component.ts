@@ -17,7 +17,10 @@ import { IconName } from '@ccs3-operator/shared/types';
   selector: 'ccs3-op-tariffs',
   templateUrl: 'tariffs.component.html',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, TranslocoDirective, FullDatePipe, MinutesToTimePipe, TariffTypeToNamePipe],
+  imports: [
+    MatButtonModule, MatIconModule, TranslocoDirective, FullDatePipe, MinutesToTimePipe,
+    TariffTypeToNamePipe
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TariffsComponent implements OnInit {
@@ -57,6 +60,7 @@ export class TariffsComponent implements OnInit {
   }
 
   onEditTariff(tariff: Tariff): void {
+    this.internalSubjectsSvc.navigateToEditTariffRequested(tariff.id);
   }
 
   createSignals(): Signals {

@@ -16,6 +16,8 @@ export const enum MessageType {
   updateDeviceReply = 'update-device-reply',
   getAllTariffsRequest = 'get-all-tariffs-request',
   getAllTariffsReply = 'get-all-tariffs-reply',
+  getTariffByIdRequest = 'get-tariff-by-id-request',
+  getTariffByIdReply = 'get-tariff-by-id-reply',
   createTariffRequest = 'create-tariff-request',
   createTariffReply = 'create-tariff-reply',
   updateTariffRequest = 'update-tariff-request',

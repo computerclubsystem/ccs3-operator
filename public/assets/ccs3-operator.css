@@ -96,6 +96,10 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   gap: var(--ccs3-op-double-gap);
 }
 
+.ccs3-op-border-spacing {
+  border-spacing: var(--ccs3-op-gap);
+}
+
 /* Align and justify */
 .ccs3-op-align-items-center {
   align-items: center;
@@ -103,6 +107,14 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
 
 .ccs3-op-align-items-baseline {
   align-items: baseline;
+}
+
+.ccs3-op-align-text-start {
+  text-align: start;
+}
+
+.ccs3-op-align-text-end {
+  text-align: end;
 }
 
 /* Size */

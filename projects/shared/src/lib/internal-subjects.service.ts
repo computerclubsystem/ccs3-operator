@@ -23,6 +23,15 @@ export class InternalSubjectsService {
   private readonly messageTimedOutSubject = new Subject<MessageTimedOutErrorData>();
   private readonly navigateToEditDeviceRequestedSubject = new Subject<number>();
   private readonly navigateToCreateNewTariffRequestedSubject = new Subject<void>();
+  private readonly navigateToEditTariffRequestedSubject = new Subject<number>();
+
+  navigateToEditTariffRequested(tariffId: number): void {
+    this.navigateToEditTariffRequestedSubject.next(tariffId);
+  }
+
+  getNavigateToEditTariffRequested(): Observable<number> {
+    return this.navigateToEditTariffRequestedSubject.asObservable();
+  }
 
   navigateToCreateNewTariffRequested(): void {
     this.navigateToCreateNewTariffRequestedSubject.next();
@@ -160,7 +169,7 @@ export class InternalSubjectsService {
     return this.signedInSubject.asObservable();
   }
 
-  whenSignedIn(): Observable<any> {
+  whenSignedIn(): Observable<boolean> {
     return this.signedInSubject.pipe(
       filter(isSignedIn => isSignedIn),
       first(),

@@ -1,5 +1,9 @@
 import { Routes } from '@angular/router';
 
+export enum QueryParamName {
+  returnUrl = 'returnUrl',
+}
+
 export enum RouteName {
   signIn = 'sign-in',
   notifications = 'notifications',
@@ -10,6 +14,7 @@ export enum RouteName {
   systemSettingsDevicesEdit = 'edit',
   systemSettingsTariffs = 'tariffs',
   systemSettingsTariffsCreate = 'create',
+  systemSettingsTariffsEdit = 'edit',
   systemSettingsUsers = 'users',
 }
 
@@ -48,6 +53,10 @@ export const routes: Routes = [
       },
       {
         path: `${RouteName.systemSettingsTariffs}/${RouteName.systemSettingsTariffsCreate}`,
+        loadComponent: () => import('@ccs3-operator/system-settings/tariffs/create').then(x => x.CreateTariffComponent),
+      },
+      {
+        path: `${RouteName.systemSettingsTariffs}/:tariffId/${RouteName.systemSettingsTariffsEdit}`,
         loadComponent: () => import('@ccs3-operator/system-settings/tariffs/create').then(x => x.CreateTariffComponent),
       },
       {
