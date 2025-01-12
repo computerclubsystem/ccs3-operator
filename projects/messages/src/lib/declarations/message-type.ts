@@ -26,6 +26,16 @@ export const enum MessageType {
   startDeviceReply = 'start-device-reply',
   getDeviceStatusesRequest = 'get-device-statuses-request',
   getDeviceStatusesReply = 'get-device-statuses-reply',
+  getAllRolesRequest = 'get-all-roles-request',
+  getAllRolesReply = 'get-all-roles-reply',
+  getRoleWithPermissionsRequest = 'get-role-with-permissions-request',
+  getRoleWithPermissionsReply = 'get-role-with-permissions-reply',
+  createRoleWithPermissionsRequest = 'create-role-with-permissions-request',
+  createRoleWithPermissionsReply = 'create-role-with-permissions-reply',
+  updateRoleWithPermissionsRequest = 'update-role-with-permissions-request',
+  updateRoleWithPermissionsReply = 'update-role-with-permissions-reply',
+  getAllPermissionsRequest = 'get-all-permissions-request',
+  getAllPermissionsReply = 'get-all-permissions-reply',
 }
 
 export const enum ReplyMessageType {

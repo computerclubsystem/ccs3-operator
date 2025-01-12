@@ -1,22 +1,22 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Params, Router, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Params, Router, RouterOutlet } from '@angular/router';
 import { MatIconRegistry } from '@angular/material/icon';
-import { filter } from 'rxjs';
 import { translate, TranslocoService } from '@jsverse/transloco';
+import { filter } from 'rxjs';
 
 import { ConnectorService, ConnectorSettings, OnCloseEventArgs, OnErrorEventArgs } from '@ccs3-operator/connector';
 import {
   Message, MessageType, AuthReplyMessage, AuthReplyMessageBody, ConfigurationMessage,
   createPingRequestMessage, createAuthRequestMessage, createRefreshTokenRequestMessage,
   RefreshTokenReplyMessage, NotAuthenticatedMessage, AuthRequestMessage,
-  SignOutReplyMessage, createSignOutRequestMessage,
+  SignOutReplyMessage, createSignOutRequestMessage, ReplyMessage,
 } from '@ccs3-operator/messages';
-import { MessageSubjectsService, Permission, PermissionsService, RequestReplyTypeService } from '@ccs3-operator/shared';
+import { MessageSubjectsService, PermissionName, PermissionsService, RequestReplyTypeService, RouteNavigationService } from '@ccs3-operator/shared';
 import { AccountMenuItem, AccountMenuItemId, IconName, MainMenuItem, MainMenuItemId, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';
 import { ToolbarComponent } from '@ccs3-operator/toolbar';
 import { MessageTransportService } from '@ccs3-operator/shared';
-import { NotificationsService } from '@ccs3-operator/notifications';
+import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
 import { InternalSubjectsService } from '@ccs3-operator/shared';
 import { AppComponentState, StorageKey } from './declarations';
 import { QueryParamName, RouteName } from './app.routes';
@@ -34,6 +34,7 @@ export class AppComponent implements OnInit {
   readonly messageSubjectsSvc = inject(MessageSubjectsService);
   readonly internalSubjectsSvc = inject(InternalSubjectsService);
   readonly messageTransportSvc = inject(MessageTransportService);
+  readonly routeNavigationSvc = inject(RouteNavigationService);
   readonly notificationsSvc = inject(NotificationsService);
   readonly permissionsSvc = inject(PermissionsService);
   readonly requestReplyTypeSvc = inject(RequestReplyTypeService);
@@ -49,6 +50,7 @@ export class AppComponent implements OnInit {
     this.subscribeToMessageTransportService();
     this.subscribeToConnectorService();
     this.subscribeToInternalSubjects();
+    this.subscribeToRouteNavigationSubjects()
     this.setNotSignedInMainMenuItems();
     this.setNotSignedInAccountMenuItems();
     this.startConnectorService();
@@ -70,17 +72,41 @@ export class AppComponent implements OnInit {
   }
 
   subscribeToInternalSubjects(): void {
-    this.internalSubjectsSvc.getNavigateToSignInRequested().subscribe(() => this.processNavigateToSignInRequested());
-    this.internalSubjectsSvc.getNavigateToNotificationsRequested().subscribe(() => this.processNavigateToNotificationsRequested());
     this.internalSubjectsSvc.getSignInRequested().subscribe(authRequestMsg => this.processSignInRequested(authRequestMsg));
     this.internalSubjectsSvc.getMainMenuSelected().subscribe(mainMenu => this.processMainMenuSelected(mainMenu));
     this.internalSubjectsSvc.getAccountMenuSelected().subscribe(accountMenu => this.processAccountMenuSelected(accountMenu));
     this.internalSubjectsSvc.getLanguageSelected().subscribe(language => this.processLanguageSelected(language));
     this.internalSubjectsSvc.getManualAuthSucceeded().subscribe(() => this.processManualAuthSucceeded());
     this.internalSubjectsSvc.getMessageTimedOut().subscribe(messageTimedOutErrorData => this.processMessageTimedOutErrorData(messageTimedOutErrorData));
-    this.internalSubjectsSvc.getNavigateToEditDeviceRequested().subscribe(deviceId => this.processNavigateToEditDeviceRequested(deviceId));
-    this.internalSubjectsSvc.getNavigateToCreateNewTariffRequested().subscribe(() => this.processNavigateToCreateNewTariffRequested());
-    this.internalSubjectsSvc.getNavigateToEditTariffRequested().subscribe(tariffId => this.processNavigateToEditTariffRequested(tariffId));
+    this.internalSubjectsSvc.getFailureReplyMessageReceived().subscribe(failureReplyMsg => this.processFailureReplyMessageReceived(failureReplyMsg));
+  }
+
+  subscribeToRouteNavigationSubjects(): void {
+    this.routeNavigationSvc.getNavigateToSignInRequested().subscribe(() => this.processNavigateToSignInRequested());
+    this.routeNavigationSvc.getNavigateToNotificationsRequested().subscribe(() => this.processNavigateToNotificationsRequested());
+    this.routeNavigationSvc.getNavigateToCreateNewTariffRequested().subscribe(() => this.processNavigateToCreateNewTariffRequested());
+    this.routeNavigationSvc.getNavigateToEditTariffRequested().subscribe(tariffId => this.processNavigateToEditTariffRequested(tariffId));
+    this.routeNavigationSvc.getNavigateToCreateNewRoleRequested().subscribe(() => this.processNavigateToCreateNewRoleRequested());
+    this.routeNavigationSvc.getNavigateToEditRoleRequested().subscribe(roleId => this.processNavigateToEditRoleRequested(roleId));
+    this.routeNavigationSvc.getNavigateToEditDeviceRequested().subscribe(deviceId => this.processNavigateToEditDeviceRequested(deviceId));
+  }
+
+  processFailureReplyMessageReceived(msg: ReplyMessage<any>): void {
+    const errors = msg.header.errors;
+    const type = msg.header.type;
+    const errorItems = errors?.map(x => `Error code ${x.code}: ${x.description}`);
+    const errorsText = errorItems?.join(' ; ');
+    this.notificationsSvc.show(NotificationType.error, translate(`Reply message '{{messageType}}' indicates failure`, { messageType: type }), errorsText, IconName.error, msg);
+
+  }
+
+  processNavigateToEditRoleRequested(roleId: number): void {
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsRoles, roleId, RouteName.systemSettingsRolesEdit]);
+
+  }
+
+  processNavigateToCreateNewRoleRequested(): void {
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsRoles, RouteName.systemSettingsRolesCreate]);
   }
 
   processNavigateToEditTariffRequested(tariffId: number): void {
@@ -114,7 +140,7 @@ export class AppComponent implements OnInit {
   }
 
   processSignInRequested(authRequestMsg: AuthRequestMessage): void {
-    this.messageTransportSvc.sendAndAwaitForReplyByType(authRequestMsg).subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg));
+    this.messageTransportSvc.sendAndAwaitForReply(authRequestMsg).subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg));
   }
 
   processLanguageSelected(language: string): void {
@@ -152,7 +178,7 @@ export class AppComponent implements OnInit {
     // TODO: This message potentially can come from the server without requested so we could listen for it in the global message listener function
     //       For example because of a feature that allows administrators to sign-out other users
     const signOutRequestMsg = createSignOutRequestMessage();
-    this.messageTransportSvc.sendAndAwaitForReplyByType(signOutRequestMsg).subscribe({
+    this.messageTransportSvc.sendAndAwaitForReply(signOutRequestMsg).subscribe({
       next: signOutReplyMsg => {
         // Receiving sign out reply message means it suceeded
         this.performSignOut(signOutReplyMsg);
@@ -206,7 +232,7 @@ export class AppComponent implements OnInit {
       if (storedAuthReplyMessage?.body?.success) {
         const authRequestMsg = createAuthRequestMessage();
         authRequestMsg.body.token = storedAuthReplyMessage.body.token;
-        this.messageTransportSvc.sendAndAwaitForReplyByType(authRequestMsg)
+        this.messageTransportSvc.sendAndAwaitForReply(authRequestMsg)
           .subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg));
       } else {
         this.internalSubjectsSvc.setSignedIn(false);
@@ -265,7 +291,7 @@ export class AppComponent implements OnInit {
   }
 
   private processAuthReplyMessage(message: AuthReplyMessage): void {
-    const permissions = (message?.body?.permissions || []) as Permission[];
+    const permissions = (message?.body?.permissions || []) as PermissionName[];
     this.permissionsSvc.setPermissions(permissions);
     this.messageTransportSvc.setToken(message.body.token);
     if (message.body.success) {

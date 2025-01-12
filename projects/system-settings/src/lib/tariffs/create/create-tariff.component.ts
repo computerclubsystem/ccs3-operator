@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -11,12 +11,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
 
 import { IconName, NumericIdWithName } from '@ccs3-operator/shared/types';
-import { createCreateTariffRequestMessage, createGetTariffByIdRequestMessage, CreateTariffReplyMessage, GetTariffByIdReplyMessage, Tariff, TariffType, UpdateTariffReplyMessage } from '@ccs3-operator/messages';
+import {
+  createCreateTariffRequestMessage, createGetTariffByIdRequestMessage, CreateTariffReplyMessage,
+  createUpdateTariffRequestMessage, GetTariffByIdReplyMessage, Tariff, TariffType, UpdateTariffReplyMessage
+} from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService } from '@ccs3-operator/shared';
 import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
 import { CreateTariffService } from './create-tariff.service';
 import { DurationFormControls, FormControls, FromToFormControls, Signals } from './declarations';
-import { createUpdateTariffRequestMessage } from 'projects/messages/src/lib/update-tariff-request.message';
 
 @Component({
   selector: 'ccs3-op-create-tariff',
@@ -62,39 +64,37 @@ export class CreateTariffComponent implements OnInit {
   processLoadTariff(tariffId: number): void {
     const getTariffRequestMsg = createGetTariffByIdRequestMessage();
     getTariffRequestMsg.body.tariffId = tariffId;
-    this.messageTransportSvc.sendAndAwaitForReplyByType(getTariffRequestMsg).pipe(
+    this.messageTransportSvc.sendAndAwaitForReply(getTariffRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(getTariffByIdReplyMsg => this.processGetTariffByIdReplyMessage(getTariffByIdReplyMsg));
   }
 
   processGetTariffByIdReplyMessage(getTariffByIdReplyMsg: GetTariffByIdReplyMessage): void {
     if (getTariffByIdReplyMsg.header.failure) {
-      const errors = getTariffByIdReplyMsg.header.errors?.map(x => `Error code ${x.code}: ${x.description}`);
-      const errorsText = errors?.join(' ; ');
-      this.notificationsSvc.show(NotificationType.error, translate(`Can't load tariff`), errorsText, IconName.error, getTariffByIdReplyMsg);
-    } else {
-      // Apply tariff to the form
-      const tariff = getTariffByIdReplyMsg.body.tariff;
-      this.signals.tariff.set(tariff);
-      this.form.patchValue({
-        description: tariff.description,
-        enabled: tariff.enabled,
-        name: tariff.name,
-        price: tariff.price,
-        type: this.tariffTypeItems.find(x => x.id === tariff.type),
-        durationTypeGroup: {
-          duration: this.createTariffSvc.convertMinutesToTime(tariff.duration),
-          restrictStart: tariff.restrictStartTime,
-          restrictStartFromTime: this.createTariffSvc.convertMinutesToTime(tariff.restrictStartFromTime),
-          restrictStartToTime: this.createTariffSvc.convertMinutesToTime(tariff.restrictStartToTime),
-        },
-        fromToTypeGroup: {
-          fromTime: this.createTariffSvc.convertMinutesToTime(tariff.fromTime),
-          toTime: this.createTariffSvc.convertMinutesToTime(tariff.toTime),
-        }
-      });
-      this.signals.isLoading.set(false);
+      return;
     }
+
+    // Apply tariff to the form
+    const tariff = getTariffByIdReplyMsg.body.tariff;
+    this.signals.tariff.set(tariff);
+    this.form.patchValue({
+      description: tariff.description,
+      enabled: tariff.enabled,
+      name: tariff.name,
+      price: tariff.price,
+      type: this.tariffTypeItems.find(x => x.id === tariff.type),
+      durationTypeGroup: {
+        duration: this.createTariffSvc.convertMinutesToTime(tariff.duration),
+        restrictStart: tariff.restrictStartTime,
+        restrictStartFromTime: this.createTariffSvc.convertMinutesToTime(tariff.restrictStartFromTime),
+        restrictStartToTime: this.createTariffSvc.convertMinutesToTime(tariff.restrictStartToTime),
+      },
+      fromToTypeGroup: {
+        fromTime: this.createTariffSvc.convertMinutesToTime(tariff.fromTime),
+        toTime: this.createTariffSvc.convertMinutesToTime(tariff.toTime),
+      }
+    });
+    this.signals.isLoading.set(false);
   }
 
   onSave(): void {
@@ -104,34 +104,26 @@ export class CreateTariffComponent implements OnInit {
       const requestMsg = createUpdateTariffRequestMessage();
       requestMsg.body.tariff = this.createTariff();
       requestMsg.body.tariff.id = tariff.id;
-      this.messageTransportSvc.sendAndAwaitForReplyByType(requestMsg).pipe(
+      this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(replyMsg => this.processUpdateTariffReplyMessage(replyMsg));
     } else {
       const requestMsg = createCreateTariffRequestMessage();
       requestMsg.body.tariff = this.createTariff();
-      this.messageTransportSvc.sendAndAwaitForReplyByType(requestMsg).pipe(
+      this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(replyMsg => this.processCreateTariffReplyMessage(replyMsg));
     }
   }
 
   processUpdateTariffReplyMessage(updateTariffReplyMsg: UpdateTariffReplyMessage): void {
-    if (updateTariffReplyMsg.header.failure) {
-      const errors = updateTariffReplyMsg.header.errors?.map(x => `Error code ${x.code}: ${x.description}`);
-      const errorsText = errors?.join(' ; ');
-      this.notificationsSvc.show(NotificationType.error, translate(`Can't update tariff`), errorsText, IconName.error, updateTariffReplyMsg);
-    } else {
+    if (!updateTariffReplyMsg.header.failure) {
       this.notificationsSvc.show(NotificationType.success, translate('Tariff updated'), null, IconName.check, updateTariffReplyMsg);
     }
   }
 
   processCreateTariffReplyMessage(createTariffReplyMsg: CreateTariffReplyMessage): void {
-    if (createTariffReplyMsg.header.failure) {
-      const errors = createTariffReplyMsg.header.errors?.map(x => `Error code ${x.code}: ${x.description}`);
-      const errorsText = errors?.join(' ; ');
-      this.notificationsSvc.show(NotificationType.error, translate(`Can't create tariff`), errorsText, IconName.error, createTariffReplyMsg);
-    } else {
+    if (!createTariffReplyMsg.header.failure) {
       this.notificationsSvc.show(NotificationType.success, translate('Tariff created'), null, IconName.check, createTariffReplyMsg);
     }
   }

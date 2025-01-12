@@ -1,0 +1,34 @@
+<ng-container *transloco="let t;">
+  @let roles = signals.roles();
+  <table class="ccs3-op-border-spacing">
+    <thead>
+      <tr>
+        <th class="ccs3-op-align-text-start">{{t('Edit')}}</th>
+        <th class="ccs3-op-align-text-start">Id</th>
+        <th class="ccs3-op-align-text-start">{{t('Name')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Description')}}</th>
+        <th class="ccs3-op-align-text-end">{{t('Active')}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (role of roles; track role.id) {
+      <tr>
+        <td class="ccs3-op-align-text-start">
+          @let editTranslated = t('Edit');
+          <button mat-icon-button (click)="onEditRole(role)" title="{{editTranslated}}"
+            [attr.aria-label]="editTranslated">
+            <mat-icon>{{iconName.edit}}</mat-icon>
+          </button>
+        </td>
+        <td class="ccs3-op-align-text-start">{{role.id}}</td>
+        <td class="ccs3-op-align-text-start">{{role.name}}</td>
+        <td class="ccs3-op-align-text-start">{{role.description}}</td>
+        <td class="ccs3-op-align-text-start">{{role.enabled}}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <section class="ccs3-op-flex-row">
+    <button (click)="onCreateNew()" mat-flat-button>{{t('Create')}}</button>
+  </section>
+</ng-container>

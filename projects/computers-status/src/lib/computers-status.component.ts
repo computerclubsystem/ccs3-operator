@@ -58,7 +58,7 @@ export class ComputersStatusComponent implements OnInit {
 
   requestDeviceStatuses(): void {
     const getDeviceStatusesRequestMsg = createGetDeviceStatusesRequestMessage();
-    this.messageTransportSvc.sendAndAwaitForReplyByType(getDeviceStatusesRequestMsg).pipe(
+    this.messageTransportSvc.sendAndAwaitForReply(getDeviceStatusesRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(getDeviceStatusesReplyMsg => this.processGetDeviceStatusesReplyMessage(getDeviceStatusesReplyMsg));
   }
@@ -73,7 +73,7 @@ export class ComputersStatusComponent implements OnInit {
     const startDeviceRequestMsg = createStartDeviceRequestMessage();
     startDeviceRequestMsg.body.deviceId = item.deviceStatus.deviceId;
     startDeviceRequestMsg.body.tariffId = item.selectedTariffItem.id;
-    this.messageTransportSvc.sendAndAwaitForReplyByType(startDeviceRequestMsg).pipe(
+    this.messageTransportSvc.sendAndAwaitForReply(startDeviceRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(startDeviceReplyMsg => this.processStartDeviceReplyMessage(startDeviceReplyMsg));
   }
@@ -95,9 +95,6 @@ export class ComputersStatusComponent implements OnInit {
 
   processStartDeviceReplyMessage(startDeviceReplyMsg: StartDeviceReplyMessage): void {
     if (startDeviceReplyMsg.header.failure) {
-      const errors = startDeviceReplyMsg.header.errors?.map(x => `Error code ${x.code}: ${x.description}`);
-      const errorsText = errors?.join(' ; ');
-      this.notificationsSvc.show(NotificationType.error, translate(`Can't start the computer`), errorsText, IconName.error, startDeviceReplyMsg);
       return;
     }
     this.refreshDeviceStatusItem(startDeviceReplyMsg.body.deviceStatus);
@@ -105,11 +102,11 @@ export class ComputersStatusComponent implements OnInit {
 
   loadEntities(): void {
     const getAllDevicesRequestMsg = createGetAllDevicesRequestMessage();
-    this.messageTransportSvc.sendAndAwaitForReplyByType(getAllDevicesRequestMsg).pipe(
+    this.messageTransportSvc.sendAndAwaitForReply(getAllDevicesRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(allDevicesReplyMsg => this.processAllDevicesReplyMessage(allDevicesReplyMsg));
     const getAllTariffsRequestMsg = createGetAllTariffsRequestMessage();
-    this.messageTransportSvc.sendAndAwaitForReplyByType(getAllTariffsRequestMsg).pipe(
+    this.messageTransportSvc.sendAndAwaitForReply(getAllTariffsRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(allTariffsReplyMsg => this.processAllTariffsReplyMessage(allTariffsReplyMsg));
   }

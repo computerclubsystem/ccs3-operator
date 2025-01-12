@@ -9,7 +9,8 @@ import {
   TariffType
 } from '@ccs3-operator/messages';
 import {
-  InternalSubjectsService, MessageTransportService, FullDatePipe, MinutesToTimePipe, TariffTypeToNamePipe
+  InternalSubjectsService, MessageTransportService, FullDatePipe, MinutesToTimePipe, TariffTypeToNamePipe,
+  RouteNavigationService
 } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
 
@@ -30,17 +31,18 @@ export class TariffsComponent implements OnInit {
 
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
   private readonly messageTransportSvc = inject(MessageTransportService);
+  private readonly routeNavigationSvc = inject(RouteNavigationService);
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.internalSubjectsSvc.whenSignedIn().pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.requestAllTariffs());
+    ).subscribe(() => this.loadAllTariffs());
   }
 
-  requestAllTariffs(): void {
+  loadAllTariffs(): void {
     const msg = createGetAllTariffsRequestMessage();
-    this.messageTransportSvc.sendAndAwaitForReplyByType<GetAllTariffsRequestMessageBody>(msg)
+    this.messageTransportSvc.sendAndAwaitForReply<GetAllTariffsRequestMessageBody>(msg)
       .subscribe(getAllTariffsReplyMsg => this.processGetAllTariffsReplyMessage(getAllTariffsReplyMsg));
   }
 
@@ -56,11 +58,11 @@ export class TariffsComponent implements OnInit {
   }
 
   onCreateNew(): void {
-    this.internalSubjectsSvc.navigateToCreateNewTariffRequested();
+    this.routeNavigationSvc.navigateToCreateNewTariffRequested();
   }
 
   onEditTariff(tariff: Tariff): void {
-    this.internalSubjectsSvc.navigateToEditTariffRequested(tariff.id);
+    this.routeNavigationSvc.navigateToEditTariffRequested(tariff.id);
   }
 
   createSignals(): Signals {

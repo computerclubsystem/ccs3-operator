@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { catchError, first, Observable, Subject, throwError, timeout } from 'rxjs';
+import { catchError, first, Observable, Subject, tap, throwError, timeout } from 'rxjs';
 
-import { Message, MessageType } from '@ccs3-operator/messages';
+import { Message, MessageType, ReplyMessageHeader } from '@ccs3-operator/messages';
 import { MessageSubjectsService } from './message-subjects.service';
 import { RequestReplyTypeService } from './request-reply-type.service';
 import { InternalSubjectsService } from './internal-subjects.service';
@@ -22,31 +22,52 @@ export class MessageTransportService {
    * @param requestMessage Message to send. If it does not have correlationId, random one will be assigned
    * @returns First received message that has the same correlationId as requestMessage.header.correlationId
    */
-  sendAndAwaitForReply<TRequestMessageBody>(requestMessage: Message<TRequestMessageBody>): Observable<any> {
+  sendAndAwaitForReply<TRequestMessageBody>(requestMessage: Message<TRequestMessageBody>, timeoutDuration?: number): Observable<any> {
     if (!requestMessage.header.correlationId) {
       requestMessage.header.correlationId = this.createCorrelationId();
     }
     const requestCorrelationId = requestMessage.header.correlationId;
+    const timeoutValue = timeoutDuration || this.timeout;
+    const sentAt = Date.now();
+
     return this.sendMessage(requestMessage).pipe(
-      first(replyMessage => replyMessage.header.correlationId === requestCorrelationId)
+      timeout(timeoutValue),
+      first(replyMessage => replyMessage.header.correlationId === requestCorrelationId),
+      tap(msg => {
+        const replyMsgHeader = msg.header as ReplyMessageHeader;
+        if (replyMsgHeader.failure) {
+          this.internalSubjectsSvc.setFailureReplyMessageReceived(msg);
+        }
+      }),
+      catchError(err => {
+        this.internalSubjectsSvc.setMessageTimedOut(this.createMessageTimedOutErrorData(requestMessage, sentAt, timeoutValue, requestMessage.header.type));
+        return throwError(() => err);
+      })
     );
   }
 
   /**
+   * @deprecated Use sendAndWaitForReply instead - it uses correlationId instead of message type for exact match of reques and reply
    * Sends requestMessage and will emit the first received message of matching type.
    * For example if requestMessage.header.type is 'auth-request', it will emit the first received message of type 'auth-reply'
    * Will emit error if the specified or the global timeout occurs
    * @param timeoutDuration
    * @param requestMessage
-   * @returns First received message that has mathing type
+   * @returns First received message that has matching type
    */
-  sendAndAwaitForReplyByType<TRequestMessageBody>(requestMessage: Message<TRequestMessageBody>, timeoutDuration?: number): Observable<Message<any>> {
+  private sendAndAwaitForReplyByType<TRequestMessageBody>(requestMessage: Message<TRequestMessageBody>, timeoutDuration?: number): Observable<Message<any>> {
     const replyType = this.requestReplyTypeSvc.getReplyType(requestMessage.header.type);
     const timeoutValue = timeoutDuration || this.timeout;
     const sentAt = Date.now();
     return this.sendMessage(requestMessage).pipe(
       timeout(timeoutValue),
       first(replyMessage => replyMessage.header.type === replyType),
+      tap(msg => {
+        const replyMsgHeader = msg.header as ReplyMessageHeader;
+        if (replyMsgHeader.failure) {
+          this.internalSubjectsSvc.setFailureReplyMessageReceived(msg);
+        }
+      }),
       catchError(err => {
         this.internalSubjectsSvc.setMessageTimedOut(this.createMessageTimedOutErrorData(requestMessage, sentAt, timeoutValue, replyType));
         return throwError(() => err);
@@ -98,8 +119,7 @@ export class MessageTransportService {
     const messageTimedoutData: MessageTimedOutErrorData = {
       message: requestMessage,
       sentAt: sentAt,
-      timeout:
-        timeoutValue,
+      timeout: timeoutValue,
       expectedReplyType: expectedReplyType,
     };
     return messageTimedoutData;
