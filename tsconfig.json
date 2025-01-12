@@ -50,6 +50,12 @@
       "@ccs3-operator/system-settings/users": [
         "projects/system-settings/src/lib/users/public-api.ts"
       ],
+      "@ccs3-operator/system-settings/roles": [
+        "projects/system-settings/src/lib/roles/public-api.ts"
+      ],
+      "@ccs3-operator/system-settings/roles/create": [
+        "projects/system-settings/src/lib/roles/create/public-api.ts"
+      ],
       "@ccs3-operator/money-formatter": [
         "projects/money-formatter/src/public-api.ts"
       ],

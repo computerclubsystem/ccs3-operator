@@ -1,0 +1,82 @@
+<mat-card *transloco="let t;">
+  @let role = signals.role();
+  <mat-card-header>
+    <mat-card-title>
+      @if (signals.isCreate()){
+      {{t('Create role')}}
+      } @else {
+      {{t('Edit role')}} {{role?.id}}
+      }
+    </mat-card-title>
+    <mat-card-subtitle>
+      @if (signals.isLoading()){
+      <span>{{t('Loading...')}}</span>
+      }
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    @if (!signals.isLoading()) {
+    <form [formGroup]="form" class="ccs3-op-flex-column ccs3-op-max-width-large-text">
+      <mat-form-field>
+        <mat-label>{{t('Name')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.name" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{t('Description')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.description" />
+      </mat-form-field>
+      <mat-checkbox [formControl]="form.controls.enabled">{{t('Active')}}</mat-checkbox>
+    </form>
+    <section class="permissions-selection ccs3-op-flex-row ccs3-op-flex-wrap ccs3-op-align-items-start">
+      <section class="available-permissions">
+        <h2>{{t('Available permissions')}}</h2>
+        <div
+          class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
+          @for (availablePermission of signals.availablePermissions(); track availablePermission.id) {
+          <div class="ccs3-op-flex-row">
+            <button (click)="onAddPermission(availablePermission)" mat-icon-button>
+              <mat-icon>{{iconName.add}}</mat-icon>
+            </button>
+            <div class="ccs3-op-flex-column">
+              <div class="permission-name">{{availablePermission.name}}</div>
+              <div class="permission-description">{{availablePermission.description}}</div>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          }
+        </div>
+      </section>
+      <section class="role-permissions">
+        <h2>{{t('Role permissions')}}</h2>
+        <div
+          class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
+          @for (rolePermission of signals.rolePermissions(); track rolePermission.id) {
+          <div class="ccs3-op-flex-row">
+            <button (click)="onRemovePermission(rolePermission)" mat-icon-button>
+              <mat-icon>{{iconName.remove}}</mat-icon>
+            </button>
+            <div class="ccs3-op-flex-column">
+              <div class="permission-name">{{rolePermission.name}}</div>
+              <div class="permission-description">{{rolePermission.description}}</div>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          }
+        </div>
+      </section>
+    </section>
+    }
+  </mat-card-content>
+  <mat-card-actions>
+    <section class="ccs3-op-flex-row">
+      <button (click)="onSave()" mat-flat-button [disabled]="form.invalid">
+        @if (signals.isCreate()) {
+        {{t('Create')}}
+        } @else {
+        {{t('Update')}}
+        }
+      </button>
+      <button (click)="onGoToList()" mat-raised-button>{{t('Go back to list')}}</button>
+    </section>
+  </mat-card-actions>
+</mat-card>

@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 
-import { Permission } from './types/permission';
+import { PermissionName } from './types/permission-name';
 
 @Injectable({ providedIn: 'root' })
 export class PermissionsService {
   private permissionsSet = new Set<string>();
 
-  hasPermission(permission: Permission): boolean {
-    return this.permissionsSet.has(Permission.all) || this.permissionsSet.has(permission);
+  hasPermission(permission: PermissionName): boolean {
+    return this.permissionsSet.has(PermissionName.all) || this.permissionsSet.has(permission);
   }
 
-  setPermissions(permissions: Permission[]): void {
+  setPermissions(permissions: PermissionName[]): void {
     this.permissionsSet = new Set<string>(permissions);
   }
 }

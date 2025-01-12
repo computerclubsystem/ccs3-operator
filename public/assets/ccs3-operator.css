@@ -109,6 +109,10 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   align-items: baseline;
 }
 
+.ccs3-op-align-items-start {
+  align-items: start;
+}
+
 .ccs3-op-align-text-start {
   text-align: start;
 }
@@ -136,6 +140,23 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
 
 .ccs3-op-max-width-large-text {
   max-width: 60ch;
+}
+
+.ccs3-op-max-height-small-text {
+  max-height: 20ch;
+}
+
+.ccs3-op-max-height-medium-text {
+  max-height: 40ch;
+}
+
+.ccs3-op-max-height-large-text {
+  max-height: 60ch;
+}
+
+/* Overflow */
+.ccs3-op-overflow-auto {
+  overflow: auto;
 }
 
 /* Colors */

@@ -8,7 +8,7 @@ import { filter, first } from 'rxjs';
 import {
   createGetAllDevicesRequestMessage, Device, GetAllDevicesReplyMessage, GetAllDevicesRequestMessageBody
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, FullDatePipe } from '@ccs3-operator/shared';
+import { InternalSubjectsService, MessageTransportService, FullDatePipe, RouteNavigationService } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
 
 @Component({
@@ -21,6 +21,7 @@ import { IconName } from '@ccs3-operator/shared/types';
 export class DevicesComponent implements OnInit {
   readonly messageTransportSvc = inject(MessageTransportService);
   readonly internalSubjectsSvc = inject(InternalSubjectsService);
+  readonly routeNavigationSvc = inject(RouteNavigationService);
   readonly signals = this.createSignals();
   readonly iconName = IconName;
 
@@ -35,12 +36,12 @@ export class DevicesComponent implements OnInit {
   }
 
   onEditDevice(device: Device): void {
-    this.internalSubjectsSvc.navigateToEditDeviceRequested(device.id);
+    this.routeNavigationSvc.navigateToEditDeviceRequested(device.id);
   }
 
   requestAllDevices(): void {
     const msg = createGetAllDevicesRequestMessage();
-    this.messageTransportSvc.sendAndAwaitForReplyByType<GetAllDevicesRequestMessageBody>(msg)
+    this.messageTransportSvc.sendAndAwaitForReply<GetAllDevicesRequestMessageBody>(msg)
       .subscribe(getAllDevicesReplyMsg => this.processGetAllDevicesReplyMessage(getAllDevicesReplyMsg));
   }
 

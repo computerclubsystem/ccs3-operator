@@ -14,4 +14,6 @@ export enum IconName {
   edit = 'edit',
   close = 'close',
   error = 'error',
+  add = 'add',
+  remove = 'remove',
 }

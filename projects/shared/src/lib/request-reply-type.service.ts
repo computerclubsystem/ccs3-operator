@@ -24,6 +24,11 @@ export class RequestReplyTypeService {
     map.set(MessageType.updateTariffRequest, MessageType.updateTariffReply);
     map.set(MessageType.startDeviceRequest, MessageType.startDeviceReply);
     map.set(MessageType.getDeviceStatusesRequest, MessageType.getDeviceStatusesReply);
+    map.set(MessageType.getAllRolesRequest, MessageType.getAllRolesReply);
+    map.set(MessageType.getRoleWithPermissionsRequest, MessageType.getRoleWithPermissionsReply);
+    map.set(MessageType.getAllPermissionsRequest, MessageType.getAllPermissionsReply);
+    map.set(MessageType.createRoleWithPermissionsRequest, MessageType.createRoleWithPermissionsReply);
+    map.set(MessageType.updateRoleWithPermissionsRequest, MessageType.updateRoleWithPermissionsReply);
     return map;
   }
 }

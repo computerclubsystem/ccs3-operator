@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { filter, first, Observable, ReplaySubject, Subject } from 'rxjs';
 
-import { AuthRequestMessage, ConfigurationMessage, Device, SignOutReplyMessage } from '@ccs3-operator/messages';
+import { AuthRequestMessage, ConfigurationMessage, ReplyMessage, SignOutReplyMessage } from '@ccs3-operator/messages';
 import { AccountMenuItem, MainMenuItem, MessageTimedOutErrorData } from './types';
 
 @Injectable({ providedIn: 'root' })
@@ -9,8 +9,6 @@ export class InternalSubjectsService {
   private readonly signedInSubject = new ReplaySubject<boolean>(1);
   private readonly configurationMessageSubject = new ReplaySubject<ConfigurationMessage>(1);
   private readonly connectedSubject = new Subject<boolean>();
-  private readonly navigateToSignInRequestedSubject = new Subject<void>();
-  private readonly navigateToNotificationsRequestedSubject = new Subject<void>();
   private readonly notificationsChangedSubject = new ReplaySubject<any>(1);
   private readonly setMainMenuItemsSubject = new Subject<MainMenuItem[]>();
   private readonly mainMenuSelectedSubject = new Subject<MainMenuItem>();
@@ -21,32 +19,14 @@ export class InternalSubjectsService {
   private readonly manualAuthSucceededSubject = new Subject<void>();
   private readonly signOutReplyMessageSubject = new ReplaySubject<SignOutReplyMessage>(1);
   private readonly messageTimedOutSubject = new Subject<MessageTimedOutErrorData>();
-  private readonly navigateToEditDeviceRequestedSubject = new Subject<number>();
-  private readonly navigateToCreateNewTariffRequestedSubject = new Subject<void>();
-  private readonly navigateToEditTariffRequestedSubject = new Subject<number>();
+  private readonly setFailureReplyMessageReceivedSubject = new Subject<ReplyMessage<any>>();
 
-  navigateToEditTariffRequested(tariffId: number): void {
-    this.navigateToEditTariffRequestedSubject.next(tariffId);
+  setFailureReplyMessageReceived(msg: ReplyMessage<any>): void {
+    this.setFailureReplyMessageReceivedSubject.next(msg);
   }
 
-  getNavigateToEditTariffRequested(): Observable<number> {
-    return this.navigateToEditTariffRequestedSubject.asObservable();
-  }
-
-  navigateToCreateNewTariffRequested(): void {
-    this.navigateToCreateNewTariffRequestedSubject.next();
-  }
-
-  getNavigateToCreateNewTariffRequested(): Observable<void> {
-    return this.navigateToCreateNewTariffRequestedSubject.asObservable();
-  }
-
-  navigateToEditDeviceRequested(deviceId: number): void {
-    this.navigateToEditDeviceRequestedSubject.next(deviceId);
-  }
-
-  getNavigateToEditDeviceRequested(): Observable<number> {
-    return this.navigateToEditDeviceRequestedSubject.asObservable();
+  getFailureReplyMessageReceived(): Observable<ReplyMessage<any>> {
+    return this.setFailureReplyMessageReceivedSubject.asObservable();
   }
 
   setMessageTimedOut(messageTimedOutErrorData: MessageTimedOutErrorData): void {
@@ -127,22 +107,6 @@ export class InternalSubjectsService {
 
   getNotificationsChanged(): Observable<any> {
     return this.notificationsChangedSubject.asObservable();
-  }
-
-  navigateToNotificationsRequested(): void {
-    this.navigateToNotificationsRequestedSubject.next();
-  }
-
-  getNavigateToNotificationsRequested(): Observable<void> {
-    return this.navigateToNotificationsRequestedSubject.asObservable();
-  }
-
-  navigateToSignInRequested(): void {
-    this.navigateToSignInRequestedSubject.next();
-  }
-
-  getNavigateToSignInRequested(): Observable<void> {
-    return this.navigateToSignInRequestedSubject.asObservable();
   }
 
   setConnected(isConnected: boolean): void {

@@ -50,7 +50,7 @@ export class EditDeviceComponent implements OnInit {
   loadDevice(deviceId: number): void {
     const msg = createGetDeviceByIdRequestMessage();
     msg.body.deviceId = deviceId;
-    this.messageTransportSvc.sendAndAwaitForReplyByType(msg)
+    this.messageTransportSvc.sendAndAwaitForReply(msg)
       .subscribe(getAllDevicesReplyMsg => this.processGetDeviceByIdReplyMessage(getAllDevicesReplyMsg));
   }
 
@@ -79,7 +79,7 @@ export class EditDeviceComponent implements OnInit {
       description: this.form.value.description!,
       name: this.form.value.name!,
     } as Device;
-    this.messageTransportSvc.sendAndAwaitForReplyByType(msg)
+    this.messageTransportSvc.sendAndAwaitForReply(msg)
       .subscribe(updateDeviceReplyMsg => this.processUpdateDeviceReplyMessage(updateDeviceReplyMsg));
   }
 
