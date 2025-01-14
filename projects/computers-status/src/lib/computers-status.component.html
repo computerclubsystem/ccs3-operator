@@ -49,10 +49,10 @@
           <section class="ccs3-op-flex-row">
             @if (item.deviceStatus.started) {
             <button mat-button disabled>{{t('Select')}}</button>
-            <button mat-stroked-button>Stop</button>
+            <button (click)="toggleStopExpanded(item)" mat-stroked-button>{{t('Options')}}</button>
             } @else {
             <button (click)="toggleStartExpanded(item)" mat-button class="mat-tonal-button">{{t('Select')}}</button>
-            <button mat-stroked-button disabled>Stop</button>
+            <button mat-stroked-button disabled>{{t('Options')}}</button>
             }
           </section>
           @if (item.isStartExpanded) {
@@ -65,6 +65,17 @@
               </mat-select>
             </mat-form-field>
             <button (click)="onStart(item)" mat-button class="mat-tonal-button">{{t('Start')}}</button>
+          </section>
+          }
+          @if (item.isStopExpanded) {
+          <section class="device-options-section ccs3-op-flex-row">
+            <section class="stop-section ccs3-op-flex-column ccs3-op-no-gap">
+              <mat-form-field>
+                <mat-label>{{t('Note')}}</mat-label>
+                <textarea (input)="onStopNoteChanged($event, item)" matInput class="stop-note-input"></textarea>
+              </mat-form-field>
+              <button (click)="onStopDevice(item)" mat-flat-button>{{t('Stop')}}</button>
+            </section>
           </section>
           }
         </section>

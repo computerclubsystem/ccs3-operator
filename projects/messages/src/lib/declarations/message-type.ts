@@ -44,6 +44,10 @@ export const enum MessageType {
   createUserWithRolesReply = 'create-user-with-roles-reply',
   updateUserWithRolesRequest = 'update-user-with-roles-request',
   updateUserWithRolesReply = 'update-user-with-roles-reply',
+  stopDeviceRequest = 'stop-device-request',
+  stopDeviceReply = 'stop-device-reply',
+  transferDeviceRequest = 'transfer-device-request',
+  transferDeviceReply = 'transfer-device-reply',
 }
 
 export const enum ReplyMessageType {

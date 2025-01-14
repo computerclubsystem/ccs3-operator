@@ -32,6 +32,8 @@ export * from './lib/update-tariff-request.message';
 export * from './lib/device-statuses-notification.message';
 export * from './lib/start-device-request.message';
 export * from './lib/start-device-reply.message';
+export * from './lib/stop-device-request.message';
+export * from './lib/stop-device-reply.message';
 export * from './lib/get-device-statuses-request.message';
 export * from './lib/get-device-statuses-reply.message';
 export * from './lib/get-all-roles-request.message';
@@ -52,6 +54,8 @@ export * from './lib/create-user-with-roles-request.message';
 export * from './lib/create-user-with-roles-reply.message';
 export * from './lib/update-user-with-roles-request.message';
 export * from './lib/update-user-with-roles-reply.message';
+export * from './lib/transfer-device-request.message';
+export * from './lib/transfer-device-reply.message';
 
 export * from './lib/entities/device';
 export * from './lib/entities/tariff';
