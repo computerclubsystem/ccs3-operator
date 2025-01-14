@@ -12,7 +12,7 @@ import {
   RefreshTokenReplyMessage, NotAuthenticatedMessage, AuthRequestMessage,
   SignOutReplyMessage, createSignOutRequestMessage, ReplyMessage,
 } from '@ccs3-operator/messages';
-import { MessageSubjectsService, PermissionName, PermissionsService, RequestReplyTypeService, RouteNavigationService } from '@ccs3-operator/shared';
+import { MessageSubjectsService, PermissionName, PermissionsService, RouteNavigationService } from '@ccs3-operator/shared';
 import { AccountMenuItem, AccountMenuItemId, IconName, MainMenuItem, MainMenuItemId, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';
 import { ToolbarComponent } from '@ccs3-operator/toolbar';
 import { MessageTransportService } from '@ccs3-operator/shared';
@@ -37,7 +37,6 @@ export class AppComponent implements OnInit {
   readonly routeNavigationSvc = inject(RouteNavigationService);
   readonly notificationsSvc = inject(NotificationsService);
   readonly permissionsSvc = inject(PermissionsService);
-  readonly requestReplyTypeSvc = inject(RequestReplyTypeService);
   readonly notificationsHelperSvc = inject(NotificationsHelperService);
   readonly matIconRegistry = inject(MatIconRegistry);
   readonly translocoService = inject(TranslocoService);
@@ -94,15 +93,15 @@ export class AppComponent implements OnInit {
   processFailureReplyMessageReceived(msg: ReplyMessage<any>): void {
     const errors = msg.header.errors;
     const type = msg.header.type;
-    const errorItems = errors?.map(x => `Error code ${x.code}: ${x.description}`);
-    const errorsText = errorItems?.join(' ; ');
+    const errorItems = errors?.map(x => translate('Error code') + ` '${x.code || ""}'` + (x.description ? `: ${x.description}` : ''));
+    const requestType = msg.header.requestType ? translate(`Request message type '{{requestMessageType}}'`, { requestMessageType: msg.header.requestType }) + '.' : '';
+    const errorsText = errorItems?.join(' ; ') + (requestType ? '. ' + requestType : '');
     this.notificationsSvc.show(NotificationType.error, translate(`Reply message '{{messageType}}' indicates failure`, { messageType: type }), errorsText, IconName.error, msg);
 
   }
 
   processNavigateToEditRoleRequested(roleId: number): void {
     this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsRoles, roleId, RouteName.systemSettingsRolesEdit]);
-
   }
 
   processNavigateToCreateNewRoleRequested(): void {
@@ -337,8 +336,8 @@ export class AppComponent implements OnInit {
 
   private setSignedInAccountMenuItems(): void {
     const signedInAccountMenuItems: AccountMenuItem[] = [
+      { id: AccountMenuItemId.settings, icon: IconName.user_attributes, translationKey: 'Profile settings' },
       { id: AccountMenuItemId.signOut, icon: IconName.logout, translationKey: 'Sign out' },
-      // { id: AccountMenuItemId.settings, icon: IconName.settings, translationKey: 'Settings' },
     ];
     this.internalSubjectsSvc.setAccountMenuItems(signedInAccountMenuItems);
   }

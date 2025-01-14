@@ -16,4 +16,5 @@ export enum IconName {
   error = 'error',
   add = 'add',
   remove = 'remove',
+  user_attributes = 'user_attributes',
 }

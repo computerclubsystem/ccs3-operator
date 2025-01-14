@@ -34,6 +34,8 @@ export class NotificationsService {
       data: data,
       panelClass: panelClass,
       duration: this.duration,
+      verticalPosition: 'top',
+      horizontalPosition: 'end',
     };
     this.snackBar.openFromComponent(NotificationComponent, config);
     this.internalSubjectsSvc.setNotificationsChanged(this.notifications);

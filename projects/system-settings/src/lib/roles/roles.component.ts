@@ -10,7 +10,7 @@ import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
 
 @Component({
-  selector: 'ccs3-op-roles',
+  selector: 'ccs3-op-system-settings-roles',
   templateUrl: 'roles.component.html',
   standalone: true,
   imports: [MatButtonModule, MatIconModule, TranslocoDirective],

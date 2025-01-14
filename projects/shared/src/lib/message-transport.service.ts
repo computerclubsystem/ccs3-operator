@@ -3,7 +3,6 @@ import { catchError, first, Observable, Subject, tap, throwError, timeout } from
 
 import { Message, MessageType, ReplyMessageHeader } from '@ccs3-operator/messages';
 import { MessageSubjectsService } from './message-subjects.service';
-import { RequestReplyTypeService } from './request-reply-type.service';
 import { InternalSubjectsService } from './internal-subjects.service';
 import { MessageTimedOutErrorData } from './types';
 
@@ -11,7 +10,6 @@ import { MessageTimedOutErrorData } from './types';
 export class MessageTransportService {
   private readonly subjectsService = inject(MessageSubjectsService);
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
-  private readonly requestReplyTypeSvc = inject(RequestReplyTypeService);
   private readonly sendMessageSubject = new Subject<Message<any>>();
   private token?: string;
   private timeout = 5000;
@@ -41,35 +39,6 @@ export class MessageTransportService {
       }),
       catchError(err => {
         this.internalSubjectsSvc.setMessageTimedOut(this.createMessageTimedOutErrorData(requestMessage, sentAt, timeoutValue, requestMessage.header.type));
-        return throwError(() => err);
-      })
-    );
-  }
-
-  /**
-   * @deprecated Use sendAndWaitForReply instead - it uses correlationId instead of message type for exact match of reques and reply
-   * Sends requestMessage and will emit the first received message of matching type.
-   * For example if requestMessage.header.type is 'auth-request', it will emit the first received message of type 'auth-reply'
-   * Will emit error if the specified or the global timeout occurs
-   * @param timeoutDuration
-   * @param requestMessage
-   * @returns First received message that has matching type
-   */
-  private sendAndAwaitForReplyByType<TRequestMessageBody>(requestMessage: Message<TRequestMessageBody>, timeoutDuration?: number): Observable<Message<any>> {
-    const replyType = this.requestReplyTypeSvc.getReplyType(requestMessage.header.type);
-    const timeoutValue = timeoutDuration || this.timeout;
-    const sentAt = Date.now();
-    return this.sendMessage(requestMessage).pipe(
-      timeout(timeoutValue),
-      first(replyMessage => replyMessage.header.type === replyType),
-      tap(msg => {
-        const replyMsgHeader = msg.header as ReplyMessageHeader;
-        if (replyMsgHeader.failure) {
-          this.internalSubjectsSvc.setFailureReplyMessageReceived(msg);
-        }
-      }),
-      catchError(err => {
-        this.internalSubjectsSvc.setMessageTimedOut(this.createMessageTimedOutErrorData(requestMessage, sentAt, timeoutValue, replyType));
         return throwError(() => err);
       })
     );

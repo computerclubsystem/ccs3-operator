@@ -16,6 +16,7 @@ export interface ReplyMessageHeader {
   correlationId?: string;
   roundTripData?: RoundTripData;
   failure?: boolean;
+  requestType?: string;
   errors?: MessageError[];
 }
 

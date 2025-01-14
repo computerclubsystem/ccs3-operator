@@ -36,6 +36,14 @@ export const enum MessageType {
   updateRoleWithPermissionsReply = 'update-role-with-permissions-reply',
   getAllPermissionsRequest = 'get-all-permissions-request',
   getAllPermissionsReply = 'get-all-permissions-reply',
+  getAllUsersRequest = 'get-all-users-request',
+  getAllUsersReply = 'get-all-users-reply',
+  getUserWithRolesRequest = 'get-user-with-roles-request',
+  getUserWithRolesReply = 'get-user-with-roles-reply',
+  createUserWithRolesRequest = 'create-user-with-roles-request',
+  createUserWithRolesReply = 'create-user-with-roles-reply',
+  updateUserWithRolesRequest = 'update-user-with-roles-request',
+  updateUserWithRolesReply = 'update-user-with-roles-reply',
 }
 
 export const enum ReplyMessageType {
