@@ -13,9 +13,9 @@ import { filter } from 'rxjs';
 
 import {
   createGetAllDevicesRequestMessage, createGetAllTariffsRequestMessage, createGetDeviceStatusesRequestMessage,
-  createStartDeviceRequestMessage, Device, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage,
+  createStartDeviceRequestMessage, createStopDeviceRequestMessage, Device, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage,
   GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, MessageType, NotificationMessageType, StartDeviceReplyMessage,
-  Tariff, TariffType
+  StopDeviceReplyMessage, Tariff, TariffType
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NoYearDatePipe, SecondsToTimePipe } from '@ccs3-operator/shared';
 import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
@@ -177,23 +177,31 @@ export class ComputersStatusComponent implements OnInit {
   createDeviceStatusItems(deviceStatuses: DeviceStatus[]): DeviceStatusItem[] {
     const deviceStatusItems: DeviceStatusItem[] = [];
     for (const deviceStatus of deviceStatuses) {
-      const deviceStatusItem = {
-        deviceName: this.getDeviceName(deviceStatus.deviceId),
-        deviceStatus: deviceStatus,
-        tariffName: this.getTariffName(deviceStatus.tariff),
-      } as DeviceStatusItem;
-      this.mergeCurrentDeviceStatusItemCustomProperties(deviceStatusItem);
+      const deviceStatusItem = this.createDeviceStatusItem(deviceStatus);
       deviceStatusItems.push(deviceStatusItem);
     }
     return deviceStatusItems;
   }
+
+  createDeviceStatusItem(deviceStatus: DeviceStatus): DeviceStatusItem {
+    const deviceStatusItem = {
+      deviceName: this.getDeviceName(deviceStatus.deviceId),
+      deviceStatus: deviceStatus,
+      tariffName: this.getTariffName(deviceStatus.tariff),
+    } as DeviceStatusItem;
+    this.mergeCurrentDeviceStatusItemCustomProperties(deviceStatusItem);
+    return deviceStatusItem;
+  }
+
 
   mergeCurrentDeviceStatusItemCustomProperties(deviceStatusItem: DeviceStatusItem): void {
     const deviceStatus = deviceStatusItem.deviceStatus;
     const currentStatusItems = this.signals.deviceStatusItems();
     const currentStatusItem = currentStatusItems.find(x => x.deviceStatus.deviceId === deviceStatus.deviceId);
     deviceStatusItem.isStartExpanded = deviceStatus.started ? false : !!currentStatusItem?.isStartExpanded;
+    deviceStatusItem.isStopExpanded = !deviceStatus.started ? false : !!currentStatusItem?.isStopExpanded;
     deviceStatusItem.selectedTariffItem = currentStatusItem?.selectedTariffItem || this.signals.allEnabledTariffs()[0];
+    deviceStatusItem.stopNote = currentStatusItem?.stopNote;
   }
 
   getTariffName(tariffId?: number | null): string {
@@ -209,6 +217,38 @@ export class ComputersStatusComponent implements OnInit {
 
   toggleStartExpanded(item: DeviceStatusItem): void {
     item.isStartExpanded = !item.isStartExpanded;
+  }
+
+  toggleStopExpanded(item: DeviceStatusItem): void {
+    item.isStopExpanded = !item.isStopExpanded;
+  }
+
+  onStopNoteChanged(ev: Event, item: DeviceStatusItem): void {
+    const text = (ev.target as HTMLTextAreaElement).value;
+    item.stopNote = text;
+  }
+
+  onStopDevice(item: DeviceStatusItem): void {
+    const requestMsg = createStopDeviceRequestMessage();
+    requestMsg.body.deviceId = item.deviceStatus.deviceId;
+    requestMsg.body.note = item.stopNote;
+    this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(stopDeviceReplyMsg => this.processStopDeviceReplyMessage(stopDeviceReplyMsg));
+  }
+
+  processStopDeviceReplyMessage(stopDeviceReplyMsg: StopDeviceReplyMessage): void {
+    if (stopDeviceReplyMsg.header.failure) {
+      return;
+    }
+
+    const deviceStatusItems = this.signals.deviceStatusItems();
+    const currentDeviceStatusItemIndex = deviceStatusItems.findIndex(x => x.deviceStatus.deviceId === stopDeviceReplyMsg.body.deviceStatus.deviceId);
+    if (currentDeviceStatusItemIndex >= 0) {
+      const newDeviceStatusItem = this.createDeviceStatusItem(stopDeviceReplyMsg.body.deviceStatus);
+      deviceStatusItems.splice(currentDeviceStatusItemIndex, 1, newDeviceStatusItem);
+      this.setDeviceStatusItems(deviceStatusItems);
+    }
   }
 
   createSignals(): Signals {
@@ -240,5 +280,7 @@ interface DeviceStatusItem {
   deviceName: string;
   tariffName: string;
   isStartExpanded: boolean;
+  isStopExpanded: boolean;
   selectedTariffItem: Tariff;
+  stopNote?: string | null;
 }
