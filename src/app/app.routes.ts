@@ -16,6 +16,8 @@ export enum RouteName {
   systemSettingsTariffsCreate = 'create',
   systemSettingsTariffsEdit = 'edit',
   systemSettingsUsers = 'users',
+  systemSettingsUsersCreate = 'create',
+  systemSettingsUsersEdit = 'edit',
   systemSettingsRoles = 'roles',
   systemSettingsRolesCreate = 'create',
   systemSettingsRolesEdit = 'edit',
@@ -65,6 +67,14 @@ export const routes: Routes = [
       {
         path: RouteName.systemSettingsUsers,
         loadComponent: () => import('@ccs3-operator/system-settings/users').then(x => x.UsersComponent),
+      },
+      {
+        path: `${RouteName.systemSettingsUsers}/${RouteName.systemSettingsUsersCreate}`,
+        loadComponent: () => import('@ccs3-operator/system-settings/users/create').then(x => x.CreateUserComponent),
+      },
+      {
+        path: `${RouteName.systemSettingsUsers}/:userId/${RouteName.systemSettingsUsersEdit}`,
+        loadComponent: () => import('@ccs3-operator/system-settings/users/create').then(x => x.CreateUserComponent),
       },
       {
         path: RouteName.systemSettingsRoles,

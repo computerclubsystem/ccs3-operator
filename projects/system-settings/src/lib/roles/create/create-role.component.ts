@@ -23,7 +23,7 @@ import { NotificationsService, NotificationType } from '@ccs3-operator/notificat
 import { FormControls } from './declarations';
 
 @Component({
-  selector: 'ccs3-op-create-role',
+  selector: 'ccs3-op-system-settings-create-role',
   templateUrl: 'create-role.component.html',
   standalone: true,
   imports: [

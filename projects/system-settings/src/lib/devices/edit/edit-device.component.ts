@@ -84,11 +84,10 @@ export class EditDeviceComponent implements OnInit {
   }
 
   processUpdateDeviceReplyMessage(updateDeviceReplyMessage: UpdateDeviceReplyMessage): void {
-    if (updateDeviceReplyMessage.body.device) {
-      this.notificationsSvc.show(NotificationType.success, translate('Device updated'), null, IconName.check, updateDeviceReplyMessage);
-    } else {
-      this.notificationsSvc.show(NotificationType.warn, translate(`Can't update device`), null, IconName.check, updateDeviceReplyMessage);
+    if (updateDeviceReplyMessage.header.failure) {
+      return;
     }
+    this.notificationsSvc.show(NotificationType.success, translate('Device updated'), null, IconName.check, updateDeviceReplyMessage);
   }
 
   onGoToList(): void {

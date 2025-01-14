@@ -44,9 +44,18 @@ export * from './lib/create-role-with-permissions-request.message';
 export * from './lib/create-role-with-permissions-reply.message';
 export * from './lib/update-role-with-permissions-request.message';
 export * from './lib/update-role-with-permissions-reply.message';
+export * from './lib/get-all-users-request.message';
+export * from './lib/get-all-users-reply.message';
+export * from './lib/get-user-with-roles-request.message';
+export * from './lib/get-user-with-roles-reply.message';
+export * from './lib/create-user-with-roles-request.message';
+export * from './lib/create-user-with-roles-reply.message';
+export * from './lib/update-user-with-roles-request.message';
+export * from './lib/update-user-with-roles-reply.message';
 
 export * from './lib/entities/device';
 export * from './lib/entities/tariff';
 export * from './lib/entities/device-status';
 export * from './lib/entities/role';
 export * from './lib/entities/permission';
+export * from './lib/entities/user';

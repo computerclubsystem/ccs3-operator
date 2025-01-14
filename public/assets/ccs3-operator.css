@@ -174,6 +174,27 @@ fieldset {
 }
 
 /* Notifications */
+.ccs3-op-notification-icon {
+  flex-shrink: 0;
+}
+
+.ccs3-op-notification-title {
+  font-size: 1.5em;
+  flex-grow: 1;
+}
+
+.ccs3-op-notification-close-button {
+  flex-shrink: 0;
+}
+
+.ccs3-op-notification-close-button .ccs3-op-notification-close-button-icon {
+  color: var(--ccs3-op-notification-success-color);
+}
+
+.ccs3-op-notification-description {
+  font-size: 1.5em;
+}
+
 .mdc-snackbar.mat-mdc-snack-bar-container.ccs3-op-notification-type-success .mat-mdc-snackbar-surface {
   color: var(--ccs3-op-notification-success-color);
   background-color: var(--ccs3-op-notification-success-background-color);

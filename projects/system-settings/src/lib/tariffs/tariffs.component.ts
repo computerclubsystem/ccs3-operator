@@ -15,7 +15,7 @@ import {
 import { IconName } from '@ccs3-operator/shared/types';
 
 @Component({
-  selector: 'ccs3-op-tariffs',
+  selector: 'ccs3-op-system-settings-tariffs',
   templateUrl: 'tariffs.component.html',
   standalone: true,
   imports: [

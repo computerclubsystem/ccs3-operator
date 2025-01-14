@@ -7,7 +7,7 @@ import { TranslocoDirective, TranslocoModule } from '@jsverse/transloco';
 import { filter } from 'rxjs';
 
 import { AuthReplyMessage, createAuthRequestMessage, MessageType } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService } from '@ccs3-operator/shared';
+import { HashService, InternalSubjectsService, MessageTransportService } from '@ccs3-operator/shared';
 
 @Component({
   imports: [
@@ -23,9 +23,10 @@ import { InternalSubjectsService, MessageTransportService } from '@ccs3-operator
 })
 export class SignInComponent implements OnInit {
   formGroup!: FormGroup<SignInFormControls>;
-  formBuilder = inject(FormBuilder);
-  messageTransportSvc = inject(MessageTransportService);
-  internalSubjectsSvc = inject(InternalSubjectsService);
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly messageTransportSvc = inject(MessageTransportService);
+  private readonly internalSubjectsSvc = inject(InternalSubjectsService);
+  private readonly hashSvc = inject(HashService);
   signals = this.createSignals();
 
   private readonly destroyRef = inject(DestroyRef);
@@ -42,7 +43,7 @@ export class SignInComponent implements OnInit {
     const formValue = this.formGroup.value;
     const authRequestMsg = createAuthRequestMessage();
     authRequestMsg.body.username = formValue.username!;
-    authRequestMsg.body.passwordHash = await this.getSha512(formValue.password!);
+    authRequestMsg.body.passwordHash = await this.hashSvc.getSha512(formValue.password!);
     this.internalSubjectsSvc.setSignInRequested(authRequestMsg);
   }
 
@@ -67,17 +68,6 @@ export class SignInComponent implements OnInit {
       password: new FormControl('', Validators.required),
     });
     return formGroup;
-  }
-
-  async getSha512(text: string): Promise<string> {
-    // From https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest#converting_a_digest_to_a_hex_string
-    const msgUint8 = new TextEncoder().encode(text);
-    const hashBuffer = await window.crypto.subtle.digest('sha-512', msgUint8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('');
-    return hashHex;
   }
 
   createSignals(): Signals {

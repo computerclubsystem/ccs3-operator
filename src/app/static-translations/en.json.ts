@@ -26,5 +26,6 @@ export const en = {
   "Select": "Select",
   "Start": "Start",
   "The tariff '{{tariffName}}' can't be used right now": "The tariff '{{tariffName}}' can't be used right now",
-  "Reply message '{{messageType}}' indicates failure": "Reply message '{{messageType}}' indicates failure"
+  "Reply message '{{messageType}}' indicates failure": "Reply message '{{messageType}}' indicates failure",
+  "Request message type '{{requestMessageType}}'": "Request message type '{{requestMessageType}}'"
 };

@@ -21,7 +21,7 @@ import { CreateTariffService } from './create-tariff.service';
 import { DurationFormControls, FormControls, FromToFormControls, Signals } from './declarations';
 
 @Component({
-  selector: 'ccs3-op-create-tariff',
+  selector: 'ccs3-op-system-settings-create-tariff',
   templateUrl: 'create-tariff.component.html',
   standalone: true,
   imports: [
@@ -75,7 +75,7 @@ export class CreateTariffComponent implements OnInit {
     }
 
     // Apply tariff to the form
-    const tariff = getTariffByIdReplyMsg.body.tariff;
+    const tariff = getTariffByIdReplyMsg.body.tariff!;
     this.signals.tariff.set(tariff);
     this.form.patchValue({
       description: tariff.description,

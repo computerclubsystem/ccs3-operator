@@ -25,5 +25,6 @@
   "System settings": "Системни настройки",
   "Select": "Избор",
   "The tariff '{{tariffName}}' can't be used right now": "Тарифата '{{tariffName}}' не може да се използва в момента",
-  "Reply message '{{messageType}}' indicates failure": "Полученото съобщение '{{messageType}}' показва грешка"
+  "Reply message '{{messageType}}' indicates failure": "Полученото съобщение '{{messageType}}' показва грешка",
+  "Request message type '{{requestMessageType}}'": "Тип на заявката '{{requestMessageType}}'"
 }

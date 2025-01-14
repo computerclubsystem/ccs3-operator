@@ -50,6 +50,9 @@
       "@ccs3-operator/system-settings/users": [
         "projects/system-settings/src/lib/users/public-api.ts"
       ],
+      "@ccs3-operator/system-settings/users/create": [
+        "projects/system-settings/src/lib/users/create/public-api.ts"
+      ],
       "@ccs3-operator/system-settings/roles": [
         "projects/system-settings/src/lib/roles/public-api.ts"
       ],

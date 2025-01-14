@@ -1,4 +1,4 @@
-import { Message } from './declarations/message';
+import { ReplyMessage } from './declarations/message';
 
 export interface AuthReplyMessageBody {
   success: boolean;
@@ -7,5 +7,5 @@ export interface AuthReplyMessageBody {
   tokenExpiresAt?: number;
 }
 
-export interface AuthReplyMessage extends Message<AuthReplyMessageBody> {
+export interface AuthReplyMessage extends ReplyMessage<AuthReplyMessageBody> {
 }
