@@ -1,0 +1,41 @@
+@let typeValue = type();
+@switch (typeValue) {
+@case (btnType.matButton) {
+<button mat-button [disabled]="disabled()" [ngClass]="buttonElementClass()">
+  <ng-container [ngTemplateOutlet]="buttonChildrenTemplate"></ng-container>
+</button>
+}
+@case (btnType.matFlatButton) {
+<button mat-flat-button [disabled]="disabled()" [ngClass]="buttonElementClass()">
+  <ng-container [ngTemplateOutlet]="buttonChildrenTemplate"></ng-container>
+</button>
+}
+@case (btnType.matRaisedButton) {
+<button mat-raised-button [disabled]="disabled()" [ngClass]="buttonElementClass()">
+  <ng-container [ngTemplateOutlet]="buttonChildrenTemplate"></ng-container>
+</button>
+}
+@case (btnType.matStrokedButton) {
+<button mat-stroked-button [disabled]="disabled()" [ngClass]="buttonElementClass()">
+  <ng-container [ngTemplateOutlet]="buttonChildrenTemplate"></ng-container>
+</button>
+}
+@case (btnType.matIconButton) {
+  <button mat-icon-button [disabled]="disabled()" [ngClass]="buttonElementClass()">
+    <ng-container [ngTemplateOutlet]="buttonChildrenTemplate"></ng-container>
+  </button>
+  }
+}
+
+<ng-template #buttonChildrenTemplate>
+  <section class="ccs3-op-flex-row ccs3-op-half-gap">
+    <ng-content></ng-content>
+    <mat-icon>
+      @if (isExpanded()) {
+      {{iconName.keyboard_arrow_up}}
+      } @else {
+      {{iconName.keyboard_arrow_down}}
+      }
+    </mat-icon>
+  </section>
+</ng-template>

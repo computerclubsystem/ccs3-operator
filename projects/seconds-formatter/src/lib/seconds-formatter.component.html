@@ -1,0 +1,21 @@
+<section *transloco="let t;" class="ccs3-op-seconds-formatter">
+  @let value = signals.computedValue();
+  @if (traditionalDisplay()) {
+  <span class="hours">{{value.hoursText}}</span>
+  <span class="separator">:</span>
+  <span class="minutes">{{value.minutesText}}</span>
+  <span class="separator">:</span>
+  <span class="seconds">{{value.secondsText}}</span>
+  } @else {
+  @if (value.hours) {
+  <span class="hours">{{value.hours}}</span>
+  <span class="hours-abbreviation ccs3-op-font-size-small">{{t('Hours abbreviation')}}</span>
+  }
+  @if (value.minutes) {
+  <span class="minutes">{{value.minutes}}</span>
+  <span class="minutes-abbreviation ccs3-op-font-size-small">{{t('Minutes abbreviation')}}</span>
+  }
+  <span class="seconds">{{value.seconds}}</span>
+  <span class="seconds-abbreviation ccs3-op-font-size-small">{{t('Seconds abbreviation')}}</span>
+  }
+</section>

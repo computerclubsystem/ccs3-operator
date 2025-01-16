@@ -1,0 +1,120 @@
+<ng-container *transloco="let t;">
+  <div class="ccs3-op-computer-statuses-component ccs3-op-flex-column ccs3-op-half-gap">
+    @let items = signals.deviceStatusItems();
+    @for (item of items; track item.deviceStatus.deviceId) {
+    <ng-container [ngTemplateOutlet]="standardCard" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
+    }
+  </div>
+
+  @let totalTranslation = t('Total');
+  @let elapsedTimeTranslation = t('Elapsed time');
+  @let remainingTimeTranslation = t('Remaining time');
+  @let startedTranslation = t('Started');
+  @let stoppedTranslation = t('Stopped');
+  @let tariffTranslation = t('Tariff');
+
+  <ng-template #standardCard let-templateContext>
+    @let item = deviceStatusItemIdentity(templateContext);
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>
+          <div class="ccs3-op-flex-row ccs3-op-align-items-baseline">
+            <span>{{item.deviceName}}</span>
+            <span>-</span>
+            <ccs3-op-money-formatter [title]="totalTranslation" [value]="item.deviceStatus.totalSum"
+              class="total-sum"></ccs3-op-money-formatter>
+            <ccs3-op-seconds-formatter [value]="item.deviceStatus.remainingSeconds"
+              class="remaining-time"></ccs3-op-seconds-formatter>
+            <ccs3-op-expand-button (click)="detailsExpansionPanel.expanded = !detailsExpansionPanel.expanded"
+              [isExpanded]="detailsExpansionPanel.expanded"
+              [type]="expandButtonType.matIconButton"></ccs3-op-expand-button>
+          </div>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="ccs3-op-mat-card-content-no-padding">
+        <mat-expansion-panel #detailsExpansionPanel class="ccs3-op-mat-expansion-panel-small-padding">
+          <ng-template matExpansionPanelContent>
+            <section class="ccs3-op-two-col-grid ccs3-op-half-gap">
+              <span>{{tariffTranslation}}</span>
+              <span class="tariff-name">{{item.tariffName}}</span>
+              @if (item.deviceStatus.started) {
+              <span>{{remainingTimeTranslation}}</span>
+              <span class="remaining-time">{{item.deviceStatus.remainingSeconds | secondsToTime}}</span>
+              <span>{{elapsedTimeTranslation}}</span>
+              <span class="elapsed-time">{{item.deviceStatus.totalTime | secondsToTime}}</span>
+              }
+              <span>{{startedTranslation}}</span>
+              <span class="started-at">{{item.deviceStatus.startedAt | noYearDate}}</span>
+              @if (item.deviceStatus.stoppedAt) {
+              <span>{{stoppedTranslation}}</span>
+              <span class="stopped-at">{{item.deviceStatus.stoppedAt| noYearDate}}</span>
+              }
+            </section>
+          </ng-template>
+        </mat-expansion-panel>
+      </mat-card-content>
+      <mat-card-actions>
+        <section class="ccs3-op-flex-column">
+          <section class="ccs3-op-flex-row">
+            @if (item.deviceStatus.started) {
+            <ccs3-op-expand-button [type]="expandButtonType.matButton"
+              [disabled]="true">{{t('Select')}}</ccs3-op-expand-button>
+            <ccs3-op-expand-button (click)="toggleStopExpanded(item)" [type]="expandButtonType.matStrokedButton"
+              [isExpanded]="item.isStopExpanded">{{t('Options')}}</ccs3-op-expand-button>
+            } @else {
+            <ccs3-op-expand-button (click)="toggleStartExpanded(item)" [isExpanded]="item.isStartExpanded"
+              [type]="expandButtonType.matButton"
+              buttonElementClass="mat-tonal-button">{{t('Select')}}</ccs3-op-expand-button>
+            <ccs3-op-expand-button [type]="expandButtonType.matStrokedButton"
+              [disabled]="true">{{t('Options')}}</ccs3-op-expand-button>
+            }
+          </section>
+          @if (item.isStartExpanded) {
+          <section class="ccs3-op-flex-row ccs3-op-align-items-baseline">
+            <mat-form-field>
+              <mat-label>{{t('Tariff')}}</mat-label>
+              <mat-select (valueChange)="onTariffSelected($event, item)" [(value)]="item.selectedTariffItem">
+                @for (tariff of signals.allEnabledTariffs(); track tariff.id) {
+                <mat-option [value]="tariff" [title]="tariff.name">{{tariff.name}}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            <button (click)="onStart(item)" mat-flat-button>{{t('Start')}}</button>
+          </section>
+          }
+          @if (item.isStopExpanded) {
+          <section class="device-options-section ccs3-op-flex-row ccs3-op-flex-wrap ccs3-op-align-items-start">
+            <section class="stop-section ccs3-op-flex-column ccs3-op-no-gap">
+              <mat-form-field>
+                <mat-label>{{t('Stop note')}}</mat-label>
+                <textarea (input)="onStopNoteChanged($event, item)" matInput class="stop-note-input"></textarea>
+              </mat-form-field>
+              <button (click)="onStopDevice(item)" mat-flat-button>{{t('Stop')}}</button>
+            </section>
+            <section class="transfer-section ccs3-op-flex-column ccs3-op-no-gap">
+              <mat-form-field>
+                <mat-label>{{t('Transfer to')}}</mat-label>
+                <mat-select (valueChange)="onTransferToChanged($event, item)" [value]="item.selectedTransferToDeviceId">
+                  @for (notStartedItem of signals.notStartedDeviceStatusItems(); track
+                  notStartedItem.deviceStatus.deviceId) {
+                  <mat-option [value]="notStartedItem.deviceStatus.deviceId"
+                    [title]="notStartedItem.deviceName">{{notStartedItem.deviceName}}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <button (click)="onTransferToAnotherDevice(item)" mat-stroked-button
+                [disabled]="!item.selectedTransferToDeviceId">
+                <span class="ccs3-op-flex-row">
+                  <mat-icon>{{iconName.swap_horiz}}</mat-icon>
+                  <span>{{t('Transfer')}}</span>
+                </span>
+              </button>
+            </section>
+          </section>
+          }
+        </section>
+      </mat-card-actions>
+      <mat-card-footer></mat-card-footer>
+    </mat-card>
+  </ng-template>
+</ng-container>

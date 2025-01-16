@@ -17,4 +17,9 @@ export enum IconName {
   add = 'add',
   remove = 'remove',
   user_attributes = 'user_attributes',
+  expand_circle_down = 'expand_circle_down',
+  expand_circle_up = 'expand_circle_up',
+  swap_horiz = 'swap_horiz',
+  keyboard_arrow_down = 'keyboard_arrow_down',
+  keyboard_arrow_up = 'keyboard_arrow_up',
 }

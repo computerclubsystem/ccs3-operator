@@ -154,6 +154,14 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   max-height: 60ch;
 }
 
+.ccs3-op-font-size-small {
+  font-size: small;
+}
+
+.ccs3-op-font-size-smaller {
+  font-size: smaller;
+}
+
 /* Overflow */
 .ccs3-op-overflow-auto {
   overflow: auto;
@@ -219,4 +227,12 @@ fieldset {
 button[mat-button].mat-tonal-button {
   background-color: var(--mat-sys-secondary-container);
   color: var(--mat-sys-on-secondary-container);
+}
+
+mat-card-content.ccs3-op-mat-card-content-no-padding {
+  padding: 0;
+}
+
+mat-expansion-panel.ccs3-op-mat-expansion-panel-small-padding .mat-expansion-panel-body {
+  padding-inline: 16px;
 }

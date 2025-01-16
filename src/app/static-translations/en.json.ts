@@ -27,5 +27,8 @@ export const en = {
   "Start": "Start",
   "The tariff '{{tariffName}}' can't be used right now": "The tariff '{{tariffName}}' can't be used right now",
   "Reply message '{{messageType}}' indicates failure": "Reply message '{{messageType}}' indicates failure",
-  "Request message type '{{requestMessageType}}'": "Request message type '{{requestMessageType}}'"
+  "Request message type '{{requestMessageType}}'": "Request message type '{{requestMessageType}}'",
+  "Hours abbreviation": "h",
+  "Minutes abbreviation": "m",
+  "Seconds abbreviation": "s"
 };

@@ -26,8 +26,8 @@
       "@ccs3-operator/notifications": [
         "projects/notifications/src/public-api.ts"
       ],
-      "@ccs3-operator/computers-status": [
-        "projects/computers-status/src/public-api.ts"
+      "@ccs3-operator/computer-statuses": [
+        "projects/computer-statuses/src/public-api.ts"
       ],
       "@ccs3-operator/signed-out-session-stats": [
         "projects/signed-out-session-stats/src/public-api.ts"
@@ -61,6 +61,12 @@
       ],
       "@ccs3-operator/money-formatter": [
         "projects/money-formatter/src/public-api.ts"
+      ],
+      "@ccs3-operator/seconds-formatter": [
+        "projects/seconds-formatter/src/public-api.ts"
+      ],
+      "@ccs3-operator/expand-button": [
+        "projects/expand-button/src/public-api.ts"
       ],
     },
     "outDir": "./dist/out-tsc",
