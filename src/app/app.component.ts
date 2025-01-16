@@ -135,7 +135,7 @@ export class AppComponent implements OnInit {
     }
     // No returnUrl parameter - navigate to the default for the user
     // Also check permissions and decide where to navigate to
-    this.router.navigate([RouteName.computersStatus]);
+    this.router.navigate([RouteName.computerStatuses]);
   }
 
   processSignInRequested(authRequestMsg: AuthRequestMessage): void {
@@ -149,7 +149,7 @@ export class AppComponent implements OnInit {
   processMainMenuSelected(mainMenuItem: MainMenuItem): void {
     switch (mainMenuItem.id) {
       case MainMenuItemId.copmutersStatus:
-        this.router.navigate([RouteName.computersStatus]);
+        this.router.navigate([RouteName.computerStatuses]);
         break;
       case MainMenuItemId.notifications:
         this.router.navigate([RouteName.notifications]);

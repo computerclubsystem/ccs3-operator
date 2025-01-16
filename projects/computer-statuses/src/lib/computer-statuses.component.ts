@@ -3,38 +3,47 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, inject, OnInit, Signal, signal,
   WritableSignal
 } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { filter } from 'rxjs';
+
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
-import { filter } from 'rxjs';
 
 import {
   createGetAllDevicesRequestMessage, createGetAllTariffsRequestMessage, createGetDeviceStatusesRequestMessage,
-  createStartDeviceRequestMessage, createStopDeviceRequestMessage, Device, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage,
-  GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, MessageType, NotificationMessageType, StartDeviceReplyMessage,
-  StopDeviceReplyMessage, Tariff, TariffType
+  createStartDeviceRequestMessage, createStopDeviceRequestMessage, createTransferDeviceRequestMessage, Device, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage,
+  GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, NotificationMessageType, StartDeviceReplyMessage,
+  StopDeviceReplyMessage, Tariff, TransferDeviceReplyMessage
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NoYearDatePipe, SecondsToTimePipe } from '@ccs3-operator/shared';
 import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
+import { SecondsFormatterComponent } from '@ccs3-operator/seconds-formatter';
+import { ExpandButtonComponent, ExpandButtonType } from '@ccs3-operator/expand-button';
 import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { TariffService } from './tariff.service';
 
 @Component({
-  selector: 'ccs3-op-computers-status',
+  selector: 'ccs3-op-computer-statuses',
   standalone: true,
   imports: [
-    MatCardModule, MatButtonModule, MatInputModule, MatSelectModule, TranslocoDirective,
-    NgTemplateOutlet, SecondsToTimePipe, NoYearDatePipe, MoneyFormatterComponent,
+    MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
+    TranslocoDirective, NgTemplateOutlet, SecondsToTimePipe, NoYearDatePipe, MoneyFormatterComponent,
+    SecondsFormatterComponent, ExpandButtonComponent
   ],
-  templateUrl: 'computers-status.component.html',
+  templateUrl: 'computer-statuses.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ComputersStatusComponent implements OnInit {
+export class ComputerStatusesComponent implements OnInit {
   readonly signals = this.createSignals();
+  iconName = IconName;
+  expandButtonType = ExpandButtonType;
+
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
   private readonly notificationsSvc = inject(NotificationsService);
@@ -170,8 +179,25 @@ export class ComputersStatusComponent implements OnInit {
   }
 
   setDeviceStatusItems(deviceStatusItems: DeviceStatusItem[]): void {
+    // If there is a change in started/stopped state of some devices, their selections for transfer might
+    // become invalid. If for example some other device was started and transfer to device which was not started was selected,
+    // this selection is now invalid, because the target device is now started
+    this.refreshTransferToDeviceSelections(deviceStatusItems);
     this.signals.deviceStatusItems.set(deviceStatusItems);
+    const notStartedDeviceStatusItems = deviceStatusItems.filter(x => !x.deviceStatus.started);
+    this.signals.notStartedDeviceStatusItems.set(notStartedDeviceStatusItems);
     this.changeDetectorRef.markForCheck();
+  }
+
+  refreshTransferToDeviceSelections(deviceStatusItems: DeviceStatusItem[]): void {
+    const startedDevicesIds = new Set<number>(deviceStatusItems.filter(x => x.deviceStatus.started).map(x => x.deviceStatus.deviceId));
+    for (const deviceStatusItem of deviceStatusItems) {
+      if (deviceStatusItem.selectedTransferToDeviceId && startedDevicesIds.has(deviceStatusItem.selectedTransferToDeviceId)) {
+        // Some device has selected this device for transfer to, but the target device is not started
+        // Clear source device transfer to selection since it is no longer valid
+        deviceStatusItem.selectedTransferToDeviceId = null;
+      }
+    }
   }
 
   createDeviceStatusItems(deviceStatuses: DeviceStatus[]): DeviceStatusItem[] {
@@ -202,6 +228,7 @@ export class ComputersStatusComponent implements OnInit {
     deviceStatusItem.isStopExpanded = !deviceStatus.started ? false : !!currentStatusItem?.isStopExpanded;
     deviceStatusItem.selectedTariffItem = currentStatusItem?.selectedTariffItem || this.signals.allEnabledTariffs()[0];
     deviceStatusItem.stopNote = currentStatusItem?.stopNote;
+    deviceStatusItem.selectedTransferToDeviceId = currentStatusItem?.selectedTransferToDeviceId;
   }
 
   getTariffName(tariffId?: number | null): string {
@@ -221,6 +248,11 @@ export class ComputersStatusComponent implements OnInit {
 
   toggleStopExpanded(item: DeviceStatusItem): void {
     item.isStopExpanded = !item.isStopExpanded;
+    // Clear selections so they don't contain already invalid data
+    // Like if target device for transfer was selected, then the section collapsed, then the device was started
+    // and section expanded, since there is selection, the transfer button is enabled, but this selection is no longer valid,
+    // because now the target device is started and cannot tranfer to it
+    // item.selectedTransferToDeviceId = null;
   }
 
   onStopNoteChanged(ev: Event, item: DeviceStatusItem): void {
@@ -235,6 +267,35 @@ export class ComputersStatusComponent implements OnInit {
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(stopDeviceReplyMsg => this.processStopDeviceReplyMessage(stopDeviceReplyMsg));
+  }
+
+  onTransferToChanged(transferToDeviceId: number, sourceItem: DeviceStatusItem): void {
+    sourceItem.selectedTransferToDeviceId = transferToDeviceId;
+  }
+
+  onTransferToAnotherDevice(item: DeviceStatusItem): void {
+    if (!item.selectedTransferToDeviceId) {
+      const msg = translate('Target computer is not selected');
+      this.notificationsSvc.show(NotificationType.warn, msg, null, IconName.priority_high, item);
+      return;
+    }
+    const sourceDeviceId = item.deviceStatus.deviceId;
+    const targetDeviceId = item.selectedTransferToDeviceId;
+    const requestMsg = createTransferDeviceRequestMessage();
+    requestMsg.body.sourceDeviceId = sourceDeviceId;
+    requestMsg.body.targetDeviceId = targetDeviceId;
+    this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processTransferDeviceReplyMessage(replyMsg));
+  }
+
+  processTransferDeviceReplyMessage(replyMsg: TransferDeviceReplyMessage): void {
+    if (replyMsg.header.failure) {
+      return;
+    }
+    // Refresh the two devices
+    this.refreshDeviceStatusItem(replyMsg.body.sourceDeviceStatus);
+    this.refreshDeviceStatusItem(replyMsg.body.targetDeviceStatus);
   }
 
   processStopDeviceReplyMessage(stopDeviceReplyMsg: StopDeviceReplyMessage): void {
@@ -258,11 +319,17 @@ export class ComputersStatusComponent implements OnInit {
       allDevicesMap: signal(new Map<number, Device>()),
       allTariffsMap: signal(new Map<number, Tariff>()),
       allEnabledTariffs: signal([]),
+      notStartedDeviceStatusItems: signal([]),
     };
     signals.allEnabledTariffs = computed(() => {
       const allTariffs = this.signals.allTariffsMap().values();
       return Array.from(allTariffs).filter(tariff => tariff.enabled);
     });
+    // signals.notStartedDeviceStatusItems = computed(() => {
+    //   const allDeviceStatusItems = this.signals.deviceStatusItems();
+    //   const notStartedDeviceStatusItems = allDeviceStatusItems.filter(x => !x.deviceStatus.started);
+    //   return notStartedDeviceStatusItems;
+    // });
     return signals;
   }
 }
@@ -273,6 +340,7 @@ interface Signals {
   allDevicesMap: WritableSignal<Map<number, Device>>;
   allTariffsMap: WritableSignal<Map<number, Tariff>>;
   allEnabledTariffs: Signal<Tariff[]>;
+  notStartedDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;
 }
 
 interface DeviceStatusItem {
@@ -283,4 +351,5 @@ interface DeviceStatusItem {
   isStopExpanded: boolean;
   selectedTariffItem: Tariff;
   stopNote?: string | null;
+  selectedTransferToDeviceId?: number | null;
 }

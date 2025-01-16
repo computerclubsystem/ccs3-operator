@@ -4,5 +4,4 @@ export interface MessageTimedOutErrorData {
   sentAt: number;
   message: Message<any>;
   timeout: number;
-  expectedReplyType?: MessageType;
 }

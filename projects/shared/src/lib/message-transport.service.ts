@@ -38,7 +38,7 @@ export class MessageTransportService {
         }
       }),
       catchError(err => {
-        this.internalSubjectsSvc.setMessageTimedOut(this.createMessageTimedOutErrorData(requestMessage, sentAt, timeoutValue, requestMessage.header.type));
+        this.internalSubjectsSvc.setMessageTimedOut(this.createMessageTimedOutErrorData(requestMessage, sentAt, timeoutValue));
         return throwError(() => err);
       })
     );
@@ -84,12 +84,11 @@ export class MessageTransportService {
     return crypto.randomUUID();
   }
 
-  private createMessageTimedOutErrorData(requestMessage: Message<any>, sentAt: number, timeoutValue: number, expectedReplyType?: MessageType): MessageTimedOutErrorData {
+  private createMessageTimedOutErrorData(requestMessage: Message<any>, sentAt: number, timeoutValue: number): MessageTimedOutErrorData {
     const messageTimedoutData: MessageTimedOutErrorData = {
       message: requestMessage,
       sentAt: sentAt,
       timeout: timeoutValue,
-      expectedReplyType: expectedReplyType,
     };
     return messageTimedoutData;
   }

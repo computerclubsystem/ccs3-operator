@@ -283,23 +283,23 @@
         }
       }
     },
-    "computers-status": {
+    "computer-statuses": {
       "projectType": "library",
-      "root": "projects/computers-status",
-      "sourceRoot": "projects/computers-status/src",
+      "root": "projects/computer-statuses",
+      "sourceRoot": "projects/computer-statuses/src",
       "prefix": "ccs3-op",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "projects/computers-status/ng-package.json"
+            "project": "projects/computer-statuses/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "projects/computers-status/tsconfig.lib.prod.json"
+              "tsConfig": "projects/computer-statuses/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "projects/computers-status/tsconfig.lib.json"
+              "tsConfig": "projects/computer-statuses/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -307,7 +307,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "tsConfig": "projects/computers-status/tsconfig.spec.json",
+            "tsConfig": "projects/computer-statuses/tsconfig.spec.json",
             "polyfills": [
             ]
           }
@@ -401,6 +401,72 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/money-formatter/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "seconds-formatter": {
+      "projectType": "library",
+      "root": "projects/seconds-formatter",
+      "sourceRoot": "projects/seconds-formatter/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/seconds-formatter/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/seconds-formatter/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/seconds-formatter/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/seconds-formatter/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    },
+    "expand-button": {
+      "projectType": "library",
+      "root": "projects/expand-button",
+      "sourceRoot": "projects/expand-button/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/expand-button/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/expand-button/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/expand-button/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/expand-button/tsconfig.spec.json",
             "polyfills": [
               "zone.js",
               "zone.js/testing"

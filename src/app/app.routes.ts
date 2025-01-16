@@ -7,7 +7,7 @@ export enum QueryParamName {
 export enum RouteName {
   signIn = 'sign-in',
   notifications = 'notifications',
-  computersStatus = 'computers-status',
+  computerStatuses = 'computer-statuses',
   signedOutSessionStats = 'signed-out-session-stats',
   systemSettings = 'system-settings',
   systemSettingsDevices = 'devices',
@@ -33,8 +33,8 @@ export const routes: Routes = [
     loadComponent: () => import('@ccs3-operator/notifications').then(x => x.NotificationListComponent),
   },
   {
-    path: RouteName.computersStatus,
-    loadComponent: () => import('@ccs3-operator/computers-status').then(x => x.ComputersStatusComponent),
+    path: RouteName.computerStatuses,
+    loadComponent: () => import('@ccs3-operator/computer-statuses').then(x => x.ComputerStatusesComponent),
   },
   {
     path: RouteName.signedOutSessionStats,

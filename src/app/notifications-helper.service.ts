@@ -46,7 +46,7 @@ export class NotificationsHelperService {
     this.ntfSvc.show(
       NotificationType.warn,
       translate('Message timed out'),
-      translate(`Message was sent to the server but did not receive reply. Message type ${messageTimedOutErrorData.message.header.type} / ${messageTimedOutErrorData.expectedReplyType}`),
+      translate(`Message was sent to the server but did not receive reply. Message type ${messageTimedOutErrorData.message.header.type}`),
       IconName.priority_high,
       messageTimedOutErrorData
     );
