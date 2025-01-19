@@ -56,4 +56,5 @@ export const enum ReplyMessageType {
 
 export const enum NotificationMessageType {
   deviceStatusesNotification = 'device-statuses-notification',
+  deviceConnectivitiesNotification = 'device-connectivities-notification',
 }

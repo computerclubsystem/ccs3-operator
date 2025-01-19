@@ -4,8 +4,6 @@ import {
   WritableSignal
 } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { filter } from 'rxjs';
-
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -13,11 +11,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
+import { filter } from 'rxjs';
 
 import {
   createGetAllDevicesRequestMessage, createGetAllTariffsRequestMessage, createGetDeviceStatusesRequestMessage,
   createStartDeviceRequestMessage, createStopDeviceRequestMessage, createTransferDeviceRequestMessage, Device, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage,
-  GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, NotificationMessageType, StartDeviceReplyMessage,
+  GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, NotificationMessageType, OperatorDeviceConnectivitiesNotificationMessage, StartDeviceReplyMessage,
   StopDeviceReplyMessage, Tariff, TransferDeviceReplyMessage
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NoYearDatePipe, SecondsToTimePipe } from '@ccs3-operator/shared';
@@ -27,6 +26,7 @@ import { SecondsFormatterComponent } from '@ccs3-operator/seconds-formatter';
 import { ExpandButtonComponent, ExpandButtonType } from '@ccs3-operator/expand-button';
 import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { TariffService } from './tariff.service';
+import { DeviceConnectivityItem } from 'projects/messages/src/lib/entities/device-connectivity-item';
 
 @Component({
   selector: 'ccs3-op-computer-statuses',
@@ -170,6 +170,21 @@ export class ComputerStatusesComponent implements OnInit {
       filter(msg => (msg.header.type as unknown as NotificationMessageType) === NotificationMessageType.deviceStatusesNotification),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(deviceStatusesMsg => this.processDeviceStatusesNotificationMessage(deviceStatusesMsg as unknown as DeviceStatusesNotificationMessage));
+    this.messageTransportSvc.getMessageReceivedObservable().pipe(
+      filter(msg => (msg.header.type as unknown as NotificationMessageType) === NotificationMessageType.deviceConnectivitiesNotification),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(deviceConnectivitiesMsg => this.processDeviceConnectivitiesNotificationMessage(deviceConnectivitiesMsg as unknown as OperatorDeviceConnectivitiesNotificationMessage));
+  }
+
+  processDeviceConnectivitiesNotificationMessage(msg: OperatorDeviceConnectivitiesNotificationMessage): void {
+    const deviceStatusItems = this.signals.deviceStatusItems();
+    for (const connectivityItem of msg.body.connectivityItems) {
+      const statusItem = deviceStatusItems.find(x => x.deviceStatus.deviceId === connectivityItem.deviceId);
+      if (statusItem) {
+        statusItem.deviceConnectivity = connectivityItem;
+      }
+    }
+    this.setDeviceStatusItems(deviceStatusItems);
   }
 
   processDeviceStatusesNotificationMessage(deviceStatusesMsg: DeviceStatusesNotificationMessage): void {
@@ -229,6 +244,7 @@ export class ComputerStatusesComponent implements OnInit {
     deviceStatusItem.selectedTariffItem = currentStatusItem?.selectedTariffItem || this.signals.allEnabledTariffs()[0];
     deviceStatusItem.stopNote = currentStatusItem?.stopNote;
     deviceStatusItem.selectedTransferToDeviceId = currentStatusItem?.selectedTransferToDeviceId;
+    deviceStatusItem.deviceConnectivity = currentStatusItem?.deviceConnectivity;
   }
 
   getTariffName(tariffId?: number | null): string {
@@ -352,4 +368,5 @@ interface DeviceStatusItem {
   selectedTariffItem: Tariff;
   stopNote?: string | null;
   selectedTransferToDeviceId?: number | null;
+  deviceConnectivity?: DeviceConnectivityItem | null;
 }

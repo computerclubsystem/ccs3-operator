@@ -56,6 +56,7 @@ export * from './lib/update-user-with-roles-request.message';
 export * from './lib/update-user-with-roles-reply.message';
 export * from './lib/transfer-device-request.message';
 export * from './lib/transfer-device-reply.message';
+export * from './lib/device-connectivities-notification.message';
 
 export * from './lib/entities/device';
 export * from './lib/entities/tariff';
