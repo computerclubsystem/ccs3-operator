@@ -22,4 +22,5 @@ export enum IconName {
   swap_horiz = 'swap_horiz',
   keyboard_arrow_down = 'keyboard_arrow_down',
   keyboard_arrow_up = 'keyboard_arrow_up',
+  signal_wifi_statusbar_not_connected = 'signal_wifi_statusbar_not_connected',
 }

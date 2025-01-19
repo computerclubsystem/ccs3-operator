@@ -19,6 +19,15 @@
       <mat-card-header>
         <mat-card-title>
           <div class="ccs3-op-flex-row ccs3-op-align-items-baseline">
+            @if (item.deviceConnectivity) {
+            @if (item.deviceConnectivity.isConnected) {
+            <mat-icon class="ccs3-op-success-color">{{iconName.wifi}}</mat-icon>
+            } @else {
+            <mat-icon class="ccs3-op-error-color">{{iconName.wifi_off}}</mat-icon>
+            }
+            } @else {
+            <mat-icon class="ccs3-op-warn-color">{{iconName.signal_wifi_statusbar_not_connected}}</mat-icon>
+            }
             <span>{{item.deviceName}}</span>
             <span>-</span>
             <ccs3-op-money-formatter [title]="totalTranslation" [value]="item.deviceStatus.totalSum"
