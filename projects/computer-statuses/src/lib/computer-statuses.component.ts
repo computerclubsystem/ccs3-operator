@@ -195,7 +195,7 @@ export class ComputerStatusesComponent implements OnInit {
 
   setDeviceStatusItems(deviceStatusItems: DeviceStatusItem[]): void {
     // Sort devices by name
-    deviceStatusItems.sort((left, right) => left.deviceName.localeCompare(right.deviceName));
+    deviceStatusItems.sort((left, right) => left.deviceName?.localeCompare(right.deviceName));
     // If there is a change in started/stopped state of some devices, their selections for transfer might
     // become invalid. If for example some other device was started and transfer to device which was not started was selected,
     // this selection is now invalid, because the target device is now started
