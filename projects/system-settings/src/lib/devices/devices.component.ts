@@ -46,7 +46,8 @@ export class DevicesComponent implements OnInit {
   }
 
   processGetAllDevicesReplyMessage(getAllDevicesReplyMsg: GetAllDevicesReplyMessage): void {
-    this.signals.allDevices.set(getAllDevicesReplyMsg.body.devices);
+    const sortedDevices = getAllDevicesReplyMsg.body.devices.sort((left, right) => left.name ? left.name.localeCompare(right.name!) : -1);
+    this.signals.allDevices.set(sortedDevices);
   }
 
   createSignals(): Signals {
