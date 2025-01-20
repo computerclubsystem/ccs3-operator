@@ -12,6 +12,10 @@
   @let startedTranslation = t('Started');
   @let stoppedTranslation = t('Stopped');
   @let tariffTranslation = t('Tariff');
+  @let messagesTranslation = t('Messages');
+  @let connectionsTranslation = t('Connections');
+  @let timePassedSinceLastMessageTranslation = t('Time passed since last message');
+  @let timePassedSinceLastConnectionTranslation = t('Time passed since last connection');
 
   <ng-template #standardCard let-templateContext>
     @let item = deviceStatusItemIdentity(templateContext);
@@ -30,9 +34,9 @@
             }
             <span>{{item.deviceName}}</span>
             <span>-</span>
-            <ccs3-op-money-formatter [title]="totalTranslation" [value]="item.deviceStatus.totalSum"
+            <ccs3-op-money-formatter [value]="item.deviceStatus.totalSum" [title]="totalTranslation"
               class="total-sum"></ccs3-op-money-formatter>
-            <ccs3-op-seconds-formatter [value]="item.deviceStatus.remainingSeconds"
+            <ccs3-op-seconds-formatter [value]="item.deviceStatus.remainingSeconds" [title]="remainingTimeTranslation"
               class="remaining-time"></ccs3-op-seconds-formatter>
             <ccs3-op-expand-button (click)="detailsExpansionPanel.expanded = !detailsExpansionPanel.expanded"
               [isExpanded]="detailsExpansionPanel.expanded"
@@ -47,16 +51,37 @@
               <span>{{tariffTranslation}}</span>
               <span class="tariff-name">{{item.tariffName}}</span>
               @if (item.deviceStatus.started) {
-              <span>{{remainingTimeTranslation}}</span>
-              <span class="remaining-time">{{item.deviceStatus.remainingSeconds | secondsToTime}}</span>
               <span>{{elapsedTimeTranslation}}</span>
-              <span class="elapsed-time">{{item.deviceStatus.totalTime | secondsToTime}}</span>
+              <ccs3-op-seconds-formatter [value]="item.deviceStatus.totalTime"
+                class="elapsed-time"></ccs3-op-seconds-formatter>
               }
               <span>{{startedTranslation}}</span>
               <span class="started-at">{{item.deviceStatus.startedAt | noYearDate}}</span>
               @if (item.deviceStatus.stoppedAt) {
               <span>{{stoppedTranslation}}</span>
               <span class="stopped-at">{{item.deviceStatus.stoppedAt| noYearDate}}</span>
+              }
+              @if (item.deviceConnectivity) {
+              <span>{{messagesTranslation}}</span>
+              <section class="ccs3-op-flex-row">
+                <span class="messages-count">{{item.deviceConnectivity.messagesCount}}</span>
+                @if(item.deviceConnectivity.secondsSinceLastMessage != null) {
+                <div class="ccs3-op-flex-row ccs3-op-no-gap">
+                  (<ccs3-op-seconds-formatter [value]="item.deviceConnectivity.secondsSinceLastMessage"
+                    [title]="timePassedSinceLastMessageTranslation"></ccs3-op-seconds-formatter>)
+                </div>
+                <!-- <ccs3-op-seconds-formatter [value]="item.deviceConnectivity.secondsSinceLastMessage"
+                  class="seconds-since-last-message"></ccs3-op-seconds-formatter> -->
+                }
+              </section>
+              <span>{{connectionsTranslation}}</span>
+              <section class="ccs3-op-flex-row">
+                <span class="connections-count">{{item.deviceConnectivity.connectionsCount}}</span>
+                <div class="ccs3-op-flex-row ccs3-op-no-gap">
+                  (<ccs3-op-seconds-formatter [value]="item.deviceConnectivity.secondsSinceLastConnected"
+                    [title]="timePassedSinceLastConnectionTranslation"></ccs3-op-seconds-formatter>)
+                </div>
+              </section>
               }
             </section>
           </ng-template>

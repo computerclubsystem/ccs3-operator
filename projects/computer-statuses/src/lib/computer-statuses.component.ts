@@ -1,8 +1,8 @@
-import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, inject, OnInit, Signal, signal,
   WritableSignal
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +19,7 @@ import {
   GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, NotificationMessageType, OperatorDeviceConnectivitiesNotificationMessage, StartDeviceReplyMessage,
   StopDeviceReplyMessage, Tariff, TransferDeviceReplyMessage
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, NoYearDatePipe, SecondsToTimePipe } from '@ccs3-operator/shared';
+import { InternalSubjectsService, MessageTransportService, NoYearDatePipe } from '@ccs3-operator/shared';
 import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
 import { SecondsFormatterComponent } from '@ccs3-operator/seconds-formatter';
@@ -33,7 +33,7 @@ import { DeviceConnectivityItem } from 'projects/messages/src/lib/entities/devic
   standalone: true,
   imports: [
     MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
-    TranslocoDirective, NgTemplateOutlet, SecondsToTimePipe, NoYearDatePipe, MoneyFormatterComponent,
+    TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
     SecondsFormatterComponent, ExpandButtonComponent
   ],
   templateUrl: 'computer-statuses.component.html',
