@@ -27,6 +27,7 @@
   "The tariff '{{tariffName}}' can't be used right now": "Тарифата '{{tariffName}}' не може да се използва в момента",
   "Reply message '{{messageType}}' indicates failure": "Полученото съобщение '{{messageType}}' показва грешка",
   "Request message type '{{requestMessageType}}'": "Тип на заявката '{{requestMessageType}}'",
+  "Will continue with tariff {{tariffName}}": "Ще продължи на тарифа '{{tariffName}}'",
   "Hours abbreviation": "ч",
   "Minutes abbreviation": "м",
   "Seconds abbreviation": "с"

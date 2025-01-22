@@ -11,11 +11,23 @@
   @let remainingTimeTranslation = t('Remaining time');
   @let startedTranslation = t('Started');
   @let stoppedTranslation = t('Stopped');
+  @let willStopAtTranslation = t('Will stop at');
   @let tariffTranslation = t('Tariff');
   @let messagesTranslation = t('Messages');
   @let connectionsTranslation = t('Connections');
   @let timePassedSinceLastMessageTranslation = t('Time passed since last message');
   @let timePassedSinceLastConnectionTranslation = t('Time passed since last connection');
+  @let actionsTranslation = t('Actions');
+  @let optionsTranslation = t('Options');
+  @let connectedTranslation = t('Connected');
+  @let disconnectedTranslation = t('Disconnected');
+  @let unknownConnectionStatusTranslation = t('Unknown connection status');
+  @let stopTranslation = t('Stop');
+  @let transferTranslation = t('Transfer');
+  @let continueWithTranslation = t('Continue with');
+  @let stopOptionsTranslation = t('Stop options');
+  @let transferOptionsTranslation = t('Transfer options');
+  @let continueWithOptionsTranslation = t('Continue with options');
 
   <ng-template #standardCard let-templateContext>
     @let item = deviceStatusItemIdentity(templateContext);
@@ -25,19 +37,27 @@
           <div class="ccs3-op-flex-row ccs3-op-align-items-baseline">
             @if (item.deviceConnectivity) {
             @if (item.deviceConnectivity.isConnected) {
-            <mat-icon class="ccs3-op-success-color">{{iconName.wifi}}</mat-icon>
+            <mat-icon [title]="connectedTranslation" [attr.aria-label]="connectedTranslation"
+              class="connected-icon ccs3-op-success-color">{{iconName.wifi}}</mat-icon>
             } @else {
-            <mat-icon class="ccs3-op-error-color">{{iconName.wifi_off}}</mat-icon>
+            <mat-icon [title]="disconnectedTranslation" [attr.aria-label]="disconnectedTranslation"
+              class="disconnected-icon ccs3-op-error-container">{{iconName.wifi_off}}</mat-icon>
             }
             } @else {
-            <mat-icon class="ccs3-op-warn-color">{{iconName.signal_wifi_statusbar_not_connected}}</mat-icon>
+            <mat-icon [title]="unknownConnectionStatusTranslation"
+              [attr.aria-label]="unknownConnectionStatusTranslation"
+              class="unknown-connection-state-icon ccs3-op-warn-container">{{iconName.signal_wifi_statusbar_not_connected}}</mat-icon>
             }
-            <span>{{item.deviceName}}</span>
-            <span>-</span>
+            <span class="computer-name">{{item.deviceName}}</span>
             <ccs3-op-money-formatter [value]="item.deviceStatus.totalSum" [title]="totalTranslation"
               class="total-sum"></ccs3-op-money-formatter>
             <ccs3-op-seconds-formatter [value]="item.deviceStatus.remainingSeconds" [title]="remainingTimeTranslation"
               class="remaining-time"></ccs3-op-seconds-formatter>
+            @if (item.deviceStatus.continuationTariffId) {
+            <mat-icon
+              [title]="t('Will continue with tariff {{tariffName}}', {tariffName: getTariffName(item.deviceStatus.continuationTariffId)})"
+              class="has-continuation-icon ccs3-op-warn-container">{{iconName.fast_forward}}</mat-icon>
+            }
             <ccs3-op-expand-button (click)="detailsExpansionPanel.expanded = !detailsExpansionPanel.expanded"
               [isExpanded]="detailsExpansionPanel.expanded"
               [type]="expandButtonType.matIconButton"></ccs3-op-expand-button>
@@ -60,6 +80,9 @@
               @if (item.deviceStatus.stoppedAt) {
               <span>{{stoppedTranslation}}</span>
               <span class="stopped-at">{{item.deviceStatus.stoppedAt| noYearDate}}</span>
+              } @else {
+              <span>{{willStopAtTranslation}}</span>
+              <span class="will-stop-at">{{item.deviceStatus.expectedEndAt | noYearDate}}</span>
               }
               @if (item.deviceConnectivity) {
               <span>{{messagesTranslation}}</span>
@@ -70,8 +93,6 @@
                   (<ccs3-op-seconds-formatter [value]="item.deviceConnectivity.secondsSinceLastMessage"
                     [title]="timePassedSinceLastMessageTranslation"></ccs3-op-seconds-formatter>)
                 </div>
-                <!-- <ccs3-op-seconds-formatter [value]="item.deviceConnectivity.secondsSinceLastMessage"
-                  class="seconds-since-last-message"></ccs3-op-seconds-formatter> -->
                 }
               </section>
               <span>{{connectionsTranslation}}</span>
@@ -92,21 +113,21 @@
           <section class="ccs3-op-flex-row">
             @if (item.deviceStatus.started) {
             <ccs3-op-expand-button [type]="expandButtonType.matButton"
-              [disabled]="true">{{t('Select')}}</ccs3-op-expand-button>
-            <ccs3-op-expand-button (click)="toggleStopExpanded(item)" [type]="expandButtonType.matStrokedButton"
-              [isExpanded]="item.isStopExpanded">{{t('Options')}}</ccs3-op-expand-button>
+              [disabled]="true">{{actionsTranslation}}</ccs3-op-expand-button>
+            <ccs3-op-expand-button (click)="toggleOptionsExpanded(item)" [type]="expandButtonType.matStrokedButton"
+              [isExpanded]="item.isOptionsExpanded">{{optionsTranslation}}</ccs3-op-expand-button>
             } @else {
-            <ccs3-op-expand-button (click)="toggleStartExpanded(item)" [isExpanded]="item.isStartExpanded"
+            <ccs3-op-expand-button (click)="toggleActionsExpanded(item)" [isExpanded]="item.isActionsExpanded"
               [type]="expandButtonType.matButton"
-              buttonElementClass="mat-tonal-button">{{t('Select')}}</ccs3-op-expand-button>
+              buttonElementClass="mat-tonal-button">{{actionsTranslation}}</ccs3-op-expand-button>
             <ccs3-op-expand-button [type]="expandButtonType.matStrokedButton"
-              [disabled]="true">{{t('Options')}}</ccs3-op-expand-button>
+              [disabled]="true">{{optionsTranslation}}</ccs3-op-expand-button>
             }
           </section>
-          @if (item.isStartExpanded) {
+          @if (item.isActionsExpanded) {
           <section class="ccs3-op-flex-row ccs3-op-align-items-baseline">
             <mat-form-field>
-              <mat-label>{{t('Tariff')}}</mat-label>
+              <mat-label>{{tariffTranslation}}</mat-label>
               <mat-select (valueChange)="onTariffSelected($event, item)" [(value)]="item.selectedTariffItem">
                 @for (tariff of signals.allEnabledTariffs(); track tariff.id) {
                 <mat-option [value]="tariff" [title]="tariff.name">{{tariff.name}}</mat-option>
@@ -116,33 +137,98 @@
             <button (click)="onStart(item)" mat-flat-button>{{t('Start')}}</button>
           </section>
           }
-          @if (item.isStopExpanded) {
-          <section class="device-options-section ccs3-op-flex-row ccs3-op-flex-wrap ccs3-op-align-items-start">
-            <section class="stop-section ccs3-op-flex-column ccs3-op-no-gap">
-              <mat-form-field>
-                <mat-label>{{t('Stop note')}}</mat-label>
-                <textarea (input)="onStopNoteChanged($event, item)" matInput class="stop-note-input"></textarea>
-              </mat-form-field>
-              <button (click)="onStopDevice(item)" mat-flat-button>{{t('Stop')}}</button>
+          @if (item.isOptionsExpanded) {
+          <section class="device-options-section ccs3-op-flex-column">
+            <section class="device-options-expanders ccs3-op-flex-row">
+              <ccs3-op-expand-button (click)="onToggleOptionStopVisibility(item)"
+                [type]="expandButtonType.matStrokedButton" [isExpanded]="item.optionsVisibility.stop"
+                [title]="stopOptionsTranslation">
+                <mat-icon>{{iconName.stop_circle}}</mat-icon>
+              </ccs3-op-expand-button>
+              <ccs3-op-expand-button (click)="onToggleOptionTransferVisibility(item)"
+                [type]="expandButtonType.matStrokedButton" [isExpanded]="item.optionsVisibility.transfer"
+                [title]="transferOptionsTranslation">
+                <mat-icon>{{iconName.swap_horiz}}</mat-icon>
+              </ccs3-op-expand-button>
+              <ccs3-op-expand-button (click)="onToggleOptionContinueWithVisibility(item)"
+                [type]="expandButtonType.matStrokedButton" [isExpanded]="item.optionsVisibility.continueWith"
+                [title]="continueWithOptionsTranslation">
+                <mat-icon>{{iconName.fast_forward}}</mat-icon>
+              </ccs3-op-expand-button>
             </section>
-            <section class="transfer-section ccs3-op-flex-column ccs3-op-no-gap">
-              <mat-form-field>
-                <mat-label>{{t('Transfer to')}}</mat-label>
-                <mat-select (valueChange)="onTransferToChanged($event, item)" [value]="item.selectedTransferToDeviceId">
-                  @for (notStartedItem of signals.notStartedDeviceStatusItems(); track
-                  notStartedItem.deviceStatus.deviceId) {
-                  <mat-option [value]="notStartedItem.deviceStatus.deviceId"
-                    [title]="notStartedItem.deviceName">{{notStartedItem.deviceName}}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-              <button (click)="onTransferToAnotherDevice(item)" mat-stroked-button
-                [disabled]="!item.selectedTransferToDeviceId">
-                <span class="ccs3-op-flex-row">
-                  <mat-icon>{{iconName.swap_horiz}}</mat-icon>
-                  <span>{{t('Transfer')}}</span>
-                </span>
-              </button>
+            <section class="device-options-sections">
+              @if (item.optionsVisibility.stop) {
+              <section
+                class="stop-section ccs3-op-flex-row ccs3-op-flex-wrap ccs3-op-half-gap ccs3-op-align-items-baseline">
+                <mat-form-field>
+                  <mat-label>{{t('Stop note')}}</mat-label>
+                  <textarea (input)="onStopNoteChanged($event, item)" matInput class="stop-note-input"></textarea>
+                </mat-form-field>
+                <button (click)="onStopDevice(item)" mat-flat-button>
+                  <span class="ccs3-op-flex-row">
+                    <mat-icon>{{iconName.stop_circle}}</mat-icon>
+                    <span>{{stopTranslation}}</span>
+                  </span>
+                </button>
+              </section>
+              }
+              @if (item.optionsVisibility.transfer) {
+              <section
+                class="transfer-section ccs3-op-flex-row ccs3-op-flex-wrap ccs3-op-half-gap ccs3-op-align-items-baseline">
+                <mat-form-field>
+                  <mat-label>{{t('Transfer to')}}</mat-label>
+                  <mat-select (valueChange)="onTransferToChanged($event, item)"
+                    [value]="item.selectedTransferToDeviceId">
+                    @for (notStartedItem of signals.notStartedDeviceStatusItems(); track
+                    notStartedItem.deviceStatus.deviceId) {
+                    <mat-option [value]="notStartedItem.deviceStatus.deviceId"
+                      [title]="notStartedItem.deviceName">{{notStartedItem.deviceName}}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+                <button (click)="onTransferToAnotherDevice(item)" mat-stroked-button
+                  [disabled]="!item.selectedTransferToDeviceId">
+                  <span class="ccs3-op-flex-row">
+                    <mat-icon>{{iconName.swap_horiz}}</mat-icon>
+                    <span>{{transferTranslation}}</span>
+                  </span>
+                </button>
+              </section>
+              }
+              @if (item.optionsVisibility.continueWith) {
+              <section class="continue-with-wrapper-section ccs3-op-flex-column ccs3-op-half-gap">
+                @if (item.deviceStatus.continuationTariffId) {
+                <section class="continue-with-current-configuration-section ccs3-op-flex-row">
+                  <span>{{t('Current continuation tariff')}}</span>
+                  <span>{{getTariffName(item.deviceStatus.continuationTariffId)}}</span>
+                </section>
+                }
+                <section
+                  class="continue-with-section ccs3-op-flex-row ccs3-op-flex-wrap ccs3-op-half-gap ccs3-op-align-items-baseline">
+                  <mat-form-field>
+                    <mat-label>{{continueWithTranslation}}</mat-label>
+                    <mat-select (valueChange)="onContinueWithChanged($event, item)"
+                      [value]="item.selectedContinueWithTariffId">
+                      @for (tariff of signals.allEnabledTariffs(); track tariff.id) {
+                      <mat-option [value]="tariff.id" [title]="tariff.name">{{tariff.name}}</mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+                  <section class="continuation-actions ccs3-op-flex-row">
+                    <button (click)="onSetContinuation(item)" mat-flat-button
+                      [disabled]="!item.selectedContinueWithTariffId">
+                      <span class="ccs3-op-flex-row">
+                        <mat-icon>{{iconName.fast_forward}}</mat-icon>
+                        <span>{{t('Set')}}</span>
+                      </span>
+                    </button>
+                    <button (click)="onCancelContinuation(item)" mat-icon-button [title]="t('Cancel continuation')">
+                      <mat-icon>{{iconName.close}}</mat-icon>
+                    </button>
+                  </section>
+                </section>
+              </section>
+              }
             </section>
           </section>
           }

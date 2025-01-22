@@ -11,13 +11,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
-import { filter } from 'rxjs';
+import { filter, takeUntil } from 'rxjs';
 
 import {
+  createCreateDeviceContinuationRequestMessage,
+  CreateDeviceContinuationReplyMessage,
   createGetAllDevicesRequestMessage, createGetAllTariffsRequestMessage, createGetDeviceStatusesRequestMessage,
-  createStartDeviceRequestMessage, createStopDeviceRequestMessage, createTransferDeviceRequestMessage, Device, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage,
-  GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, NotificationMessageType, OperatorDeviceConnectivitiesNotificationMessage, StartDeviceReplyMessage,
-  StopDeviceReplyMessage, Tariff, TransferDeviceReplyMessage
+  createStartDeviceRequestMessage, createStopDeviceRequestMessage, createTransferDeviceRequestMessage, Device,
+  DeviceConnectivityItem, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage,
+  GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, NotificationMessageType,
+  OperatorDeviceConnectivitiesNotificationMessage, StartDeviceReplyMessage, StopDeviceReplyMessage, Tariff,
+  TransferDeviceReplyMessage
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NoYearDatePipe } from '@ccs3-operator/shared';
 import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
@@ -26,7 +30,8 @@ import { SecondsFormatterComponent } from '@ccs3-operator/seconds-formatter';
 import { ExpandButtonComponent, ExpandButtonType } from '@ccs3-operator/expand-button';
 import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { TariffService } from './tariff.service';
-import { DeviceConnectivityItem } from 'projects/messages/src/lib/entities/device-connectivity-item';
+import { createDeleteDeviceContinuationRequestMessage } from 'projects/messages/src/lib/delete-device-continuation-request.message';
+import { DeleteDeviceContinuationReplyMessage } from 'projects/messages/src/lib/delete-device-continuation-reply.message.mjs';
 
 @Component({
   selector: 'ccs3-op-computer-statuses',
@@ -241,12 +246,16 @@ export class ComputerStatusesComponent implements OnInit {
     const deviceStatus = deviceStatusItem.deviceStatus;
     const currentStatusItems = this.signals.deviceStatusItems();
     const currentStatusItem = currentStatusItems.find(x => x.deviceStatus.deviceId === deviceStatus.deviceId);
-    deviceStatusItem.isStartExpanded = deviceStatus.started ? false : !!currentStatusItem?.isStartExpanded;
-    deviceStatusItem.isStopExpanded = !deviceStatus.started ? false : !!currentStatusItem?.isStopExpanded;
+    deviceStatusItem.isActionsExpanded = deviceStatus.started ? false : !!currentStatusItem?.isActionsExpanded;
+    deviceStatusItem.isOptionsExpanded = !deviceStatus.started ? false : !!currentStatusItem?.isOptionsExpanded;
     deviceStatusItem.selectedTariffItem = currentStatusItem?.selectedTariffItem || this.signals.allEnabledTariffs()[0];
     deviceStatusItem.stopNote = currentStatusItem?.stopNote;
     deviceStatusItem.selectedTransferToDeviceId = currentStatusItem?.selectedTransferToDeviceId;
+    deviceStatusItem.selectedContinueWithTariffId = currentStatusItem?.selectedContinueWithTariffId;
     deviceStatusItem.deviceConnectivity = currentStatusItem?.deviceConnectivity;
+    deviceStatusItem.optionsVisibility = currentStatusItem?.optionsVisibility ? currentStatusItem?.optionsVisibility : {
+      continueWith: false, stop: false, transfer: false
+    };
   }
 
   getTariffName(tariffId?: number | null): string {
@@ -260,17 +269,54 @@ export class ComputerStatusesComponent implements OnInit {
     return this.signals.allDevicesMap().get(deviceId)?.name || ''
   }
 
-  toggleStartExpanded(item: DeviceStatusItem): void {
-    item.isStartExpanded = !item.isStartExpanded;
+  toggleActionsExpanded(item: DeviceStatusItem): void {
+    item.isActionsExpanded = !item.isActionsExpanded;
   }
 
-  toggleStopExpanded(item: DeviceStatusItem): void {
-    item.isStopExpanded = !item.isStopExpanded;
+  toggleOptionsExpanded(item: DeviceStatusItem): void {
+    item.isOptionsExpanded = !item.isOptionsExpanded;
     // Clear selections so they don't contain already invalid data
     // Like if target device for transfer was selected, then the section collapsed, then the device was started
     // and section expanded, since there is selection, the transfer button is enabled, but this selection is no longer valid,
     // because now the target device is started and cannot tranfer to it
     // item.selectedTransferToDeviceId = null;
+  }
+
+  onToggleOptionStopVisibility(item: DeviceStatusItem): void {
+    item.optionsVisibility = {
+      stop: !item.optionsVisibility.stop,
+    };
+  }
+
+  onToggleOptionTransferVisibility(item: DeviceStatusItem): void {
+    item.optionsVisibility = {
+      transfer: !item.optionsVisibility.transfer,
+    };
+  }
+
+  onToggleOptionContinueWithVisibility(item: DeviceStatusItem): void {
+    item.optionsVisibility = {
+      continueWith: !item.optionsVisibility.continueWith,
+    };
+  }
+
+  onCancelContinuation(item: DeviceStatusItem): void {
+    // TODO: Send message and wait for reply. Based on the reply success/failure cancel the continuation
+    const requestMsg = createDeleteDeviceContinuationRequestMessage();
+    requestMsg.body.deviceId = item.deviceStatus.deviceId;
+    this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processDeleteDeviceContinuationReplyMessage(replyMsg));
+  }
+
+  processDeleteDeviceContinuationReplyMessage(replyMsg: DeleteDeviceContinuationReplyMessage): void {
+    if (replyMsg.header.failure) {
+      const msg = translate(`Can't remove continuation data`);
+      this.notificationsSvc.show(NotificationType.error, msg, null, IconName.priority_high, replyMsg);
+      return;
+    }
+    const msg = translate(`Continuation data removed`);
+    this.notificationsSvc.show(NotificationType.success, msg, null, IconName.check, replyMsg);
   }
 
   onStopNoteChanged(ev: Event, item: DeviceStatusItem): void {
@@ -289,6 +335,40 @@ export class ComputerStatusesComponent implements OnInit {
 
   onTransferToChanged(transferToDeviceId: number, sourceItem: DeviceStatusItem): void {
     sourceItem.selectedTransferToDeviceId = transferToDeviceId;
+  }
+
+  onContinueWithChanged(tariffId: number, sourceItem: DeviceStatusItem): void {
+    sourceItem.selectedContinueWithTariffId = tariffId;
+  }
+
+  onSetContinuation(item: DeviceStatusItem): void {
+    if (!item.selectedContinueWithTariffId) {
+      const msg = translate('Continue with tariff is not selected');
+      this.notificationsSvc.show(NotificationType.warn, msg, null, IconName.priority_high, item);
+      return;
+    }
+    const requestMsg = createCreateDeviceContinuationRequestMessage();
+    requestMsg.body.deviceContinuation = {
+      deviceId: item.deviceStatus.deviceId,
+      // TODO: his does not need to be set by the client
+      requestedAt: new Date().toISOString(),
+      tariffId: item.selectedContinueWithTariffId,
+      // TODO: This does not need to be set by the client
+      userId: 0,
+    };
+    this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processCreateDeviceContinuationReplyMessage(replyMsg, item));
+  }
+
+  processCreateDeviceContinuationReplyMessage(replyMsg: CreateDeviceContinuationReplyMessage, item: DeviceStatusItem): void {
+    if (replyMsg.header.failure) {
+      const msg = translate(`Can't continue with the selected tariff`);
+      this.notificationsSvc.show(NotificationType.warn, msg, null, IconName.priority_high, { replyMsg, deviceStatusItem: item });
+      return;
+    }
+    const msg = translate(`Continuation saved`);
+    this.notificationsSvc.show(NotificationType.success, msg, null, IconName.check, { replyMsg, deviceStatusItem: item });
   }
 
   onTransferToAnotherDevice(item: DeviceStatusItem): void {
@@ -361,14 +441,22 @@ interface Signals {
   notStartedDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;
 }
 
+interface OptionsVisibility {
+  stop?: boolean | null;
+  transfer?: boolean | null;
+  continueWith?: boolean | null;
+}
+
 interface DeviceStatusItem {
   deviceStatus: DeviceStatus;
   deviceName: string;
   tariffName: string;
-  isStartExpanded: boolean;
-  isStopExpanded: boolean;
+  isActionsExpanded: boolean;
+  isOptionsExpanded: boolean;
   selectedTariffItem: Tariff;
   stopNote?: string | null;
   selectedTransferToDeviceId?: number | null;
+  selectedContinueWithTariffId?: number | null;
   deviceConnectivity?: DeviceConnectivityItem | null;
+  optionsVisibility: OptionsVisibility;
 }

@@ -48,6 +48,10 @@ export const enum MessageType {
   stopDeviceReply = 'stop-device-reply',
   transferDeviceRequest = 'transfer-device-request',
   transferDeviceReply = 'transfer-device-reply',
+  createDeviceContinuationRequest = 'create-device-continuation-request',
+  createDeviceContinuationReply = 'create-device-continuation-reply',
+  deleteDeviceContinuationRequest = 'delete-device-continuation-request',
+  deleteDeviceContinuationReply = 'delete-device-continuation-reply',
 }
 
 export const enum ReplyMessageType {

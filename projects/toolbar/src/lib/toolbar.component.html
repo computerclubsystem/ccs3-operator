@@ -9,10 +9,10 @@
   <div class="ccs3-op-flex-row ccs3-op-no-gap">
     @if(isConnected) {
       @let connectedText = 'Connected' | transloco;
-      <mat-icon title="{{connectedText}}" [attr.aria-label]="connectedText">{{iconName.wifi}}</mat-icon>
+      <mat-icon title="{{connectedText}}" class="connected-icon ccs3-op-success-color" [attr.aria-label]="connectedText">{{iconName.wifi}}</mat-icon>
     } @else {
       @let disconnectedText = 'Disconnected' | transloco;
-      <mat-icon title="{{disconnectedText}}" class="ccs3-op-error-color" [attr.aria-label]="disconnectedText">{{iconName.wifi_off}}</mat-icon>
+      <mat-icon title="{{disconnectedText}}" class="disconnected-icon ccs3-op-error-container" [attr.aria-label]="disconnectedText">{{iconName.wifi_off}}</mat-icon>
     }
     <button mat-icon-button [matMenuTriggerFor]="languageMenu" title="{{'Language' | transloco}}" aria-label="Language">
       <mat-icon>{{iconName.language}}</mat-icon>

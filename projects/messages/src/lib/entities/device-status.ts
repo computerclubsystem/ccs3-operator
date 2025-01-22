@@ -9,4 +9,5 @@ export interface DeviceStatus  {
   expectedEndAt: number | null;
   remainingSeconds: number | null;
   enabled: boolean;
+  continuationTariffId?: number | null;
 }

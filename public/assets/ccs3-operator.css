@@ -16,6 +16,11 @@
   --ccs3-op-notification-warn-background-color: #ffe799;
   --ccs3-op-notification-error-color: #202020;
   --ccs3-op-notification-error-background-color: #fac0c0;
+  --ccs3-op-sys-error: var(--mat-sys-error);
+  --ccs3-op-sys-error-container: var(--mat-sys-error-container);
+  --ccs3-op-sys-tertiary: var(--mat-sys-tertiary);
+  --ccs3-op-sys-tertiary-container: var(--mat-sys-tertiary-container);
+  --ccs3-op-active-border-width: 0.33em;
 }
 
 html,
@@ -81,6 +86,14 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
 
 .ccs3-op-no-padding {
   padding: var(--ccs3-op-no-padding);
+}
+
+.ccs3-op-block-start-padding {
+  padding-block-start: var(--ccs3-op-padding);
+}
+
+.ccs3-op-block-end-padding {
+  padding-block-end: var(--ccs3-op-padding);
 }
 
 /* Spacing */
@@ -184,6 +197,16 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   color: var(--mat-sys-tertiary-container);
 }
 
+.ccs3-op-warn-container {
+  color: var(--ccs3-op-sys-tertiary);
+  background-color: var(--ccs3-op-sys-tertiary-container);
+}
+
+.ccs3-op-error-container {
+  color: var(--ccs3-op-sys-error);
+  background-color: var(--ccs3-op-sys-error-container);
+}
+
 /* Elements */
 fieldset {
   border: none;
@@ -231,6 +254,11 @@ fieldset {
   background-color: var(--ccs3-op-notification-error-background-color);
 }
 
+/* Components */
+ccs3-op-computer-statuses .device-options-expanders ccs3-op-expand-button .expand-button-expanded {
+  border-width: var(--ccs3-op-active-border-width);
+}
+
 /* Material */
 button[mat-button].mat-tonal-button {
   background-color: var(--mat-sys-secondary-container);
@@ -243,4 +271,8 @@ mat-card-content.ccs3-op-mat-card-content-no-padding {
 
 mat-expansion-panel.ccs3-op-mat-expansion-panel-small-padding .mat-expansion-panel-body {
   padding-inline: 16px;
+}
+
+mat-expansion-panel.ccs3-op-mat-expansion-panel-no-padding .mat-expansion-panel-body {
+  padding: 0;
 }
