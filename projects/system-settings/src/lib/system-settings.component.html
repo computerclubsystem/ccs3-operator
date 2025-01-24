@@ -2,7 +2,7 @@
   <h2>System settings</h2>
 </section>
 
-<nav class="ccs3-op-flex-row ccs3-op-flex-wrap">
+<nav class="ccs3-op-flex-row">
   @for (item of signals.links(); track item.routerLink) {
   <a [routerLink]="item.routerLink" mat-raised-button routerLinkActive="ccs3-op-router-link-active"
     class="ccs3-op-router-link">{{item.translationKey | transloco}}</a>

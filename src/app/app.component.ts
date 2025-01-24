@@ -7,7 +7,7 @@ import { filter } from 'rxjs';
 
 import { ConnectorService, ConnectorSettings, OnCloseEventArgs, OnErrorEventArgs } from '@ccs3-operator/connector';
 import {
-  Message, MessageType, AuthReplyMessage, AuthReplyMessageBody, ConfigurationMessage,
+  Message, MessageType, AuthReplyMessage, ConfigurationMessage,
   createPingRequestMessage, createAuthRequestMessage, createRefreshTokenRequestMessage,
   RefreshTokenReplyMessage, NotAuthenticatedMessage, AuthRequestMessage,
   SignOutReplyMessage, createSignOutRequestMessage, ReplyMessage,
@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
     this.setNotSignedInAccountMenuItems();
     this.startConnectorService();
     // Check if we have token and authenticate with it
-    this.processStoredAuthReplyMessage();
+    this.processStoredTokenData();
   }
 
   subscribeToMessageTransportService(): void {
@@ -81,8 +81,6 @@ export class AppComponent implements OnInit {
   }
 
   subscribeToRouteNavigationSubjects(): void {
-    this.routeNavigationSvc.getNavigateToSignInRequested().subscribe(() => this.processNavigateToSignInRequested());
-    this.routeNavigationSvc.getNavigateToNotificationsRequested().subscribe(() => this.processNavigateToNotificationsRequested());
     this.routeNavigationSvc.getNavigateToCreateNewTariffRequested().subscribe(() => this.processNavigateToCreateNewTariffRequested());
     this.routeNavigationSvc.getNavigateToEditTariffRequested().subscribe(tariffId => this.processNavigateToEditTariffRequested(tariffId));
     this.routeNavigationSvc.getNavigateToCreateNewRoleRequested().subscribe(() => this.processNavigateToCreateNewRoleRequested());
@@ -139,7 +137,8 @@ export class AppComponent implements OnInit {
   }
 
   processSignInRequested(authRequestMsg: AuthRequestMessage): void {
-    this.messageTransportSvc.sendAndAwaitForReply(authRequestMsg).subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg));
+    this.messageTransportSvc.sendAndAwaitForReply(authRequestMsg)
+      .subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg));
   }
 
   processLanguageSelected(language: string): void {
@@ -204,7 +203,7 @@ export class AppComponent implements OnInit {
   performSignOut(signOutReplyMessage: SignOutReplyMessage): void {
     this.stopPing();
     this.stopRefreshTokenTimer();
-    this.removeStoredAuthReplyMessage();
+    this.removeStoredTokenData();
     this.setNotSignedInAccountMenuItems();
     this.setNotSignedInMainMenuItems();
     this.internalSubjectsSvc.setSignedIn(false);
@@ -221,16 +220,16 @@ export class AppComponent implements OnInit {
     this.connectorSvc.start(connectorSettings);
   }
 
-  private processStoredAuthReplyMessage(): void {
+  private processStoredTokenData(): void {
     // When connected and if there is a token in the storage,
     // use it to authenticate
     this.internalSubjectsSvc.getConnected().pipe(
       filter(isConnected => isConnected),
     ).subscribe(() => {
-      const storedAuthReplyMessage = this.getStoredAuthReplyMessage();
-      if (storedAuthReplyMessage?.body?.success) {
+      const tokenData = this.getStoredTokenData();
+      if (tokenData?.token) {
         const authRequestMsg = createAuthRequestMessage();
-        authRequestMsg.body.token = storedAuthReplyMessage.body.token;
+        authRequestMsg.body.token = tokenData.token;
         this.messageTransportSvc.sendAndAwaitForReply(authRequestMsg)
           .subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg));
       } else {
@@ -277,10 +276,18 @@ export class AppComponent implements OnInit {
 
   private processRefreshTokenReplyMessage(message: RefreshTokenReplyMessage): void {
     this.messageTransportSvc.setToken(message.body.token);
-    if (!message.body.success) {
-      this.notificationsHelperSvc.showAuthenticationErrorCantRefreshTheToken();
-    } else {
+    if (message.body.success) {
+      const existingTokenData = this.getStoredTokenData();
+      const newTokenData: TokenData = {
+        token: message.body.token!,
+        tokenExpiresAt: message.body.tokenExpiresAt!,
+        permissions: existingTokenData?.permissions!,
+      };
+      this.storeTokenData(newTokenData);
       this.setUpRefreshTokenTimer(message.body.tokenExpiresAt!);
+    } else {
+      this.removeStoredTokenData();
+      this.notificationsHelperSvc.showAuthenticationErrorCantRefreshTheToken();
     }
   }
 
@@ -290,11 +297,22 @@ export class AppComponent implements OnInit {
   }
 
   private processAuthReplyMessage(message: AuthReplyMessage): void {
-    const permissions = (message?.body?.permissions || []) as PermissionName[];
+    // This can be token refresh reply (if the request contains only token)
+    // If permissions are ampy get these from the session storage
+    let permissions = message?.body?.permissions as PermissionName[];
+    if (!permissions) {
+      const tokenData = this.getStoredTokenData();
+      permissions = tokenData?.permissions! as PermissionName[];
+    }
     this.permissionsSvc.setPermissions(permissions);
     this.messageTransportSvc.setToken(message.body.token);
     if (message.body.success) {
-      this.storeAuthReplyMessage(message);
+      const tokenData: TokenData = {
+        token: message.body.token!,
+        tokenExpiresAt: message.body.tokenExpiresAt!,
+        permissions: permissions
+      };
+      this.storeTokenData(tokenData);
       this.notificationsHelperSvc.showSignedIn();
       this.internalSubjectsSvc.setSignedIn(true);
       this.setSignedInMainMenuItems();
@@ -302,9 +320,10 @@ export class AppComponent implements OnInit {
       this.setUpRefreshTokenTimer(message.body.tokenExpiresAt!);
       this.redirectToReturnUrl();
     } else {
+      this.removeStoredTokenData();
       this.setNotSignedInMainMenuItems();
       this.setNotSignedInAccountMenuItems();
-      this.removeStoredAuthReplyMessage();
+      this.removeStoredTokenData();
       this.navigateToSignInWithReturnUrl();
     }
   }
@@ -314,6 +333,11 @@ export class AppComponent implements OnInit {
     const returnUrl = url.searchParams.get(QueryParamName.returnUrl);
     if (returnUrl) {
       window.location.href = returnUrl;
+    } else {
+      // No return URL - check permissions and navigate to route with least permission (computer statuses)
+      if (this.permissionsSvc.hasPermission(PermissionName.devicesReadStatus)) {
+        this.navigateToComputerStatuses();
+      }
     }
   }
 
@@ -372,16 +396,12 @@ export class AppComponent implements OnInit {
     this.router.navigate([RouteName.signIn], { queryParams: queryParams });
   }
 
+  private navigateToComputerStatuses(): void {
+    this.router.navigate([RouteName.computerStatuses]);
+  }
+
   private navigateToSignIn(): void {
     this.router.navigate([RouteName.signIn]);
-  }
-
-  private processNavigateToSignInRequested(): void {
-    this.navigateToSignIn();
-  }
-
-  private processNavigateToNotificationsRequested(): void {
-    this.router.navigate([RouteName.notifications]);
   }
 
   private stopRefreshTokenTimer(): void {
@@ -441,25 +461,25 @@ export class AppComponent implements OnInit {
     return message;
   }
 
-  private removeStoredAuthReplyMessage(): void {
-    window.sessionStorage.removeItem(StorageKey.authReplyMessage);
+  private removeStoredTokenData(): void {
+    window.sessionStorage.removeItem(StorageKey.tokenData);
   }
 
-  private storeAuthReplyMessage(message: Message<AuthReplyMessageBody>): void {
-    window.sessionStorage.setItem(StorageKey.authReplyMessage, JSON.stringify(message));
+  private storeTokenData(tokenData: TokenData): void {
+    window.sessionStorage.setItem(StorageKey.tokenData, JSON.stringify(tokenData));
   }
 
-  private getStoredAuthReplyMessage(): Message<AuthReplyMessageBody> | null {
-    const value = window.sessionStorage.getItem(StorageKey.authReplyMessage);
+  private getStoredTokenData(): TokenData | null {
+    const value = window.sessionStorage.getItem(StorageKey.tokenData);
     if (!value) {
       return null;
     }
 
-    let result: Message<AuthReplyMessageBody> | null = null;
+    let result: TokenData | null = null;
     try {
       result = JSON.parse(value);
     } catch (err) {
-      this.removeStoredAuthReplyMessage();
+      this.removeStoredTokenData();
     }
     return result;
   }
@@ -483,4 +503,10 @@ export class AppComponent implements OnInit {
     };
     return state;
   }
+}
+
+interface TokenData {
+  token: string;
+  tokenExpiresAt: number;
+  permissions: string[];
 }

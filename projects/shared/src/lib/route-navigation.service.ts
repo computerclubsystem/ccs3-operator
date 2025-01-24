@@ -3,8 +3,6 @@ import { Observable, Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class RouteNavigationService {
-  private readonly navigateToSignInRequestedSubject = new Subject<void>();
-  private readonly navigateToNotificationsRequestedSubject = new Subject<void>();
   private readonly navigateToEditDeviceRequestedSubject = new Subject<number>();
   private readonly navigateToCreateNewTariffRequestedSubject = new Subject<void>();
   private readonly navigateToEditTariffRequestedSubject = new Subject<number>();
@@ -49,21 +47,5 @@ export class RouteNavigationService {
 
   getNavigateToEditDeviceRequested(): Observable<number> {
     return this.navigateToEditDeviceRequestedSubject.asObservable();
-  }
-
-  navigateToNotificationsRequested(): void {
-    this.navigateToNotificationsRequestedSubject.next();
-  }
-
-  getNavigateToNotificationsRequested(): Observable<void> {
-    return this.navigateToNotificationsRequestedSubject.asObservable();
-  }
-
-  navigateToSignInRequested(): void {
-    this.navigateToSignInRequestedSubject.next();
-  }
-
-  getNavigateToSignInRequested(): Observable<void> {
-    return this.navigateToSignInRequestedSubject.asObservable();
   }
 }

@@ -40,6 +40,7 @@ body {
 .ccs3-op-flex-row {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: var(--ccs3-op-gap);
   align-items: center;
 }
@@ -54,8 +55,8 @@ body {
   justify-content: space-between;
 }
 
-.ccs3-op-flex-wrap {
-  flex-wrap: wrap;
+.ccs3-op-flex-no-wrap {
+  flex-wrap: nowrap;
 }
 
 /* Routing */
@@ -173,6 +174,10 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
 
 .ccs3-op-font-size-smaller {
   font-size: smaller;
+}
+
+.ccs3-op-line-height-normal {
+  line-height: normal;
 }
 
 /* Overflow */

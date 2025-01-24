@@ -1,5 +1,5 @@
 export enum StorageKey {
-  authReplyMessage = 'ccs3-op-auth-reply-message',
+  tokenData = 'ccs3-op-token-data',
 }
 
 export interface AppComponentState {

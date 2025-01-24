@@ -13,4 +13,8 @@ export class PermissionsService {
   setPermissions(permissions: PermissionName[]): void {
     this.permissionsSet = new Set<string>(permissions);
   }
+
+  getPermissions(): PermissionName[] {
+    return [...this.permissionsSet] as PermissionName[];
+  }
 }
