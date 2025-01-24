@@ -123,17 +123,7 @@ export class AppComponent implements OnInit {
   }
 
   processManualAuthSucceeded(): void {
-    // User manually signed in successfully - this is emitted by the sign-in component requesting navigating away
-    const url = new URL(window.location.href);
-    const returnUrl = url.searchParams.get(QueryParamName.returnUrl);
-    if (returnUrl) {
-      // We already have returnUrl parameter - navigate
-      window.location.href = returnUrl;
-      return;
-    }
-    // No returnUrl parameter - navigate to the default for the user
-    // Also check permissions and decide where to navigate to
-    this.router.navigate([RouteName.computerStatuses]);
+    this.redirectToDesiredUrl();
   }
 
   processSignInRequested(authRequestMsg: AuthRequestMessage): void {
@@ -318,7 +308,7 @@ export class AppComponent implements OnInit {
       this.setSignedInMainMenuItems();
       this.setSignedInAccountMenuItems();
       this.setUpRefreshTokenTimer(message.body.tokenExpiresAt!);
-      this.redirectToReturnUrl();
+      this.redirectToDesiredUrl();
     } else {
       this.removeStoredTokenData();
       this.setNotSignedInMainMenuItems();
@@ -328,15 +318,17 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private redirectToReturnUrl(): void {
+  private redirectToDesiredUrl(): void {
     const url = new URL(window.location.href);
     const returnUrl = url.searchParams.get(QueryParamName.returnUrl);
     if (returnUrl) {
       window.location.href = returnUrl;
     } else {
-      // No return URL - check permissions and navigate to route with least permission (computer statuses)
-      if (this.permissionsSvc.hasPermission(PermissionName.devicesReadStatus)) {
-        this.navigateToComputerStatuses();
+      // No return URL - if we are at the root - check permissions and navigate to route with least permission (computer statuses)
+      if (url.pathname === '/' || url.pathname === `/${RouteName.signIn}`) {
+        if (this.permissionsSvc.hasPermission(PermissionName.devicesReadStatus)) {
+          this.navigateToComputerStatuses();
+        }
       }
     }
   }
