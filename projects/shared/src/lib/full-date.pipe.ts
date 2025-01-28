@@ -5,6 +5,6 @@ import { formatDate } from '@angular/common';
 export class FullDatePipe implements PipeTransform {
 
   transform(value: any, ...args: any[]) {
-    return formatDate(value, 'yyyy-MM-dd HH:mm:ss', '');
+    return formatDate(value, 'yyyy-MM-dd HH:mm:ss', 'en');
   }
 }
