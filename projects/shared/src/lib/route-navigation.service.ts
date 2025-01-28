@@ -5,7 +5,9 @@ import { Observable, Subject } from 'rxjs';
 export class RouteNavigationService {
   private readonly navigateToEditDeviceRequestedSubject = new Subject<number>();
   private readonly navigateToCreateNewTariffRequestedSubject = new Subject<void>();
+  private readonly navigateToCreateNewPrepaidTariffRequestedSubject = new Subject<void>();
   private readonly navigateToEditTariffRequestedSubject = new Subject<number>();
+  private readonly navigateToEditPrepaidTariffRequestedSubject = new Subject<number>();
   private readonly navigateToCreateNewRoleRequestedSubject = new Subject<void>();
   private readonly navigateToEditRoleRequestedSubject = new Subject<number>();
 
@@ -39,6 +41,22 @@ export class RouteNavigationService {
 
   getNavigateToCreateNewTariffRequested(): Observable<void> {
     return this.navigateToCreateNewTariffRequestedSubject.asObservable();
+  }
+
+  navigateToEditPrepaidTariffRequested(tariffId: number): void {
+    this.navigateToEditPrepaidTariffRequestedSubject.next(tariffId);
+  }
+
+  getNavigateToEditPrepaidTariffRequested(): Observable<number> {
+    return this.navigateToEditPrepaidTariffRequestedSubject.asObservable();
+  }
+
+  navigateToCreateNewPrepaidTariffRequested(): void {
+    this.navigateToCreateNewPrepaidTariffRequestedSubject.next();
+  }
+
+  getNavigateToCreateNewPrepaidTariffRequested(): Observable<void> {
+    return this.navigateToCreateNewPrepaidTariffRequestedSubject.asObservable();
   }
 
   navigateToEditDeviceRequested(deviceId: number): void {

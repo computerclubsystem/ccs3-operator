@@ -47,6 +47,12 @@
       "@ccs3-operator/system-settings/tariffs/create": [
         "projects/system-settings/src/lib/tariffs/create/public-api.ts"
       ],
+      "@ccs3-operator/system-settings/prepaid-tariffs": [
+        "projects/system-settings/src/lib/prepaid-tariffs/public-api.ts"
+      ],
+      "@ccs3-operator/system-settings/prepaid-tariffs/create": [
+        "projects/system-settings/src/lib/prepaid-tariffs/create/public-api.ts"
+      ],
       "@ccs3-operator/system-settings/users": [
         "projects/system-settings/src/lib/users/public-api.ts"
       ],
@@ -67,6 +73,9 @@
       ],
       "@ccs3-operator/expand-button": [
         "projects/expand-button/src/public-api.ts"
+      ],
+      "@ccs3-operator/boolean-indicator": [
+        "projects/boolean-indicator/src/public-api.ts"
       ],
     },
     "outDir": "./dist/out-tsc",

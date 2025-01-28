@@ -23,7 +23,7 @@
         </td>
         <td class="ccs3-op-align-text-start">{{user.id}}</td>
         <td class="ccs3-op-align-text-start">{{user.username}}</td>
-        <td class="ccs3-op-align-text-start">{{user.enabled}}</td>
+        <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="user.enabled" /></td>
         <td class="ccs3-op-align-text-end">{{user.createdAt}}</td>
         <td class="ccs3-op-align-text-end">{{user.updatedAt}}</td>
       </tr>

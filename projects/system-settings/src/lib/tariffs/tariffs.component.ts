@@ -13,13 +13,14 @@ import {
   RouteNavigationService
 } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
+import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 
 @Component({
   selector: 'ccs3-op-system-settings-tariffs',
   templateUrl: 'tariffs.component.html',
   standalone: true,
   imports: [
-    MatButtonModule, MatIconModule, TranslocoDirective, FullDatePipe, MinutesToTimePipe,
+    MatButtonModule, MatIconModule, TranslocoDirective, BooleanIndicatorComponent, FullDatePipe, MinutesToTimePipe,
     TariffTypeToNamePipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,6 +43,7 @@ export class TariffsComponent implements OnInit {
 
   loadAllTariffs(): void {
     const msg = createGetAllTariffsRequestMessage();
+    msg.body.types = [TariffType.duration, TariffType.fromTo];
     this.messageTransportSvc.sendAndAwaitForReply<GetAllTariffsRequestMessageBody>(msg)
       .subscribe(getAllTariffsReplyMsg => this.processGetAllTariffsReplyMessage(getAllTariffsReplyMsg));
   }
@@ -78,10 +80,6 @@ interface Signals {
 }
 
 interface TariffDisplayItem {
-  // TODO: Create pipes for these ?
   tariffTypeName: string;
-  tariffDurationText?: string;
-  tariffFromTimeText?: string;
-  tariffToTimeText?: string;
   tariff: Tariff;
 }

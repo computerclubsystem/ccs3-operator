@@ -83,6 +83,8 @@ export class AppComponent implements OnInit {
   subscribeToRouteNavigationSubjects(): void {
     this.routeNavigationSvc.getNavigateToCreateNewTariffRequested().subscribe(() => this.processNavigateToCreateNewTariffRequested());
     this.routeNavigationSvc.getNavigateToEditTariffRequested().subscribe(tariffId => this.processNavigateToEditTariffRequested(tariffId));
+    this.routeNavigationSvc.getNavigateToCreateNewPrepaidTariffRequested().subscribe(() => this.processNavigateToCreateNewPrepaidTariffRequested());
+    this.routeNavigationSvc.getNavigateToEditPrepaidTariffRequested().subscribe(tariffId => this.processNavigateToEditPrepaidTariffRequested(tariffId));
     this.routeNavigationSvc.getNavigateToCreateNewRoleRequested().subscribe(() => this.processNavigateToCreateNewRoleRequested());
     this.routeNavigationSvc.getNavigateToEditRoleRequested().subscribe(roleId => this.processNavigateToEditRoleRequested(roleId));
     this.routeNavigationSvc.getNavigateToEditDeviceRequested().subscribe(deviceId => this.processNavigateToEditDeviceRequested(deviceId));
@@ -99,23 +101,31 @@ export class AppComponent implements OnInit {
   }
 
   processNavigateToEditRoleRequested(roleId: number): void {
-    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsRoles, roleId, RouteName.systemSettingsRolesEdit]);
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsRoles, roleId, RouteName.sharedRouteEdit]);
   }
 
   processNavigateToCreateNewRoleRequested(): void {
-    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsRoles, RouteName.systemSettingsRolesCreate]);
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsRoles, RouteName.sharedRouteCreate]);
+  }
+
+  processNavigateToEditPrepaidTariffRequested(tariffId: number): void {
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsPrepaidTariffs, tariffId, RouteName.sharedRouteEdit]);
+  }
+
+  processNavigateToCreateNewPrepaidTariffRequested(): void {
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsPrepaidTariffs, RouteName.sharedRouteCreate]);
   }
 
   processNavigateToEditTariffRequested(tariffId: number): void {
-    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsTariffs, tariffId, RouteName.systemSettingsTariffsEdit]);
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsTariffs, tariffId, RouteName.sharedRouteEdit]);
   }
 
   processNavigateToCreateNewTariffRequested(): void {
-    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsTariffs, RouteName.systemSettingsTariffsCreate]);
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsTariffs, RouteName.sharedRouteCreate]);
   }
 
   processNavigateToEditDeviceRequested(deviceId: number): void {
-    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsDevices, deviceId, RouteName.systemSettingsDevicesEdit]);
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsDevices, deviceId, RouteName.sharedRouteEdit]);
   }
 
   processMessageTimedOutErrorData(messageTimedOutErrorData: MessageTimedOutErrorData): void {

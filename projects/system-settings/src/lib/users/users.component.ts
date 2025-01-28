@@ -8,12 +8,13 @@ import { IconName } from '@ccs3-operator/shared/types';
 import { InternalSubjectsService, MessageTransportService } from '@ccs3-operator/shared';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 
 @Component({
   selector: 'ccs3-op-system-settings-users',
   templateUrl: 'users.component.html',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, TranslocoDirective],
+  imports: [MatButtonModule, MatIconModule, TranslocoDirective, BooleanIndicatorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersComponent implements OnInit {

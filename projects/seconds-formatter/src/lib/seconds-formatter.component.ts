@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input, Signal } from '@angular/core';
-import { translate, TranslocoDirective } from '@jsverse/transloco';
+import { ChangeDetectionStrategy, Component, computed, inject, input, Signal } from '@angular/core';
+import { TranslocoDirective } from '@jsverse/transloco';
+
+import { ComputedValueResult } from './declarations';
+import { SecondsFormatterService } from './seconds-formatter.service';
 
 @Component({
   selector: 'ccs3-op-seconds-formatter',
@@ -12,39 +15,9 @@ export class SecondsFormatterComponent {
   value = input<number | undefined | null>(0);
   traditionalDisplay = input<boolean | undefined | null>(false);
 
-  signals = this.createSignals();
+  private readonly secondsFormatterSvc = inject(SecondsFormatterService);
 
-  getComputedValue(value?: number | null): ComputedValueResult {
-    if (!value || isNaN(value)) {
-      value = 0;
-    }
-    const totalSeconds = +value;
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor(totalSeconds / 60) % 60;
-    const seconds = totalSeconds % 60;
-    const result = {
-      hours,
-      minutes,
-      seconds,
-    } as ComputedValueResult;
-    if (this.traditionalDisplay()) {
-      // Format as zero-padded values like '0:00:01'
-      result.hoursText = `${hours}`;
-      result.minutesText = this.padValue(minutes);
-      result.secondsText = this.padValue(seconds);
-      return result;
-    } else {
-      // Format by adding abbreviatures
-      if (result.hours) {
-        result.hoursText = `${result.hours}${translate('Hours abbreviation')}`;
-      }
-      if (result.minutes) {
-        result.minutesText = `${result.minutes}${translate('Minutes abbreviation')}`;
-      }
-      result.secondsText = `${result.seconds}${translate('Seconds abbreviation')}`;
-      return result;
-    }
-  }
+  signals = this.createSignals();
 
   createComputedValueResult(hours: number, minutes: number, seconds: number): ComputedValueResult {
     const result: ComputedValueResult = {
@@ -58,13 +31,9 @@ export class SecondsFormatterComponent {
     return result;
   }
 
-  padValue(value: number): string {
-    return value.toString().padStart(2, '0');
-  }
-
   createSignals(): Signals {
     const signals: Signals = {
-      computedValue: computed(() => this.getComputedValue(this.value()))
+      computedValue: computed(() => this.secondsFormatterSvc.getComputedValue(this.value(), this.traditionalDisplay()))
     };
     return signals;
   }
@@ -72,13 +41,4 @@ export class SecondsFormatterComponent {
 
 interface Signals {
   computedValue: Signal<ComputedValueResult>;
-}
-
-interface ComputedValueResult {
-  hours: number;
-  hoursText: string;
-  minutes: number;
-  minutesText: string;
-  seconds: number;
-  secondsText: string;
 }

@@ -11,16 +11,12 @@ export enum RouteName {
   signedOutSessionStats = 'signed-out-session-stats',
   systemSettings = 'system-settings',
   systemSettingsDevices = 'devices',
-  systemSettingsDevicesEdit = 'edit',
   systemSettingsTariffs = 'tariffs',
-  systemSettingsTariffsCreate = 'create',
-  systemSettingsTariffsEdit = 'edit',
+  systemSettingsPrepaidTariffs = 'prepaid-tariffs',
   systemSettingsUsers = 'users',
-  systemSettingsUsersCreate = 'create',
-  systemSettingsUsersEdit = 'edit',
   systemSettingsRoles = 'roles',
-  systemSettingsRolesCreate = 'create',
-  systemSettingsRolesEdit = 'edit',
+  sharedRouteCreate = 'create',
+  sharedRouteEdit = 'edit',
 }
 
 export const routes: Routes = [
@@ -49,7 +45,7 @@ export const routes: Routes = [
         loadComponent: () => import('@ccs3-operator/system-settings/devices').then(x => x.DevicesComponent),
       },
       {
-        path: `${RouteName.systemSettingsDevices}/:deviceId/${RouteName.systemSettingsDevicesEdit}`,
+        path: `${RouteName.systemSettingsDevices}/:deviceId/${RouteName.sharedRouteEdit}`,
         loadComponent: () => import('@ccs3-operator/system-settings/devices/edit').then(x => x.EditDeviceComponent),
       },
       {
@@ -57,23 +53,35 @@ export const routes: Routes = [
         loadComponent: () => import('@ccs3-operator/system-settings/tariffs').then(x => x.TariffsComponent),
       },
       {
-        path: `${RouteName.systemSettingsTariffs}/${RouteName.systemSettingsTariffsCreate}`,
+        path: `${RouteName.systemSettingsTariffs}/${RouteName.sharedRouteCreate}`,
         loadComponent: () => import('@ccs3-operator/system-settings/tariffs/create').then(x => x.CreateTariffComponent),
       },
       {
-        path: `${RouteName.systemSettingsTariffs}/:tariffId/${RouteName.systemSettingsTariffsEdit}`,
+        path: `${RouteName.systemSettingsTariffs}/:tariffId/${RouteName.sharedRouteEdit}`,
         loadComponent: () => import('@ccs3-operator/system-settings/tariffs/create').then(x => x.CreateTariffComponent),
+      },
+      {
+        path: RouteName.systemSettingsPrepaidTariffs,
+        loadComponent: () => import('@ccs3-operator/system-settings/prepaid-tariffs').then(x => x.PrepaidTariffsComponent),
+      },
+      {
+        path: `${RouteName.systemSettingsPrepaidTariffs}/${RouteName.sharedRouteCreate}`,
+        loadComponent: () => import('@ccs3-operator/system-settings/prepaid-tariffs/create').then(x => x.CreatePrepaidTariffComponent),
+      },
+      {
+        path: `${RouteName.systemSettingsPrepaidTariffs}/:tariffId/${RouteName.sharedRouteEdit}`,
+        loadComponent: () => import('@ccs3-operator/system-settings/prepaid-tariffs/create').then(x => x.CreatePrepaidTariffComponent),
       },
       {
         path: RouteName.systemSettingsUsers,
         loadComponent: () => import('@ccs3-operator/system-settings/users').then(x => x.UsersComponent),
       },
       {
-        path: `${RouteName.systemSettingsUsers}/${RouteName.systemSettingsUsersCreate}`,
+        path: `${RouteName.systemSettingsUsers}/${RouteName.sharedRouteCreate}`,
         loadComponent: () => import('@ccs3-operator/system-settings/users/create').then(x => x.CreateUserComponent),
       },
       {
-        path: `${RouteName.systemSettingsUsers}/:userId/${RouteName.systemSettingsUsersEdit}`,
+        path: `${RouteName.systemSettingsUsers}/:userId/${RouteName.sharedRouteEdit}`,
         loadComponent: () => import('@ccs3-operator/system-settings/users/create').then(x => x.CreateUserComponent),
       },
       {
@@ -81,11 +89,11 @@ export const routes: Routes = [
         loadComponent: () => import('@ccs3-operator/system-settings/roles').then(x => x.RolesComponent),
       },
       {
-        path: `${RouteName.systemSettingsRoles}/${RouteName.systemSettingsRolesCreate}`,
+        path: `${RouteName.systemSettingsRoles}/${RouteName.sharedRouteCreate}`,
         loadComponent: () => import('@ccs3-operator/system-settings/roles/create').then(x => x.CreateRoleComponent),
       },
       {
-        path: `${RouteName.systemSettingsRoles}/:roleId/${RouteName.systemSettingsRolesEdit}`,
+        path: `${RouteName.systemSettingsRoles}/:roleId/${RouteName.sharedRouteEdit}`,
         loadComponent: () => import('@ccs3-operator/system-settings/roles/create').then(x => x.CreateRoleComponent),
       },
     ]

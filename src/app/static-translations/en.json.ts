@@ -31,5 +31,8 @@ export const en = {
   "Will continue with tariff {{tariffName}}": "Will continue with tariff '{{tariffName}}'",
   "Hours abbreviation": "h",
   "Minutes abbreviation": "m",
-  "Seconds abbreviation": "s"
+  "Seconds abbreviation": "s",
+  "Tariff with ID {{id}} created": "Tariff with ID {{id}} created",
+  "Recharge duration {{duration}} for price {{price}}": "Recharge duration {{duration}} for price {{price}}",
+  "New remaining time {{remainingTime}}": "New remaining time {{remainingTime}}"
 };

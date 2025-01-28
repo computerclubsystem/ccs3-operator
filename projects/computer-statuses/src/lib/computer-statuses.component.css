@@ -1,0 +1,15 @@
+:ccs3-op-computer-statuses {
+  --ccs3-op-computers-container-grid-columns: 1;
+  --ccs3-op-computers-container-grid-rows: auto;
+}
+
+.ccs3-op-computer-statuses-component {
+  container-type: inline-size;
+}
+
+.computers-container {
+  display: grid;
+  gap: var(--ccs3-op-half-gap);
+  grid-template-columns: repeat(var(--ccs3-np-computers-container-grid-columns), 1fr);
+  grid-template-rows: repeat(var(--ccs3-op-computers-container-grid-rows), auto);
+}

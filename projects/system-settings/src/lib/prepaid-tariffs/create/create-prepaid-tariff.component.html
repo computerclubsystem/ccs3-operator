@@ -1,0 +1,105 @@
+<mat-card *transloco="let t;">
+  @let durationFormControls = getDurationFormControls();
+  @let tariff = signals.tariff();
+  <mat-card-header>
+    <mat-card-title>
+      @if (signals.isCreate()){
+      {{t('Create prepaid tariff')}}
+      } @else {
+      {{t('Edit prepaid tariff')}} {{tariff?.id}}
+      }
+    </mat-card-title>
+    <mat-card-subtitle>
+      @if (signals.isLoading()){
+      <span>{{t('Loading...')}}</span>
+      }
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    @if (!signals.isLoading()) {
+    <form [formGroup]="form" class="ccs3-op-flex-column ccs3-op-max-width-large-text">
+      <mat-form-field>
+        <mat-label>{{t('Name')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.name" autocomplete="off" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{t('Description')}}</mat-label>
+        <input matInput type="text" [formControl]="form.controls.description" autocomplete="off" />
+      </mat-form-field>
+      <mat-checkbox [formControl]="form.controls.enabled">{{t('Active')}}</mat-checkbox>
+      <mat-form-field>
+        <mat-label>{{t('Duration')}}</mat-label>
+        <input matInput type="text" [formControl]="durationFormControls.duration" autocomplete="off" />
+        <mat-hint>{{t('Duration in "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-hint>
+        @if (signals.durationHasNotTwoPartsError()) {
+        <mat-error>{{t('Use "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-error>
+        }
+        @if (signals.durationHasOutOfRangeError()) {
+        <mat-error>{{t('Hours must be 0 or greater. Minutes must be between 0 and 59')}}</mat-error>
+        }
+        @if (signals.durationHasInvalidCharError()) {
+        <mat-error>{{t('Invalid character. Use "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{t('Price')}}</mat-label>
+        <input matInput type="number" [formControl]="form.controls.price" autocomplete="off" />
+        <mat-hint>Use dot as separator - 1.50, 4.00, 10.50 etc.</mat-hint>
+        @if (signals.priceHasError()) {
+        <mat-error>{{t('Invalid number. Use only digits and dot as separator - 1.50, 4.00, 10.50 etc.')}}</mat-error>
+        }
+      </mat-form-field>
+      @if (!signals.isCreate()) {
+      <section class="ccs3-op-flex-row">
+        <mat-label>{{t('Remaining time')}}</mat-label>
+        <ccs3-op-seconds-formatter [value]="tariff?.remainingSeconds"></ccs3-op-seconds-formatter>
+      </section>
+      <section class="add-tariff-duration">
+        @let translationParams = {duration: signals.initialDuration(), price: signals.initialPrice()};
+        <button (click)="onRecharge()" [disabled]="signals.rechargingTariffInProgress()" mat-flat-button>
+          {{t('Recharge duration {{duration}} for price {{price}}', translationParams)}}
+        </button>
+      </section>
+      }
+      <mat-checkbox [formControl]="form.controls.canBeStartedByCustomer">
+        {{t('Can be started by customer')}}
+      </mat-checkbox>
+      @if (!signals.isCreate()) {
+      <mat-checkbox [formControl]="form.controls.setPassword">{{t('Set password')}}</mat-checkbox>
+      }
+      @if (signals.showPasswords()) {
+      @let passwordsAreDifferent = hasPasswordsNotEqualError();
+      <mat-form-field>
+        <mat-label>{{t('Password')}}</mat-label>
+        <input matInput type="password" name="new-password" [formControl]="form.controls.password"
+          autocomplete="new-password" />
+        @if (passwordsAreDifferent){
+        <mat-error>{{t('Passwords do not match')}}</mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{t('Confirm password')}}</mat-label>
+        <input matInput type="password" name="confirm-new-password" [formControl]="form.controls.confirmPassword"
+          autocomplete="new-password" />
+        @if (passwordsAreDifferent){
+        <mat-error>{{t('Passwords do not match')}}</mat-error>
+        }
+      </mat-form-field>
+      }
+      @let createdTariff = signals.createdTariff();
+      @if (createdTariff) {
+      <section class="ccs3-op-flex-row">
+        <span>{{t('Created tariff ID:')}}</span>
+        <span>{{createdTariff.id}}</span>
+      </section>
+      }
+    </form>
+    }
+  </mat-card-content>
+  <mat-card-actions>
+    <section class="ccs3-op-flex-row">
+      <button (click)="onSave()" mat-flat-button [disabled]="form.invalid">{{t('Save')}}</button>
+      <button (click)="onGoToList()" mat-raised-button>{{t('Go back to list')}}</button>
+    </section>
+  </mat-card-actions>
+</mat-card>

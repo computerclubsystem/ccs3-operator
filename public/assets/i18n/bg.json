@@ -30,5 +30,8 @@
   "Will continue with tariff {{tariffName}}": "Ще продължи на тарифа '{{tariffName}}'",
   "Hours abbreviation": "ч",
   "Minutes abbreviation": "м",
-  "Seconds abbreviation": "с"
+  "Seconds abbreviation": "с",
+  "Tariff with ID {{id}} created": "Тарифата беше създадена с ID {{id}}",
+  "Recharge duration {{duration}} for price {{price}}": "Добави време {{duration}} на цена {{price}}",
+  "New remaining time {{remainingTime}}": "Ново оставащо време {{remainingTime}}"
 }

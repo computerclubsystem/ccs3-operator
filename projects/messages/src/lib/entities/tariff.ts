@@ -1,6 +1,7 @@
 export enum TariffType {
   duration = 1,
   fromTo = 2,
+  prepaid = 3,
 }
 
 export interface Tariff {
@@ -18,4 +19,6 @@ export interface Tariff {
   restrictStartFromTime?: number | null;
   restrictStartTime?: boolean | null;
   restrictStartToTime?: number | null;
+  remainingSeconds?: number | null;
+  canBeStartedByCustomer?: boolean | null;
 }

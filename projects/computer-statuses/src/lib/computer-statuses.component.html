@@ -1,10 +1,12 @@
 <ng-container *transloco="let t;">
-  <div class="ccs3-op-computer-statuses-component ccs3-op-flex-column ccs3-op-half-gap">
-    @let items = signals.deviceStatusItems();
-    @for (item of items; track item.deviceStatus.deviceId) {
-    <ng-container [ngTemplateOutlet]="standardCard" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
-    }
-  </div>
+  <section class="ccs3-op-computer-statuses-component">
+    <section class="computers-container">
+      @let items = signals.deviceStatusItems();
+      @for (item of items; track item.deviceStatus.deviceId) {
+      <ng-container [ngTemplateOutlet]="standardCard" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
+      }
+    </section>
+  </section>
 
   @let totalTranslation = t('Total');
   @let elapsedTimeTranslation = t('Elapsed time');
@@ -31,7 +33,7 @@
 
   <ng-template #standardCard let-templateContext>
     @let item = deviceStatusItemIdentity(templateContext);
-    <mat-card appearance="outlined">
+    <mat-card appearance="outlined" class="computer-status-container">
       <mat-card-header>
         <mat-card-title>
           <div class="device-title-info ccs3-op-flex-row ccs3-op-align-items-baseline ccs3-op-line-height-normal">
@@ -70,11 +72,9 @@
             <section class="ccs3-op-two-col-grid ccs3-op-half-gap">
               <span>{{tariffTranslation}}</span>
               <span class="tariff-name">{{item.tariffName}}</span>
-              @if (item.deviceStatus.started) {
               <span>{{elapsedTimeTranslation}}</span>
-              <ccs3-op-seconds-formatter [value]="item.deviceStatus.totalTime"
-                class="elapsed-time"></ccs3-op-seconds-formatter>
-              }
+              <ccs3-op-seconds-formatter [value]="item.deviceStatus.totalTime" class="elapsed-time">
+              </ccs3-op-seconds-formatter>
               <span>{{startedTranslation}}</span>
               <span class="started-at">{{item.deviceStatus.startedAt | noYearDate}}</span>
               @if (item.deviceStatus.stoppedAt) {
@@ -158,8 +158,7 @@
             </section>
             <section class="device-options-sections">
               @if (item.optionsVisibility.stop) {
-              <section
-                class="stop-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
+              <section class="stop-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
                 <mat-form-field>
                   <mat-label>{{t('Stop note')}}</mat-label>
                   <textarea (input)="onStopNoteChanged($event, item)" matInput class="stop-note-input"></textarea>
@@ -173,8 +172,7 @@
               </section>
               }
               @if (item.optionsVisibility.transfer) {
-              <section
-                class="transfer-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
+              <section class="transfer-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
                 <mat-form-field>
                   <mat-label>{{t('Transfer to')}}</mat-label>
                   <mat-select (valueChange)="onTransferToChanged($event, item)"
@@ -203,8 +201,7 @@
                   <span>{{getTariffName(item.deviceStatus.continuationTariffId)}}</span>
                 </section>
                 }
-                <section
-                  class="continue-with-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
+                <section class="continue-with-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
                   <mat-form-field>
                     <mat-label>{{continueWithTranslation}}</mat-label>
                     <mat-select (valueChange)="onContinueWithChanged($event, item)"

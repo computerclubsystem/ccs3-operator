@@ -52,6 +52,8 @@ export const enum MessageType {
   createDeviceContinuationReply = 'create-device-continuation-reply',
   deleteDeviceContinuationRequest = 'delete-device-continuation-request',
   deleteDeviceContinuationReply = 'delete-device-continuation-reply',
+  rechargeTariffDurationRequest = 'recharge-tariff-duration-request',
+  rechargeTariffDurationReply = 'recharge-tariff-duration-reply',
 }
 
 export const enum ReplyMessageType {

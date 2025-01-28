@@ -16,9 +16,10 @@ export class SystemSettingsComponent {
     const links: Link[] = [
       { routerLink: 'devices', translationKey: 'Devices' },
       { routerLink: 'tariffs', translationKey: 'Tariffs' },
+      { routerLink: 'prepaid-tariffs', translationKey: 'Prepaid tariffs' },
       { routerLink: 'users', translationKey: 'Users' },
       { routerLink: 'roles', translationKey: 'Roles' },
-      { routerLink: 'system-variables', translationKey: 'System variables' },
+      // { routerLink: 'system-variables', translationKey: 'System variables' },
     ];
     const signals: Signals = {
       links: signal(links),

@@ -15,9 +15,10 @@ import { filter, takeUntil } from 'rxjs';
 
 import {
   createCreateDeviceContinuationRequestMessage,
+  createDeleteDeviceContinuationRequestMessage,
   CreateDeviceContinuationReplyMessage,
   createGetAllDevicesRequestMessage, createGetAllTariffsRequestMessage, createGetDeviceStatusesRequestMessage,
-  createStartDeviceRequestMessage, createStopDeviceRequestMessage, createTransferDeviceRequestMessage, Device,
+  createStartDeviceRequestMessage, createStopDeviceRequestMessage, createTransferDeviceRequestMessage, DeleteDeviceContinuationReplyMessage, Device,
   DeviceConnectivityItem, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage,
   GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, NotificationMessageType,
   OperatorDeviceConnectivitiesNotificationMessage, StartDeviceReplyMessage, StopDeviceReplyMessage, Tariff,
@@ -30,18 +31,17 @@ import { SecondsFormatterComponent } from '@ccs3-operator/seconds-formatter';
 import { ExpandButtonComponent, ExpandButtonType } from '@ccs3-operator/expand-button';
 import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { TariffService } from './tariff.service';
-import { createDeleteDeviceContinuationRequestMessage } from 'projects/messages/src/lib/delete-device-continuation-request.message';
-import { DeleteDeviceContinuationReplyMessage } from 'projects/messages/src/lib/delete-device-continuation-reply.message.mjs';
 
 @Component({
   selector: 'ccs3-op-computer-statuses',
+  templateUrl: 'computer-statuses.component.html',
+  styleUrls: ['computer-statuses.component.css'],
   standalone: true,
   imports: [
     MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
     TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
     SecondsFormatterComponent, ExpandButtonComponent
   ],
-  templateUrl: 'computer-statuses.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComputerStatusesComponent implements OnInit {

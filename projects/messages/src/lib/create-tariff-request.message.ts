@@ -4,6 +4,7 @@ import { MessageType } from './declarations/message-type';
 
 export interface CreateTariffRequestMessageBody {
   tariff: Tariff;
+  passwordHash: string;
 }
 
 export interface CreateTariffRequestMessage extends Message<CreateTariffRequestMessageBody> {

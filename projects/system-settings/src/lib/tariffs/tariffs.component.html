@@ -1,5 +1,7 @@
 <ng-container *transloco="let t;">
   @let tariffDisplayItems = signals.tariffDisplayItems();
+  @let editTranslated = t('Edit');
+
   <table class="ccs3-op-border-spacing">
     <thead>
       <tr>
@@ -25,7 +27,6 @@
       @let tariff = tariffDisplayItem.tariff;
       <tr>
         <td class="ccs3-op-align-text-start">
-          @let editTranslated = t('Edit');
           <button mat-icon-button (click)="onEditTariff(tariff)" title="{{editTranslated}}"
             [attr.aria-label]="editTranslated">
             <mat-icon>{{iconName.edit}}</mat-icon>
@@ -58,7 +59,7 @@
         <td class="ccs3-op-align-text-end"></td>
         <td class="ccs3-op-align-text-end"></td>
         }
-        <td class="ccs3-op-align-text-start">{{tariff.enabled}}</td>
+        <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="tariff.enabled" /></td>
         <td class="ccs3-op-align-text-start">{{tariff.description}}</td>
         <td class="ccs3-op-align-text-start">{{tariff.createdAt | fullDate}}</td>
         <td class="ccs3-op-align-text-start">{{tariff.updatedAt | fullDate}}</td>

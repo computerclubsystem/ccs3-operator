@@ -19,7 +19,7 @@
       @let passwordsAreDifferent = hasPasswordsNotEqualError();
       <mat-form-field>
         <mat-label>{{t('Username')}}</mat-label>
-        <input matInput type="text" [formControl]="form.controls.username" autocomplete="off" />
+        <input matInput type="text" [formControl]="form.controls.username" autocomplete="new-password" />
       </mat-form-field>
       @if (!signals.isCreate()) {
       <mat-checkbox [formControl]="form.controls.setPassword">{{t('Set password')}}</mat-checkbox>
@@ -27,7 +27,7 @@
       @if (signals.showPasswords()) {
       <mat-form-field>
         <mat-label>{{t('Password')}}</mat-label>
-        <input matInput type="password" [formControl]="form.controls.password" autocomplete="off" />
+        <input matInput type="password" [formControl]="form.controls.password" autocomplete="new-password" />
         @if (passwordsAreDifferent){
         <mat-error>{{t('Passwords do not match')}}</mat-error>
         }

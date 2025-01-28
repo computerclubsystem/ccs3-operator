@@ -15,3 +15,4 @@ export { TariffTypeToNamePipe } from './lib/tariff-type-to-name.pipe';
 export { RouteNavigationService } from './lib/route-navigation.service';
 export { ValidatorsService } from './lib/validators.service';
 export { HashService } from './lib/hash.service';
+export { TimeConverterService } from './lib/time-converter.service';

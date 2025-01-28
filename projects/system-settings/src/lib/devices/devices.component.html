@@ -26,8 +26,8 @@
       </td>
       <td>{{device.id}}</td>
       <td>{{device.name}}</td>
-      <td>{{device.approved}}</td>
-      <td>{{device.enabled}}</td>
+      <td><ccs3-op-boolean-indicator [value]="device.approved" /></td>
+      <td><ccs3-op-boolean-indicator [value]="device.enabled" /></td>
       <td>{{device.createdAt | fullDate}}</td>
       <td>{{device.description}}</td>
       <td>{{device.certificateThumbprint}}</td>

@@ -23,7 +23,7 @@
         <td class="ccs3-op-align-text-start">{{role.id}}</td>
         <td class="ccs3-op-align-text-start">{{role.name}}</td>
         <td class="ccs3-op-align-text-start">{{role.description}}</td>
-        <td class="ccs3-op-align-text-start">{{role.enabled}}</td>
+        <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="role.enabled" /></td>
       </tr>
       }
     </tbody>

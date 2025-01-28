@@ -10,12 +10,13 @@ import {
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, FullDatePipe, RouteNavigationService } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
+import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 
 @Component({
   selector: 'ccs3-op-system-settings-devices',
   templateUrl: 'devices.component.html',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, TranslocoPipe, FullDatePipe],
+  imports: [MatButtonModule, MatIconModule, BooleanIndicatorComponent, TranslocoPipe, FullDatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DevicesComponent implements OnInit {

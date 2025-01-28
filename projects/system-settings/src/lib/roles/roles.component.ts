@@ -8,12 +8,13 @@ import { InternalSubjectsService, MessageTransportService, RouteNavigationServic
 import { createGetAllRolesRequestMessage, GetAllRolesReplyMessage, Role } from '@ccs3-operator/messages';
 import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
+import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 
 @Component({
   selector: 'ccs3-op-system-settings-roles',
   templateUrl: 'roles.component.html',
   standalone: true,
-  imports: [MatButtonModule, MatIconModule, TranslocoDirective],
+  imports: [MatButtonModule, MatIconModule, TranslocoDirective, BooleanIndicatorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RolesComponent implements OnInit {

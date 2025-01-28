@@ -35,7 +35,7 @@
           @for (availablePermission of signals.availablePermissions(); track availablePermission.id) {
           <div class="ccs3-op-flex-row">
             <button (click)="onAddPermission(availablePermission)" mat-icon-button>
-              <mat-icon>{{iconName.add}}</mat-icon>
+              <mat-icon class="ccs3-op-success-color">{{iconName.add}}</mat-icon>
             </button>
             <div class="ccs3-op-flex-column">
               <div class="permission-name">{{availablePermission.name}}</div>
@@ -53,7 +53,7 @@
           @for (rolePermission of signals.rolePermissions(); track rolePermission.id) {
           <div class="ccs3-op-flex-row">
             <button (click)="onRemovePermission(rolePermission)" mat-icon-button>
-              <mat-icon>{{iconName.remove}}</mat-icon>
+              <mat-icon class="ccs3-op-error-color">{{iconName.remove}}</mat-icon>
             </button>
             <div class="ccs3-op-flex-column">
               <div class="permission-name">{{rolePermission.name}}</div>

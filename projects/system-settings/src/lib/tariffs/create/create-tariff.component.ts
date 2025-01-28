@@ -15,7 +15,7 @@ import {
   createCreateTariffRequestMessage, createGetTariffByIdRequestMessage, CreateTariffReplyMessage,
   createUpdateTariffRequestMessage, GetTariffByIdReplyMessage, Tariff, TariffType, UpdateTariffReplyMessage
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService } from '@ccs3-operator/shared';
+import { InternalSubjectsService, MessageTransportService, TimeConverterService } from '@ccs3-operator/shared';
 import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
 import { CreateTariffService } from './create-tariff.service';
 import { DurationFormControls, FormControls, FromToFormControls, Signals } from './declarations';
@@ -38,6 +38,7 @@ export class CreateTariffComponent implements OnInit {
 
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
+  private readonly timeConverterSvc = inject(TimeConverterService);
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly notificationsSvc = inject(NotificationsService);
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
@@ -84,14 +85,14 @@ export class CreateTariffComponent implements OnInit {
       price: tariff.price,
       type: this.tariffTypeItems.find(x => x.id === tariff.type),
       durationTypeGroup: {
-        duration: this.createTariffSvc.convertMinutesToTime(tariff.duration),
+        duration: this.timeConverterSvc.convertMinutesToTime(tariff.duration),
         restrictStart: tariff.restrictStartTime,
-        restrictStartFromTime: this.createTariffSvc.convertMinutesToTime(tariff.restrictStartFromTime),
-        restrictStartToTime: this.createTariffSvc.convertMinutesToTime(tariff.restrictStartToTime),
+        restrictStartFromTime: this.timeConverterSvc.convertMinutesToTime(tariff.restrictStartFromTime),
+        restrictStartToTime: this.timeConverterSvc.convertMinutesToTime(tariff.restrictStartToTime),
       },
       fromToTypeGroup: {
-        fromTime: this.createTariffSvc.convertMinutesToTime(tariff.fromTime),
-        toTime: this.createTariffSvc.convertMinutesToTime(tariff.toTime),
+        fromTime: this.timeConverterSvc.convertMinutesToTime(tariff.fromTime),
+        toTime: this.timeConverterSvc.convertMinutesToTime(tariff.toTime),
       }
     });
     this.signals.isLoading.set(false);
@@ -142,12 +143,12 @@ export class CreateTariffComponent implements OnInit {
     const formValue = this.form.value;
     const isDuration = formValue.type?.id === TariffType.duration;
     const isFromTo = formValue.type?.id === TariffType.fromTo;
-    const tariffDuration = isDuration ? this.createTariffSvc.convertTimeToMinutes(formValue.durationTypeGroup!.duration!) : null;
+    const tariffDuration = isDuration ? this.timeConverterSvc.convertTimeToMinutes(formValue.durationTypeGroup!.duration!) : null;
     const restrictStartTime = isDuration ? formValue.durationTypeGroup?.restrictStart : null;
-    const restrictStartFromTime = (isDuration && restrictStartTime) ? this.createTariffSvc.convertTimeToMinutes(formValue.durationTypeGroup!.restrictStartFromTime!) : null;
-    const restrictStartToTime = (isDuration && restrictStartTime) ? this.createTariffSvc.convertTimeToMinutes(formValue.durationTypeGroup!.restrictStartToTime!) : null;
-    const tariffFromTime = isFromTo ? this.createTariffSvc.convertTimeToMinutes(formValue.fromToTypeGroup?.fromTime!) : null;
-    const tariffToTime = isFromTo ? this.createTariffSvc.convertTimeToMinutes(formValue.fromToTypeGroup?.toTime!) : null;
+    const restrictStartFromTime = (isDuration && restrictStartTime) ? this.timeConverterSvc.convertTimeToMinutes(formValue.durationTypeGroup!.restrictStartFromTime!) : null;
+    const restrictStartToTime = (isDuration && restrictStartTime) ? this.timeConverterSvc.convertTimeToMinutes(formValue.durationTypeGroup!.restrictStartToTime!) : null;
+    const tariffFromTime = isFromTo ? this.timeConverterSvc.convertTimeToMinutes(formValue.fromToTypeGroup?.fromTime!) : null;
+    const tariffToTime = isFromTo ? this.timeConverterSvc.convertTimeToMinutes(formValue.fromToTypeGroup?.toTime!) : null;
     const tariff = {
       name: formValue.name!,
       type: formValue.type!.id,
