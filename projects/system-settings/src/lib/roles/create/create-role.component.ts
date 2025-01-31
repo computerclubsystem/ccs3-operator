@@ -17,9 +17,9 @@ import {
   GetRoleWithPermissionsReplyMessage, Permission, Role, CreateRoleWithPermissionsReplyMessage,
   createUpdateRoleWithPermissionsRequestMessage, UpdateRoleWithPermissionsReplyMessage
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, ValidatorsService } from '@ccs3-operator/shared';
+import { InternalSubjectsService, MessageTransportService, NotificationType, ValidatorsService } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
-import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
+import { NotificationsService } from '@ccs3-operator/notifications';
 import { FormControls } from './declarations';
 
 @Component({

@@ -15,8 +15,8 @@ import {
   createCreateTariffRequestMessage, createGetTariffByIdRequestMessage, CreateTariffReplyMessage,
   createUpdateTariffRequestMessage, GetTariffByIdReplyMessage, Tariff, TariffType, UpdateTariffReplyMessage
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, TimeConverterService } from '@ccs3-operator/shared';
-import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
+import { InternalSubjectsService, MessageTransportService, NotificationType, TimeConverterService } from '@ccs3-operator/shared';
+import { NotificationsService } from '@ccs3-operator/notifications';
 import { CreateTariffService } from './create-tariff.service';
 import { DurationFormControls, FormControls, FromToFormControls, Signals } from './declarations';
 

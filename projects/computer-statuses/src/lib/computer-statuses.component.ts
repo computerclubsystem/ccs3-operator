@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, inject, OnInit, Signal, signal,
   WritableSignal
 } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
+import {  NgTemplateOutlet } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
-import { filter, takeUntil } from 'rxjs';
+import { filter } from 'rxjs';
 
 import {
   createCreateDeviceContinuationRequestMessage,
@@ -22,10 +22,11 @@ import {
   DeviceConnectivityItem, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage,
   GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, NotificationMessageType,
   OperatorDeviceConnectivitiesNotificationMessage, StartDeviceReplyMessage, StopDeviceReplyMessage, Tariff,
+  TariffType,
   TransferDeviceReplyMessage
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, NoYearDatePipe } from '@ccs3-operator/shared';
-import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
+import { InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe } from '@ccs3-operator/shared';
+import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
 import { SecondsFormatterComponent } from '@ccs3-operator/seconds-formatter';
 import { ExpandButtonComponent, ExpandButtonType } from '@ccs3-operator/expand-button';
@@ -40,7 +41,7 @@ import { TariffService } from './tariff.service';
   imports: [
     MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
     TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
-    SecondsFormatterComponent, ExpandButtonComponent
+    SecondsFormatterComponent, ExpandButtonComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -248,7 +249,7 @@ export class ComputerStatusesComponent implements OnInit {
     const currentStatusItem = currentStatusItems.find(x => x.deviceStatus.deviceId === deviceStatus.deviceId);
     deviceStatusItem.isActionsExpanded = deviceStatus.started ? false : !!currentStatusItem?.isActionsExpanded;
     deviceStatusItem.isOptionsExpanded = !deviceStatus.started ? false : !!currentStatusItem?.isOptionsExpanded;
-    deviceStatusItem.selectedTariffItem = currentStatusItem?.selectedTariffItem || this.signals.allEnabledTariffs()[0];
+    deviceStatusItem.selectedTariffItem = currentStatusItem?.selectedTariffItem || this.signals.allAvailableTariffs()[0];
     deviceStatusItem.stopNote = currentStatusItem?.stopNote;
     deviceStatusItem.selectedTransferToDeviceId = currentStatusItem?.selectedTransferToDeviceId;
     deviceStatusItem.selectedContinueWithTariffId = currentStatusItem?.selectedContinueWithTariffId;
@@ -416,18 +417,14 @@ export class ComputerStatusesComponent implements OnInit {
       lastDeviceStatusesNotificationMessage: signal(null),
       allDevicesMap: signal(new Map<number, Device>()),
       allTariffsMap: signal(new Map<number, Tariff>()),
-      allEnabledTariffs: signal([]),
+      allAvailableTariffs: signal([]),
       notStartedDeviceStatusItems: signal([]),
     };
-    signals.allEnabledTariffs = computed(() => {
-      const allTariffs = this.signals.allTariffsMap().values();
-      return Array.from(allTariffs).filter(tariff => tariff.enabled);
+    signals.allAvailableTariffs = computed(() => {
+      const allTariffs = Array.from(this.signals.allTariffsMap().values());
+      const allAvailableTariffs = allTariffs.filter(x => x.enabled && x.type !== TariffType.prepaid);
+      return allAvailableTariffs;
     });
-    // signals.notStartedDeviceStatusItems = computed(() => {
-    //   const allDeviceStatusItems = this.signals.deviceStatusItems();
-    //   const notStartedDeviceStatusItems = allDeviceStatusItems.filter(x => !x.deviceStatus.started);
-    //   return notStartedDeviceStatusItems;
-    // });
     return signals;
   }
 }
@@ -437,7 +434,7 @@ interface Signals {
   lastDeviceStatusesNotificationMessage: WritableSignal<DeviceStatusesNotificationMessage | null>;
   allDevicesMap: WritableSignal<Map<number, Device>>;
   allTariffsMap: WritableSignal<Map<number, Tariff>>;
-  allEnabledTariffs: Signal<Tariff[]>;
+  allAvailableTariffs: Signal<Tariff[]>;
   notStartedDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;
 }
 

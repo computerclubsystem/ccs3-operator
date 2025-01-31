@@ -3,8 +3,9 @@ import { MAT_SNACK_BAR_DATA, MatSnackBarRef } from '@angular/material/snack-bar'
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
-import { NotificationComponentData, NotificationItem } from './declarations';
+import { NotificationComponentData } from './declarations';
 import { IconName } from '@ccs3-operator/shared/types';
+import { NotificationItem } from '@ccs3-operator/shared';
 
 @Component({
   selector: 'ccs3-op-notification-component',

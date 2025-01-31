@@ -14,14 +14,14 @@ import { MatDividerModule } from '@angular/material/divider';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
 import { forkJoin } from 'rxjs';
 
-import { HashService, InternalSubjectsService, MessageTransportService, ValidatorsService } from '@ccs3-operator/shared';
+import { HashService, InternalSubjectsService, MessageTransportService, NotificationType, ValidatorsService } from '@ccs3-operator/shared';
 import {
   createCreateUserWithRolesRequestMessage, createGetAllRolesRequestMessage, createGetUserWithRolesRequestMessage,
   createUpdateUserWithRolesRequestMessage,
   CreateUserWithRolesReplyMessage, GetAllRolesReplyMessage, GetUserWithRolesReplyMessage, Role, UpdateUserWithRolesReplyMessage, User
 } from '@ccs3-operator/messages';
 import { IconName } from '@ccs3-operator/shared/types';
-import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
+import { NotificationsService } from '@ccs3-operator/notifications';
 
 @Component({
   selector: 'ccs3-op-system-settings-users-create',

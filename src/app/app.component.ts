@@ -12,11 +12,11 @@ import {
   RefreshTokenReplyMessage, NotAuthenticatedMessage, AuthRequestMessage,
   SignOutReplyMessage, createSignOutRequestMessage, ReplyMessage,
 } from '@ccs3-operator/messages';
-import { MessageSubjectsService, PermissionName, PermissionsService, RouteNavigationService } from '@ccs3-operator/shared';
+import { MessageSubjectsService, NotificationType, PermissionName, PermissionsService, RouteNavigationService } from '@ccs3-operator/shared';
 import { AccountMenuItem, AccountMenuItemId, IconName, MainMenuItem, MainMenuItemId, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';
 import { ToolbarComponent } from '@ccs3-operator/toolbar';
 import { MessageTransportService } from '@ccs3-operator/shared';
-import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
+import { NotificationsService } from '@ccs3-operator/notifications';
 import { InternalSubjectsService } from '@ccs3-operator/shared';
 import { AppComponentState, StorageKey } from './declarations';
 import { QueryParamName, RouteName } from './app.routes';

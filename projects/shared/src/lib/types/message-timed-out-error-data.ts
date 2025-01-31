@@ -1,4 +1,4 @@
-import { Message, MessageType } from '@ccs3-operator/messages';
+import { Message } from '@ccs3-operator/messages';
 
 export interface MessageTimedOutErrorData {
   sentAt: number;

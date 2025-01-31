@@ -16,3 +16,5 @@ export { RouteNavigationService } from './lib/route-navigation.service';
 export { ValidatorsService } from './lib/validators.service';
 export { HashService } from './lib/hash.service';
 export { TimeConverterService } from './lib/time-converter.service';
+export { NotificationType } from './lib/types/notification-type';
+export { type NotificationItem } from './lib/types/notification-item';

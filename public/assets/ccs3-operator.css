@@ -212,6 +212,11 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   background-color: var(--ccs3-op-sys-error-container);
 }
 
+/* Visibility */
+.ccs3-op-visibility-hidden {
+  visibility: hidden;
+}
+
 /* Elements */
 fieldset {
   border: none;

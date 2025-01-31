@@ -12,8 +12,8 @@ import { translate, TranslocoDirective } from '@jsverse/transloco';
 import {
   Device, GetDeviceByIdReplyMessage, UpdateDeviceReplyMessage, createGetDeviceByIdRequestMessage, createUpdateDeviceRequestMessage,
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, FullDatePipe } from '@ccs3-operator/shared';
-import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
+import { InternalSubjectsService, MessageTransportService, FullDatePipe, NotificationType } from '@ccs3-operator/shared';
+import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
 
 @Component({

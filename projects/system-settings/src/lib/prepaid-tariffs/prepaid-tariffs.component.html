@@ -11,6 +11,7 @@
         <th class="ccs3-op-align-text-end">{{t('Price')}}</th>
         <th class="ccs3-op-align-text-end">{{t('Remaining time')}}</th>
         <th class="ccs3-op-align-text-start">{{t('Active')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Can be started by customer')}}</th>
         <th class="ccs3-op-align-text-start">{{t('Description')}}</th>
         <th class="ccs3-op-align-text-start">{{t('Created at')}}</th>
         <th class="ccs3-op-align-text-start">{{t('Updated at')}}</th>
@@ -32,6 +33,7 @@
         <td class="ccs3-op-align-text-end">{{tariff.price}}</td>
         <td class="ccs3-op-align-text-end">{{tariff.remainingSeconds | secondsToTime}}</td>
         <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="tariff.enabled" /></td>
+        <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="tariff.canBeStartedByCustomer" /></td>
         <td class="ccs3-op-align-text-start">{{tariff.description}}</td>
         <td class="ccs3-op-align-text-start">{{tariff.createdAt | fullDate}}</td>
         <td class="ccs3-op-align-text-start">{{tariff.updatedAt | fullDate}}</td>

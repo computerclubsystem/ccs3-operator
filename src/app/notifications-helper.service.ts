@@ -1,10 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { translate } from '@jsverse/transloco';
 
-import { NotificationsService, NotificationType } from '@ccs3-operator/notifications';
+import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';
 import { NotAuthenticatedMessage, SignOutReplyMessage } from '@ccs3-operator/messages';
 import { OnCloseEventArgs, OnErrorEventArgs } from '@ccs3-operator/connector';
+import { NotificationType } from '@ccs3-operator/shared';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsHelperService {

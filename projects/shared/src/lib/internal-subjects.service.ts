@@ -3,13 +3,14 @@ import { filter, first, Observable, ReplaySubject, Subject } from 'rxjs';
 
 import { AuthRequestMessage, ConfigurationMessage, ReplyMessage, SignOutReplyMessage } from '@ccs3-operator/messages';
 import { AccountMenuItem, MainMenuItem, MessageTimedOutErrorData } from './types';
+import { NotificationItem } from '@ccs3-operator/shared';
 
 @Injectable({ providedIn: 'root' })
 export class InternalSubjectsService {
   private readonly signedInSubject = new ReplaySubject<boolean>(1);
   private readonly configurationMessageSubject = new ReplaySubject<ConfigurationMessage>(1);
   private readonly connectedSubject = new Subject<boolean>();
-  private readonly notificationsChangedSubject = new ReplaySubject<any>(1);
+  private readonly notificationsChangedSubject = new ReplaySubject<NotificationItem[]>(1);
   private readonly setMainMenuItemsSubject = new Subject<MainMenuItem[]>();
   private readonly mainMenuSelectedSubject = new Subject<MainMenuItem>();
   private readonly setAccountMenuItemsSubject = new Subject<AccountMenuItem[]>();
@@ -101,11 +102,11 @@ export class InternalSubjectsService {
     return this.setMainMenuItemsSubject.asObservable();
   }
 
-  setNotificationsChanged(notifications: any): void {
+  setNotificationsChanged(notifications: NotificationItem[]): void {
     this.notificationsChangedSubject.next(notifications);
   }
 
-  getNotificationsChanged(): Observable<any> {
+  getNotificationsChanged(): Observable<NotificationItem[]> {
     return this.notificationsChangedSubject.asObservable();
   }
 

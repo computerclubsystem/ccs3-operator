@@ -1,21 +1,4 @@
-import { IconName } from '@ccs3-operator/shared/types';
-
-export enum NotificationType {
-  success = 'success',
-  info = 'info',
-  warn = 'warn',
-  error = 'error',
-}
-
-export interface NotificationItem {
-  id: string;
-  type: NotificationType;
-  icon?: IconName | null;
-  title: string;
-  description?: string | null;
-  addedAt: number;
-  customData?: any;
-}
+import { NotificationItem } from '@ccs3-operator/shared';
 
 export interface NotificationComponentData {
   item: NotificationItem;
