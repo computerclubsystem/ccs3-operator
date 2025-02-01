@@ -4,10 +4,10 @@
     <thead>
       <tr>
         <th class="ccs3-op-align-text-start">{{t('Edit')}}</th>
-        <th class="ccs3-op-align-text-start">Id</th>
         <th class="ccs3-op-align-text-start">{{t('Name')}}</th>
         <th class="ccs3-op-align-text-start">{{t('Description')}}</th>
         <th class="ccs3-op-align-text-end">{{t('Active')}}</th>
+        <th class="ccs3-op-align-text-start">Id</th>
       </tr>
     </thead>
     <tbody>
@@ -20,10 +20,10 @@
             <mat-icon>{{iconName.edit}}</mat-icon>
           </button>
         </td>
-        <td class="ccs3-op-align-text-start">{{role.id}}</td>
         <td class="ccs3-op-align-text-start">{{role.name}}</td>
         <td class="ccs3-op-align-text-start">{{role.description}}</td>
         <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="role.enabled" /></td>
+        <td class="ccs3-op-align-text-start">{{role.id}}</td>
       </tr>
       }
     </tbody>
