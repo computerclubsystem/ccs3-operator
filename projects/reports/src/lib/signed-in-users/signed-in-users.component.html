@@ -3,7 +3,7 @@
   @let groups = signals.groupedSignedInUsers();
   @for (group of groups; track group.key) {
   @let username = group.items[0].username;
-  <mat-expansion-panel class="ccs3-op-mat-expansion-panel-small-padding">
+  <mat-expansion-panel togglePosition="before" class="ccs3-op-mat-expansion-panel-small-padding">
     <mat-expansion-panel-header>
       <mat-panel-title>
         <div class="ccs3-op-flex-row ccs3-op-flex-no-wrap">
