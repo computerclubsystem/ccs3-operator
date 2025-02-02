@@ -1,10 +1,10 @@
 <mat-toolbar class="ccs3-op-flex-justify-space-between">
   @let isConnected = signals.isConnected();
   <div class="ccs3-op-flex-row ccs3-op-no-gap">
-    <button mat-icon-button [matMenuTriggerFor]="mainMenu" title="{{'Main menu' | transloco}}" aria-label="Main menu">
+    <button mat-raised-button [matMenuTriggerFor]="mainMenu" title="{{'Main menu' | transloco}}" aria-label="Main menu">
       <mat-icon>{{iconName.menu}}</mat-icon>
+      <span>CCS3</span>
     </button>
-    <span>CCS3</span>
   </div>
   <div class="ccs3-op-flex-row ccs3-op-no-gap">
     @if(isConnected) {

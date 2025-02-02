@@ -1,8 +1,9 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, inject, OnInit, Signal, signal,
-  WritableSignal
+  AfterViewInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, ElementRef, inject, OnInit, Signal, signal,
+  ViewChild, WritableSignal
 } from '@angular/core';
-import {  NgTemplateOutlet } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,16 +15,15 @@ import { translate, TranslocoDirective } from '@jsverse/transloco';
 import { filter } from 'rxjs';
 
 import {
-  createCreateDeviceContinuationRequestMessage,
-  createDeleteDeviceContinuationRequestMessage,
-  CreateDeviceContinuationReplyMessage,
-  createGetAllDevicesRequestMessage, createGetAllTariffsRequestMessage, createGetDeviceStatusesRequestMessage,
-  createStartDeviceRequestMessage, createStopDeviceRequestMessage, createTransferDeviceRequestMessage, DeleteDeviceContinuationReplyMessage, Device,
-  DeviceConnectivityItem, DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage,
-  GetAllTariffsReplyMessage, GetDeviceStatusesReplyMessage, NotificationMessageType,
-  OperatorDeviceConnectivitiesNotificationMessage, StartDeviceReplyMessage, StopDeviceReplyMessage, Tariff,
-  TariffType,
-  TransferDeviceReplyMessage
+  createCreateDeviceContinuationRequestMessage, createDeleteDeviceContinuationRequestMessage,
+  CreateDeviceContinuationReplyMessage, createGetAllDevicesRequestMessage,
+  createGetAllTariffsRequestMessage, createGetDeviceStatusesRequestMessage,
+  createStartDeviceRequestMessage, createStopDeviceRequestMessage, createTransferDeviceRequestMessage,
+  DeleteDeviceContinuationReplyMessage, Device, DeviceConnectivityItem, DeviceStatus,
+  DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage, GetAllTariffsReplyMessage,
+  GetDeviceStatusesReplyMessage, NotificationMessageType,
+  OperatorDeviceConnectivitiesNotificationMessage, StartDeviceReplyMessage,
+  StopDeviceReplyMessage, Tariff, TariffType, TransferDeviceReplyMessage
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe } from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
@@ -39,13 +39,13 @@ import { TariffService } from './tariff.service';
   styleUrls: ['computer-statuses.component.css'],
   standalone: true,
   imports: [
-    MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
+    NgClass, MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
     TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
     SecondsFormatterComponent, ExpandButtonComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ComputerStatusesComponent implements OnInit {
+export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   readonly signals = this.createSignals();
   iconName = IconName;
   expandButtonType = ExpandButtonType;
@@ -56,6 +56,9 @@ export class ComputerStatusesComponent implements OnInit {
   private readonly tariffSvc = inject(TariffService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
+  private readonly layoutGridRowsCssPropName = '--ccs3-op-computers-container-grid-rows';
+
+  @ViewChild('computersContainer') computersContainerEl!: ElementRef<HTMLElement>;
 
   deviceStatusItemIdentity = (obj: DeviceStatusItem) => obj;
 
@@ -63,6 +66,14 @@ export class ComputerStatusesComponent implements OnInit {
     this.internalSubjectsSvc.whenSignedIn().pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(() => this.init());
+  }
+
+  ngAfterViewInit(): void {
+    const currentLayoutRowsValue = parseInt(
+      getComputedStyle(this.computersContainerEl.nativeElement)
+        .getPropertyValue(this.layoutGridRowsCssPropName)
+    );
+    this.signals.layoutRowsCount.set(currentLayoutRowsValue);
   }
 
   init(): void {
@@ -78,13 +89,32 @@ export class ComputerStatusesComponent implements OnInit {
     ).subscribe(getDeviceStatusesReplyMsg => this.processGetDeviceStatusesReplyMessage(getDeviceStatusesReplyMsg));
   }
 
+  isCloseToEnd(item: DeviceStatusItem): boolean {
+    if (item.deviceStatus.started && item.deviceStatus.remainingSeconds! < 180) {
+      return true;
+    }
+    return false;
+  }
+
+  onDecreaseLayoutRows(): void {
+    this.changeLayoutRows(-1);
+  }
+
+  onIncreaseLayoutRows(): void {
+    this.changeLayoutRows(+1);
+  }
+
+  changeLayoutRows(changeValue: number): void {
+    const currentValue = parseInt(getComputedStyle(this.computersContainerEl.nativeElement).getPropertyValue(this.layoutGridRowsCssPropName));
+    let newValue = currentValue + changeValue;
+    if (newValue < 1) {
+      newValue = 1;
+    }
+    this.computersContainerEl.nativeElement.style.setProperty(this.layoutGridRowsCssPropName, newValue.toString());
+    this.signals.layoutRowsCount.set(newValue);
+  }
+
   onStart(item: DeviceStatusItem): void {
-    // TODO: Starting on tariff that cannot be used right now should fail on the server
-    // const canUseTariff = this.computersStatusSvc.canUseTariff(item.selectedTariffItem);
-    // if (canUseTariff.canUse) {
-    // } else {
-    //   return;
-    // }
     const startDeviceRequestMsg = createStartDeviceRequestMessage();
     startDeviceRequestMsg.body.deviceId = item.deviceStatus.deviceId;
     startDeviceRequestMsg.body.tariffId = item.selectedTariffItem.id;
@@ -233,10 +263,13 @@ export class ComputerStatusesComponent implements OnInit {
   }
 
   createDeviceStatusItem(deviceStatus: DeviceStatus): DeviceStatusItem {
+    const tariff = this.getTariff(deviceStatus.tariff);
     const deviceStatusItem = {
       deviceName: this.getDeviceName(deviceStatus.deviceId),
       deviceStatus: deviceStatus,
-      tariffName: this.getTariffName(deviceStatus.tariff),
+      tariffName: tariff?.name || '',
+      tariffType: tariff?.type || '',
+      tariffId: tariff?.id || 0,
     } as DeviceStatusItem;
     this.mergeCurrentDeviceStatusItemCustomProperties(deviceStatusItem);
     return deviceStatusItem;
@@ -257,6 +290,13 @@ export class ComputerStatusesComponent implements OnInit {
     deviceStatusItem.optionsVisibility = currentStatusItem?.optionsVisibility ? currentStatusItem?.optionsVisibility : {
       continueWith: false, stop: false, transfer: false
     };
+  }
+
+  getTariff(tariffId?: number | null): Tariff | undefined {
+    if (!tariffId) {
+      return undefined;
+    }
+    return this.signals.allTariffsMap().get(tariffId);
   }
 
   getTariffName(tariffId?: number | null): string {
@@ -419,6 +459,7 @@ export class ComputerStatusesComponent implements OnInit {
       allTariffsMap: signal(new Map<number, Tariff>()),
       allAvailableTariffs: signal([]),
       notStartedDeviceStatusItems: signal([]),
+      layoutRowsCount: signal(5),
     };
     signals.allAvailableTariffs = computed(() => {
       const allTariffs = Array.from(this.signals.allTariffsMap().values());
@@ -436,6 +477,7 @@ interface Signals {
   allTariffsMap: WritableSignal<Map<number, Tariff>>;
   allAvailableTariffs: Signal<Tariff[]>;
   notStartedDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;
+  layoutRowsCount: WritableSignal<number>;
 }
 
 interface OptionsVisibility {
@@ -448,6 +490,8 @@ interface DeviceStatusItem {
   deviceStatus: DeviceStatus;
   deviceName: string;
   tariffName: string;
+  tariffType: TariffType;
+  tariffId: number;
   isActionsExpanded: boolean;
   isOptionsExpanded: boolean;
   selectedTariffItem: Tariff;

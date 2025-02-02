@@ -1,9 +1,31 @@
-<ng-container *transloco="let t;">
-  <section class="ccs3-op-computer-statuses-component">
-    <section class="computers-container">
+<section *transloco="let t;" class="ccs3-op-computer-statuses-component-content-container">
+  <section class="ccs3-op-computer-statuses-toolbar">
+    <mat-expansion-panel togglePosition="before">
+      <mat-expansion-panel-header>
+        <span>{{t('Tools')}}</span>
+      </mat-expansion-panel-header>
+      <section class="ccs3-op-computer-statuses-global-actions">
+        <section class="layout-rows-controls ccs3-op-flex-row">
+          <span>{{t('Layout rows')}}</span>
+          <section class="layout-rows-modification-container ccs3-op-flex-row ccs3-no-gap">
+            <button (click)="onDecreaseLayoutRows()" mat-icon-button>
+              <mat-icon>{{iconName.remove}}</mat-icon>
+            </button>
+            <span>{{signals.layoutRowsCount()}}</span>
+            <button (click)="onIncreaseLayoutRows()" mat-icon-button>
+              <mat-icon>{{iconName.add}}</mat-icon>
+            </button>
+          </section>
+        </section>
+      </section>
+    </mat-expansion-panel>
+  </section>
+  <section class="ccs3-op-computer-statuses-container">
+    <section #computersContainer class="computers-container">
       @let items = signals.deviceStatusItems();
       @for (item of items; track item.deviceStatus.deviceId) {
-      <ng-container [ngTemplateOutlet]="standardCard" [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
+      <ng-container [ngTemplateOutlet]="standardCardTemplate"
+        [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
       }
     </section>
   </section>
@@ -31,16 +53,18 @@
   @let transferOptionsTranslation = t('Transfer options');
   @let continueWithOptionsTranslation = t('Continue with options');
 
-  <ng-template #standardCard let-templateContext>
+  <ng-template #standardCardTemplate let-templateContext>
     @let item = deviceStatusItemIdentity(templateContext);
-    <mat-card appearance="outlined" class="computer-status-container">
+    <mat-card appearance="outlined" class="computer-status-container" [ngClass]="{
+        'started': item.deviceStatus.started,
+        'not-started': !item.deviceStatus.started
+      }" [attr.tariff-type]="item.tariffType" [attr.tariff-id]="item.tariffId">
       <mat-card-header>
         <mat-card-title>
           <section class="device-title-info ccs3-op-flex-row ccs3-op-align-items-center ccs3-op-line-height-normal">
             <section class="ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-center">
               <ccs3-op-expand-button (click)="detailsExpansionPanel.expanded = !detailsExpansionPanel.expanded"
-                [isExpanded]="detailsExpansionPanel.expanded"
-                [type]="expandButtonType.matIconButton">
+                [isExpanded]="detailsExpansionPanel.expanded" [type]="expandButtonType.matIconButton">
               </ccs3-op-expand-button>
               @if (item.deviceConnectivity) {
               @if (item.deviceConnectivity.isConnected) {
@@ -55,7 +79,7 @@
                 [attr.aria-label]="unknownConnectionStatusTranslation"
                 class="unknown-connection-state-icon ccs3-op-warn-container">{{iconName.signal_wifi_statusbar_not_connected}}</mat-icon>
               }
-              <span class="computer-name">{{item.deviceName}}</span>
+              <span class="computer-name" [ngClass]="{'will-stop-soon': isCloseToEnd(item)}">{{item.deviceName}}</span>
             </section>
             <ccs3-op-money-formatter [value]="item.deviceStatus.totalSum" [title]="totalTranslation"
               class="total-sum"></ccs3-op-money-formatter>
@@ -237,4 +261,4 @@
       <mat-card-footer></mat-card-footer>
     </mat-card>
   </ng-template>
-</ng-container>
+</section>

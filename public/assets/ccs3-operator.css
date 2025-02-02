@@ -269,38 +269,19 @@ fieldset {
 }
 
 /* Components */
+.ccs3-op-computer-statuses-component-content-container .computers-container {
+  --ccs3-op-computers-container-grid-rows: 10;
+}
+
 ccs3-op-computer-statuses .device-options-expanders ccs3-op-expand-button .expand-button-expanded {
   border-width: var(--ccs3-op-active-border-width);
 }
 
-/* ccs3-op-computer-statuses .ccs3-op-computer-statuses-component {
-  container-type: inline-size;
-} */
-
-/* ccs3-op-computer-statuses .computers-container {
-  display: grid;
-  gap: var(--ccs3-op-half-gap);
-  grid-template-columns: repeat(var(--ccs3-op-dynamic-computers-grid-columns), 1fr);
-  grid-template-rows: repeat(var(--ccs3-op-dynamic-computers-grid-rows), auto);
-} */
-
-/* @container (min-width: 820px) {
-  ccs3-op-computer-statuses .computers-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-} */
-
-/* @container (min-width: 1240px) {
-  ccs3-op-computer-statuses .computers-container {
-    grid-template-columns: repeat(3, 1fr);
-  }
-} */
-
-/* @container (min-width: 841px) {
-  ccs3-op-computer-statuses .computers-container {
-    grid-template-columns: repeat(3, 1fr);
-  }
-} */
+ccs3-op-computer-statuses .computer-name.will-stop-soon {
+  background-color: var(--ccs3-op-notification-warn-background-color);
+  color: var(--ccs3-op-notification-warn-color);
+  padding: var(--ccs3-op-half-padding);
+}
 
 /* Material */
 button[mat-button].mat-tonal-button {
