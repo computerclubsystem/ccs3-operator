@@ -54,6 +54,10 @@ export const enum MessageType {
   deleteDeviceContinuationReply = 'delete-device-continuation-reply',
   rechargeTariffDurationRequest = 'recharge-tariff-duration-request',
   rechargeTariffDurationReply = 'recharge-tariff-duration-reply',
+  getSignedInUsersRequest = 'get-signed-in-users-request',
+  getSignedInUsersReply = 'get-signed-in-users-reply',
+  forceSignOutAllUserSessionsRequest = 'force-sign-out-all-user-sessions-request',
+  forceSignOutAllUserSessionsReply = 'force-sign-out-all-user-sessions-reply',
 }
 
 export const enum ReplyMessageType {
@@ -63,4 +67,5 @@ export const enum ReplyMessageType {
 export const enum NotificationMessageType {
   deviceStatusesNotification = 'device-statuses-notification',
   deviceConnectivitiesNotification = 'device-connectivities-notification',
+  signedOutNotification = 'signed-out-notification',
 }

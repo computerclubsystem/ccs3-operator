@@ -63,6 +63,10 @@ export * from './lib/delete-device-continuation-request.message';
 export * from './lib/delete-device-continuation-reply.message';
 export * from './lib/recharge-tariff-duration-request.message';
 export * from './lib/recharge-tariff-duration-reply.message';
+export * from './lib/get-signed-in-users-request.message';
+export * from './lib/get-signed-in-users-reply.message';
+export * from './lib/force-sign-out-all-user-sessions-request.message';
+export * from './lib/force-sign-out-all-user-sessions-reply.message';
 
 export * from './lib/entities/device-connectivity-item';
 export * from './lib/entities/device';
@@ -71,3 +75,4 @@ export * from './lib/entities/device-status';
 export * from './lib/entities/role';
 export * from './lib/entities/permission';
 export * from './lib/entities/user';
+export * from './lib/entities/signed-in-user';

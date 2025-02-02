@@ -11,6 +11,10 @@ import { NotificationType } from '@ccs3-operator/shared';
 export class NotificationsHelperService {
   private readonly ntfSvc = inject(NotificationsService);
 
+  showSignedOutByNotificationMessage(): void {
+    this.ntfSvc.show(NotificationType.warn, translate('You have been signed out by administrator'), null, IconName.priority_high, null);
+  }
+
   showSignedOut(signOutReplyMsg: SignOutReplyMessage): void {
     this.ntfSvc.show(NotificationType.info, translate('Signed out successfully'), null, IconName.check, signOutReplyMsg);
   }

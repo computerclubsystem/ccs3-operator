@@ -18,3 +18,4 @@ export { HashService } from './lib/hash.service';
 export { TimeConverterService } from './lib/time-converter.service';
 export { NotificationType } from './lib/types/notification-type';
 export { type NotificationItem } from './lib/types/notification-item';
+export * from './lib/utils';

@@ -1,0 +1,13 @@
+<section>
+  <h2>Reports</h2>
+</section>
+
+<section class="ccs3-op-flex-column ccs3-op-half-gap">
+  <nav class="ccs3-op-flex-row">
+    @for (item of signals.links(); track item.routerLink) {
+    <a [routerLink]="item.routerLink" mat-raised-button routerLinkActive="ccs3-op-router-link-active"
+      class="ccs3-op-router-link">{{item.translationKey | transloco}}</a>
+    }
+  </nav>
+  <router-outlet></router-outlet>
+</section>

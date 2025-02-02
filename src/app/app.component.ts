@@ -11,6 +11,8 @@ import {
   createPingRequestMessage, createAuthRequestMessage, createRefreshTokenRequestMessage,
   RefreshTokenReplyMessage, NotAuthenticatedMessage, AuthRequestMessage,
   SignOutReplyMessage, createSignOutRequestMessage, ReplyMessage,
+  NotificationMessageType,
+  NotificationMessage,
 } from '@ccs3-operator/messages';
 import { MessageSubjectsService, NotificationType, PermissionName, PermissionsService, RouteNavigationService } from '@ccs3-operator/shared';
 import { AccountMenuItem, AccountMenuItemId, IconName, MainMenuItem, MainMenuItemId, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';
@@ -81,6 +83,7 @@ export class AppComponent implements OnInit {
   }
 
   subscribeToRouteNavigationSubjects(): void {
+    this.routeNavigationSvc.getNavigateToSignInRequested().subscribe(() => this.processNavigateToSignInRequested());
     this.routeNavigationSvc.getNavigateToCreateNewTariffRequested().subscribe(() => this.processNavigateToCreateNewTariffRequested());
     this.routeNavigationSvc.getNavigateToEditTariffRequested().subscribe(tariffId => this.processNavigateToEditTariffRequested(tariffId));
     this.routeNavigationSvc.getNavigateToCreateNewPrepaidTariffRequested().subscribe(() => this.processNavigateToCreateNewPrepaidTariffRequested());
@@ -88,6 +91,10 @@ export class AppComponent implements OnInit {
     this.routeNavigationSvc.getNavigateToCreateNewRoleRequested().subscribe(() => this.processNavigateToCreateNewRoleRequested());
     this.routeNavigationSvc.getNavigateToEditRoleRequested().subscribe(roleId => this.processNavigateToEditRoleRequested(roleId));
     this.routeNavigationSvc.getNavigateToEditDeviceRequested().subscribe(deviceId => this.processNavigateToEditDeviceRequested(deviceId));
+  }
+
+  processNavigateToSignInRequested(): void {
+    this.router.navigate([RouteName.signIn]);
   }
 
   processFailureReplyMessageReceived(msg: ReplyMessage<any>): void {
@@ -156,6 +163,9 @@ export class AppComponent implements OnInit {
       case MainMenuItemId.systemSettings:
         this.router.navigate([RouteName.systemSettings]);
         break;
+      case MainMenuItemId.reports:
+        this.router.navigate([RouteName.reports]);
+        break;
     }
   }
 
@@ -200,16 +210,24 @@ export class AppComponent implements OnInit {
     });
   }
 
-  performSignOut(signOutReplyMessage: SignOutReplyMessage): void {
+  async processSignedOutNotificationMessage(): Promise<void> {
+    this.performSignOut(null);
+    this.notificationsHelperSvc.showSignedOutByNotificationMessage();
+    this.router.navigate([RouteName.signedOutByAdministrator]);
+  }
+
+  performSignOut(signOutReplyMessage: SignOutReplyMessage | null): void {
     this.stopPing();
     this.stopRefreshTokenTimer();
     this.removeStoredTokenData();
     this.setNotSignedInAccountMenuItems();
     this.setNotSignedInMainMenuItems();
     this.internalSubjectsSvc.setSignedIn(false);
-    this.internalSubjectsSvc.setSignOutReplyMessage(signOutReplyMessage);
-    this.notificationsHelperSvc.showSignedOut(signOutReplyMessage);
-    this.router.navigate([RouteName.signedOutSessionStats]);
+    if (signOutReplyMessage) {
+      this.internalSubjectsSvc.setSignOutReplyMessage(signOutReplyMessage);
+      this.notificationsHelperSvc.showSignedOut(signOutReplyMessage);
+      this.router.navigate([RouteName.signedOutSessionStats]);
+    }
   }
 
   startConnectorService(): void {
@@ -234,7 +252,10 @@ export class AppComponent implements OnInit {
           .subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg));
       } else {
         this.internalSubjectsSvc.setSignedIn(false);
-        this.navigateToSignInWithReturnUrl();
+        // TODO: Find routes that should not be redirected like "You have been signed out by administrator" route
+        //       should not navigate to sign-in url because the user needs to see the information.
+        //       Same for "Signed out session stats"
+        // this.navigateToSignInWithReturnUrl();
       }
     });
   }
@@ -258,9 +279,12 @@ export class AppComponent implements OnInit {
    * All messages that have responses are normally handled by the sender
    * @param message
    */
-  private processAppMessageReceived<TBody>(message: Message<TBody>): void {
+  private processAppMessageReceived<TBody>(message: Message<TBody> | NotificationMessage<TBody> | ReplyMessage<TBody>): void {
     const type = message.header.type;
     switch (type) {
+      case NotificationMessageType.signedOutNotification:
+        this.processSignedOutNotificationMessage();
+        break;
       case MessageType.configuration:
         this.processConfigurationMessage(message as ConfigurationMessage);
         break;
@@ -349,6 +373,8 @@ export class AppComponent implements OnInit {
       { id: MainMenuItemId.notifications, icon: IconName.notifications, translationKey: 'Notifications' },
       // TODO: Check for any of the required permission
       { id: MainMenuItemId.systemSettings, icon: IconName.settings, translationKey: 'System settings' },
+      // TODO: Check for any of the required permission
+      { id: MainMenuItemId.reports, icon: IconName.query_stats, translationKey: 'Reports' },
     ];
     this.internalSubjectsSvc.setMainMenuItems(signedInMainMenuItems);
   }

@@ -1,3 +1,4 @@
+import { importProvidersFrom } from '@angular/core';
 import { Routes } from '@angular/router';
 
 export enum QueryParamName {
@@ -17,9 +18,17 @@ export enum RouteName {
   systemSettingsRoles = 'roles',
   sharedRouteCreate = 'create',
   sharedRouteEdit = 'edit',
+  reports = 'reports',
+  reportsSignedInUsers = 'signed-in-users',
+  signedOutByAdministrator = 'signed-out-by-administrator'
 }
 
 export const routes: Routes = [
+  {
+    path: RouteName.signedOutByAdministrator,
+    // loadComponent: () => import('@ccs3-operator/signed-out-by-administrator').then(x => x.SignedOutByAdministratorComponent),
+    loadComponent: async () => (await import('@ccs3-operator/signed-out-by-administrator')).SignedOutByAdministratorComponent,
+  },
   {
     path: RouteName.signIn,
     loadComponent: () => import('@ccs3-operator/sign-in').then(x => x.SignInComponent),
@@ -98,4 +107,14 @@ export const routes: Routes = [
       },
     ]
   },
+  {
+    path: RouteName.reports,
+    loadComponent: () => import('@ccs3-operator/reports').then(x => x.ReportsComponent),
+    children: [
+      {
+        path: RouteName.reportsSignedInUsers,
+        loadComponent: () => import('@ccs3-operator/reports/signed-in-users').then(x => x.SignedInUsersComponent),
+      },
+    ],
+  }
 ];

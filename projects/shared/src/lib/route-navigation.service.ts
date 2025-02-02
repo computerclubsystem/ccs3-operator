@@ -10,6 +10,15 @@ export class RouteNavigationService {
   private readonly navigateToEditPrepaidTariffRequestedSubject = new Subject<number>();
   private readonly navigateToCreateNewRoleRequestedSubject = new Subject<void>();
   private readonly navigateToEditRoleRequestedSubject = new Subject<number>();
+  private readonly navigateToSignInRequestedSubject = new Subject<void>();
+
+  navigateToSignInRequested(): void {
+    this.navigateToSignInRequestedSubject.next();
+  }
+
+  getNavigateToSignInRequested(): Observable<void> {
+    return this.navigateToSignInRequestedSubject.asObservable();
+  }
 
   navigateToEditRoleRequested(roleId: number): void {
     this.navigateToEditRoleRequestedSubject.next(roleId);

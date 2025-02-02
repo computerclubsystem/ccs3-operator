@@ -1,0 +1,41 @@
+<section *transloco="let t" class="signed-in-users-component">
+  <mat-divider></mat-divider>
+  @let groups = signals.groupedSignedInUsers();
+  @for (group of groups; track group.key) {
+  @let username = group.items[0].username;
+  <mat-expansion-panel class="ccs3-op-mat-expansion-panel-small-padding">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <div class="ccs3-op-flex-row ccs3-op-flex-no-wrap">
+          <span>{{username}}</span>
+          <span>(Id {{group.key}})</span>
+        </div>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <ng-template matExpansionPanelContent>
+      <table>
+        <thead>
+          <tr>
+            <th class="ccs3-op-align-text-start">{{t('Connected at')}}</th>
+            <th class="ccs3-op-align-text-start">{{t('Expires at')}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of group.items; track item.token) {
+          <tr>
+            <td>{{item.connectedAt| noYearDate}}</td>
+            <td>{{item.tokenExpiresAt | noYearDate}}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+      <section class="signed-in-user-actions">
+        <button (click)="onSignOutAllSessions(group)" mat-flat-button>
+          {{t('Sign out all {{username}} sessions',{username: username})}}
+        </button>
+      </section>
+    </ng-template>
+  </mat-expansion-panel>
+  <mat-divider></mat-divider>
+  }
+</section>

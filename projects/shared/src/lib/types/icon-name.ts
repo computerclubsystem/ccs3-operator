@@ -25,4 +25,5 @@ export enum IconName {
   signal_wifi_statusbar_not_connected = 'signal_wifi_statusbar_not_connected',
   fast_forward = 'fast_forward',
   stop_circle = 'stop_circle',
+  query_stats = 'query_stats',
 }

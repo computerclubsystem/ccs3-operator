@@ -34,5 +34,11 @@ export const en = {
   "Seconds abbreviation": "s",
   "Tariff with ID {{id}} created": "Tariff with ID {{id}} created",
   "Recharge duration {{duration}} for price {{price}}": "Recharge duration {{duration}} for price {{price}}",
-  "New remaining time {{remainingTime}}": "New remaining time {{remainingTime}}"
+  "New remaining time {{remainingTime}}": "New remaining time {{remainingTime}}",
+  "Sign out all {{username}} sessions": "Sign out all {{username}} sessions",
+  "{{sessionsCount}} sessions and {{connectionsCount}} connections were removed": "{{sessionsCount}} sessions and {{connectionsCount}} connections were removed",
+  "User {{username}} signed out": "User {{username}} signed out",
+  "You have been signed out by administrator": "You have been signed out by administrator",
+  "Sign in again": "Sign in again",
+  "Session stats": "Session stats"
 };

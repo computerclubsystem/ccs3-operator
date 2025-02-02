@@ -1,17 +1,23 @@
-<div class="ccs3-op-signed-out-session-stats-component">
-  @let data = signedOutReplyMessage();
-  @if (data) {
-    <div class="ccs3-op-two-col-grid">
-      <span>{{'Session start' | transloco}}</span>
+<section *transloco="let t;" class="ccs3-op-signed-out-session-stats-component">
+  <h2>{{t('Session stats')}}</h2>
+  <section class="ccs3-op-flex-column">
+    @let data = signedOutReplyMessage();
+    @if (data) {
+    <section class="ccs3-op-two-col-grid">
+      <span>{{t('Session start')}}</span>
       <span>{{data.body.sessionStart | date:'dd-MMM HH:mm:ss'}}</span>
-      <span>{{'Session end' | transloco}}</span>
+      <span>{{t('Session end')}}</span>
       <span>{{data.body.sessionEnd | date:'dd-MMM HH:mm:ss'}}</span>
-      <span>{{'Received messages' | transloco}}</span>
+      <span>{{t('Received messages')}}</span>
       <span>{{data.body.receivedMessagesCount}}</span>
-      <span>{{'Sent messages' | transloco}}</span>
+      <span>{{t('Sent messages')}}</span>
       <span>{{data.body.sentMessagesCount}}</span>
-      <span>{{'Sent "ping" messages' | transloco}}</span>
+      <span>{{t('Sent "ping" messages')}}</span>
       <span>{{data.body.sentPingMessagesCount}}</span>
-    </div>
-  }
-</div>
+    </section>
+    }
+    <section class="signed-out-session-stats-actions">
+      <button (click)="onNavigateToSignIn()" mat-flat-button>{{t('Sign in again')}}</button>
+    </section>
+  </section>
+</section>

@@ -33,5 +33,11 @@
   "Seconds abbreviation": "с",
   "Tariff with ID {{id}} created": "Тарифата беше създадена с ID {{id}}",
   "Recharge duration {{duration}} for price {{price}}": "Добави време {{duration}} на цена {{price}}",
-  "New remaining time {{remainingTime}}": "Ново оставащо време {{remainingTime}}"
+  "New remaining time {{remainingTime}}": "Ново оставащо време {{remainingTime}}",
+  "Sign out all {{username}} sessions": "Премахни всички сесии на {{username}}",
+  "{{sessionsCount}} sessions and {{connectionsCount}} connections were removed": "{{sessionsCount}} сесии и {{connectionsCount}} връзки бяха премахнати",
+  "User {{username}} signed out": "Юзърът {{username}} беше логаутнат",
+  "You have been signed out by administrator": "Вашата сесия беше прекратена от администратор",
+  "Sign in again": "Логване отново",
+  "Session stats": "Статистика за сесията"
 }

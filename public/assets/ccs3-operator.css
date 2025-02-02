@@ -36,6 +36,10 @@ body {
   background-color: var(--mat-sys-background);
 }
 
+table {
+  border-spacing: var(--ccs3-op-half-gap);
+}
+
 /* Flex */
 .ccs3-op-flex-row {
   display: flex;
