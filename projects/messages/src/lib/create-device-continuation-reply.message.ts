@@ -5,5 +5,4 @@ export interface CreateDeviceContinuationReplyMessageBody {
   deviceContinuation: DeviceContinuation;
 }
 
-export interface CreateDeviceContinuationReplyMessage extends ReplyMessage<CreateDeviceContinuationReplyMessageBody> {
-}
+export type CreateDeviceContinuationReplyMessage = ReplyMessage<CreateDeviceContinuationReplyMessageBody>;

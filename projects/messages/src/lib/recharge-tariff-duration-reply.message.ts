@@ -4,5 +4,4 @@ export interface RechargeTariffDurationReplyMessageBody {
   remainingSeconds?: number;
 }
 
-export interface RechargeTariffDurationReplyMessage extends ReplyMessage<RechargeTariffDurationReplyMessageBody> {
-}
+export type RechargeTariffDurationReplyMessage = ReplyMessage<RechargeTariffDurationReplyMessageBody>;

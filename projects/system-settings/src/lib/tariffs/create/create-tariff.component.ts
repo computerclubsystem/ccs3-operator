@@ -67,7 +67,7 @@ export class CreateTariffComponent implements OnInit {
     getTariffRequestMsg.body.tariffId = tariffId;
     this.messageTransportSvc.sendAndAwaitForReply(getTariffRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(getTariffByIdReplyMsg => this.processGetTariffByIdReplyMessage(getTariffByIdReplyMsg));
+    ).subscribe(getTariffByIdReplyMsg => this.processGetTariffByIdReplyMessage(getTariffByIdReplyMsg as GetTariffByIdReplyMessage));
   }
 
   processGetTariffByIdReplyMessage(getTariffByIdReplyMsg: GetTariffByIdReplyMessage): void {
@@ -107,13 +107,13 @@ export class CreateTariffComponent implements OnInit {
       requestMsg.body.tariff.id = tariff.id;
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(replyMsg => this.processUpdateTariffReplyMessage(replyMsg));
+      ).subscribe(replyMsg => this.processUpdateTariffReplyMessage(replyMsg as UpdateTariffReplyMessage));
     } else {
       const requestMsg = createCreateTariffRequestMessage();
       requestMsg.body.tariff = this.createTariff();
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(replyMsg => this.processCreateTariffReplyMessage(replyMsg));
+      ).subscribe(replyMsg => this.processCreateTariffReplyMessage(replyMsg as CreateTariffReplyMessage));
     }
   }
 
@@ -147,8 +147,8 @@ export class CreateTariffComponent implements OnInit {
     const restrictStartTime = isDuration ? formValue.durationTypeGroup?.restrictStart : null;
     const restrictStartFromTime = (isDuration && restrictStartTime) ? this.timeConverterSvc.convertTimeToMinutes(formValue.durationTypeGroup!.restrictStartFromTime!) : null;
     const restrictStartToTime = (isDuration && restrictStartTime) ? this.timeConverterSvc.convertTimeToMinutes(formValue.durationTypeGroup!.restrictStartToTime!) : null;
-    const tariffFromTime = isFromTo ? this.timeConverterSvc.convertTimeToMinutes(formValue.fromToTypeGroup?.fromTime!) : null;
-    const tariffToTime = isFromTo ? this.timeConverterSvc.convertTimeToMinutes(formValue.fromToTypeGroup?.toTime!) : null;
+    const tariffFromTime = isFromTo ? this.timeConverterSvc.convertTimeToMinutes(formValue.fromToTypeGroup?.fromTime) : null;
+    const tariffToTime = isFromTo ? this.timeConverterSvc.convertTimeToMinutes(formValue.fromToTypeGroup?.toTime) : null;
     const tariff = {
       name: formValue.name!,
       type: formValue.type!.id,
@@ -171,10 +171,10 @@ export class CreateTariffComponent implements OnInit {
     ).subscribe(tariffTypeItem => this.processTariffTypeItemChanges(tariffTypeItem));
     this.form.controls.durationTypeGroup.controls.duration.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(durationValue => this.processDurationValueChanges(durationValue));
+    ).subscribe(() => this.processDurationValueChanges());
     this.form.controls.price.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(priceValue => this.processPriceValueChanges(priceValue));
+    ).subscribe(() => this.processPriceValueChanges());
     this.form.controls.durationTypeGroup.controls.restrictStart.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(restrictStartValue => this.processRestrictDurationStartChanges(restrictStartValue));
@@ -183,23 +183,25 @@ export class CreateTariffComponent implements OnInit {
   processRestrictDurationStartChanges(restrictStartValue: boolean | null): void {
     const showRestrictStartSettings = !!restrictStartValue;
     this.signals.showRestrictStartPeriodSettings.set(showRestrictStartSettings);
-    this.createTariffSvc.modifyDurationGroupValidators(this.form.controls.durationTypeGroup.controls, this.form.value.type?.id!);
+    if (this.form.value.type) {
+      this.createTariffSvc.modifyDurationGroupValidators(this.form.controls.durationTypeGroup.controls, this.form.value.type.id);
+    }
   }
 
-  processDurationValueChanges(durationValue: string | null): void {
+  processDurationValueChanges(): void {
     const durationConrol = this.form.controls.durationTypeGroup.controls.duration;
     this.signals.durationHasNotTwoPartsError.set(durationConrol.hasError('notTwoParts'));
     this.signals.durationHasOutOfRangeError.set(durationConrol.hasError('outOfRange'));
     this.signals.durationHasInvalidCharError.set(durationConrol.hasError('invalidChar'));
   }
 
-  processPriceValueChanges(priceValue: number | null): void {
+  processPriceValueChanges(): void {
     const priceControl = this.form.controls.price;
     this.signals.priceHasError.set(priceControl.invalid);
   }
 
   processTariffTypeItemChanges(tariffTypeItem: NumericIdWithName | null): void {
-    const tariffType = tariffTypeItem?.id!;
+    const tariffType = tariffTypeItem?.id || 0;
     const showDuration = tariffType === this.createTariffSvc.tariffTypeDurationItem.id;
     const showFromTo = tariffType === this.createTariffSvc.tariffTypeFromToItem.id;
     this.signals.showDurationTypeSettings.set(showDuration);

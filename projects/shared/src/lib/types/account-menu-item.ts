@@ -6,5 +6,4 @@ export enum AccountMenuItemId {
   settings = 'settings',
 }
 
-export interface AccountMenuItem extends MenuItem<AccountMenuItemId> {
-}
+export type AccountMenuItem = MenuItem<AccountMenuItemId>;

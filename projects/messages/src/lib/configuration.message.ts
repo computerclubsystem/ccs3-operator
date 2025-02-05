@@ -4,5 +4,4 @@ export interface ConfigurationMessageBody {
   pingInterval: number;
 }
 
-export interface ConfigurationMessage extends Message<ConfigurationMessageBody> {
-}
+export type ConfigurationMessage = Message<ConfigurationMessageBody>;

@@ -6,7 +6,6 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 import { InternalSubjectsService, RouteNavigationService } from '@ccs3-operator/shared';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'ccs3-op-signed-out-session-stats',

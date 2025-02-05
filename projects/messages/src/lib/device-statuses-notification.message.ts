@@ -5,5 +5,4 @@ export interface DeviceStatusesNotificationMessageBody {
     deviceStatuses: DeviceStatus[];
 }
 
-export interface DeviceStatusesNotificationMessage extends NotificationMessage<DeviceStatusesNotificationMessageBody> {
-}
+export type DeviceStatusesNotificationMessage = NotificationMessage<DeviceStatusesNotificationMessageBody>;

@@ -5,5 +5,4 @@ export interface GetAllUsersReplyMessageBody {
   users: User[];
 }
 
-export interface GetAllUsersReplyMessage extends ReplyMessage<GetAllUsersReplyMessageBody> {
-}
+export type GetAllUsersReplyMessage = ReplyMessage<GetAllUsersReplyMessageBody>;

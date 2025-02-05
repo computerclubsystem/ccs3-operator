@@ -116,7 +116,7 @@
               <span>{{messagesTranslation}}</span>
               <section class="ccs3-op-flex-row">
                 <span class="messages-count">{{item.deviceConnectivity.messagesCount}}</span>
-                @if(item.deviceConnectivity.secondsSinceLastMessage != null) {
+                @if(item.deviceConnectivity.secondsSinceLastMessage !== null) {
                 <section class="ccs3-op-flex-row ccs3-op-no-gap">
                   (<ccs3-op-seconds-formatter [value]="item.deviceConnectivity.secondsSinceLastMessage"
                     [title]="timePassedSinceLastMessageTranslation"></ccs3-op-seconds-formatter>)

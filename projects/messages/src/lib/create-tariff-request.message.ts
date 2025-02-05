@@ -7,8 +7,7 @@ export interface CreateTariffRequestMessageBody {
   passwordHash: string;
 }
 
-export interface CreateTariffRequestMessage extends Message<CreateTariffRequestMessageBody> {
-}
+export type CreateTariffRequestMessage = Message<CreateTariffRequestMessageBody>;
 
 export function createCreateTariffRequestMessage(): CreateTariffRequestMessage {
   const msg: CreateTariffRequestMessage = {

@@ -4,8 +4,7 @@ export interface ForceSignOutAllUserSessionsRequestMessageBody {
   userId: number;
 }
 
-export interface ForceSignOutAllUserSessionsRequestMessage extends Message<ForceSignOutAllUserSessionsRequestMessageBody> {
-}
+export type ForceSignOutAllUserSessionsRequestMessage = Message<ForceSignOutAllUserSessionsRequestMessageBody>;
 
 export function createForceSignOutAllUserSessionsRequestMessage(): ForceSignOutAllUserSessionsRequestMessage {
   const msg: ForceSignOutAllUserSessionsRequestMessage = {

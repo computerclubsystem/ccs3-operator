@@ -4,7 +4,7 @@ import { TariffType } from '@ccs3-operator/messages';
 @Pipe({ name: 'tariffTypeToName', standalone: true })
 export class TariffTypeToNamePipe implements PipeTransform {
 
-  transform(value: any, ...args: any[]) {
+  transform(value: TariffType): string {
     const tariffType = value as TariffType;
     switch (tariffType) {
       case TariffType.duration:

@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { catchError, first, Observable, Subject, tap, throwError, timeout } from 'rxjs';
 
-import { Message, MessageType, ReplyMessageHeader } from '@ccs3-operator/messages';
+import { Message, ReplyMessageHeader } from '@ccs3-operator/messages';
 import { MessageSubjectsService } from './message-subjects.service';
 import { InternalSubjectsService } from './internal-subjects.service';
 import { MessageTimedOutErrorData } from './types';
@@ -10,7 +10,7 @@ import { MessageTimedOutErrorData } from './types';
 export class MessageTransportService {
   private readonly subjectsService = inject(MessageSubjectsService);
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
-  private readonly sendMessageSubject = new Subject<Message<any>>();
+  private readonly sendMessageSubject = new Subject<Message<unknown>>();
   private token?: string;
   private timeout = 5000;
 
@@ -20,7 +20,7 @@ export class MessageTransportService {
    * @param requestMessage Message to send. If it does not have correlationId, random one will be assigned
    * @returns First received message that has the same correlationId as requestMessage.header.correlationId
    */
-  sendAndAwaitForReply<TRequestMessageBody>(requestMessage: Message<TRequestMessageBody>, timeoutDuration?: number): Observable<any> {
+  sendAndAwaitForReply<TRequestMessageBody>(requestMessage: Message<TRequestMessageBody>, timeoutDuration?: number): Observable<Message<unknown>> {
     if (!requestMessage.header.correlationId) {
       requestMessage.header.correlationId = this.createCorrelationId();
     }
@@ -44,7 +44,7 @@ export class MessageTransportService {
     );
   }
 
-  sendMessage<TRequestBody, TReplyBody = any>(message: Message<TRequestBody>): Observable<Message<TReplyBody>> {
+  sendMessage<TRequestBody, TReplyBody = unknown>(message: Message<TRequestBody>): Observable<Message<TReplyBody>> {
     // The sole purpose of this method is to act as message send interceptor and set the token to every message
     message.header.token = this.token;
     this.sendMessageSubject.next(message);
@@ -56,7 +56,7 @@ export class MessageTransportService {
    * Listener should redirect the message to the service, that will actually send the message
    * @returns
    */
-  getSendMessageObservable<TBody>(): Observable<Message<TBody>> {
+  getSendMessageObservable(): Observable<Message<unknown>> {
     return this.sendMessageSubject.asObservable();
   }
 
@@ -84,7 +84,7 @@ export class MessageTransportService {
     return crypto.randomUUID();
   }
 
-  private createMessageTimedOutErrorData(requestMessage: Message<any>, sentAt: number, timeoutValue: number): MessageTimedOutErrorData {
+  private createMessageTimedOutErrorData(requestMessage: Message<unknown>, sentAt: number, timeoutValue: number): MessageTimedOutErrorData {
     const messageTimedoutData: MessageTimedOutErrorData = {
       message: requestMessage,
       sentAt: sentAt,

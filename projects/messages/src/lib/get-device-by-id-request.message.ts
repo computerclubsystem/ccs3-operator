@@ -5,8 +5,7 @@ export interface GetDeviceByIdRequestMessageBody {
   deviceId: number;
 }
 
-export interface GetDeviceByIdRequestMessage extends Message<GetDeviceByIdRequestMessageBody> {
-}
+export type GetDeviceByIdRequestMessage = Message<GetDeviceByIdRequestMessageBody>;
 
 export function createGetDeviceByIdRequestMessage(): GetDeviceByIdRequestMessage {
   const msg: GetDeviceByIdRequestMessage = {

@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, WritableSignal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -107,7 +107,9 @@ export class CreateUserComponent implements OnInit {
       this.messageTransportSvc.sendAndAwaitForReply(getAllRolesRequest),
     ]).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(([userWithRolesReplyMsg, allRolesReplyMsg]) => this.processLoadUserWithRolesResult(userWithRolesReplyMsg, allRolesReplyMsg));
+    ).subscribe(
+      ([userWithRolesReplyMsg, allRolesReplyMsg]) => this.processLoadUserWithRolesResult(userWithRolesReplyMsg as GetUserWithRolesReplyMessage, allRolesReplyMsg as GetAllRolesReplyMessage)
+    );
   }
 
   processLoadUserWithRolesResult(userWithRolesReplyMsg: GetUserWithRolesReplyMessage, allRolesReplyMsg: GetAllRolesReplyMessage): void {
@@ -145,7 +147,7 @@ export class CreateUserComponent implements OnInit {
     const requestMsg = createGetAllRolesRequestMessage();
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(getAllRolesReplyMsg => this.processGetAllRolesReplyMessage(getAllRolesReplyMsg));
+    ).subscribe(getAllRolesReplyMsg => this.processGetAllRolesReplyMessage(getAllRolesReplyMsg as GetAllRolesReplyMessage));
   }
 
   processGetAllRolesReplyMessage(getAllRolesReplyMsg: GetAllRolesReplyMessage): void {
@@ -220,7 +222,7 @@ export class CreateUserComponent implements OnInit {
       requestMsg.body.passwordHash = await this.hashSvc.getSha512(formValue.password!);
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(replyMsg => this.processCreateUserWithRolesReplyMessage(replyMsg))
+      ).subscribe(replyMsg => this.processCreateUserWithRolesReplyMessage(replyMsg as CreateUserWithRolesReplyMessage))
     } else {
       const requestMsg = createUpdateUserWithRolesRequestMessage();
       requestMsg.body.roleIds = this.signals.userRoles().map(x => x.id);
@@ -235,7 +237,7 @@ export class CreateUserComponent implements OnInit {
       }
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(replyMsg => this.processUpdateUserWithRolesReplyMessage(replyMsg))
+      ).subscribe(replyMsg => this.processUpdateUserWithRolesReplyMessage(replyMsg as UpdateUserWithRolesReplyMessage))
     }
   }
 

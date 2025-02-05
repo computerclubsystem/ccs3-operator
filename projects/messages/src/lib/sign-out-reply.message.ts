@@ -8,5 +8,4 @@ export interface SignOutReplyMessageBody {
   sentPingMessagesCount: number;
 }
 
-export interface SignOutReplyMessage extends Message<SignOutReplyMessageBody> {
-}
+export type SignOutReplyMessage = Message<SignOutReplyMessageBody>;

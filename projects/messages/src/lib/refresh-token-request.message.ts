@@ -5,8 +5,7 @@ export interface RefreshTokenRequestMessageBody {
   currentToken: string;
 }
 
-export interface RefreshTokenRequestMessage extends Message<RefreshTokenRequestMessageBody> {
-}
+export type RefreshTokenRequestMessage = Message<RefreshTokenRequestMessageBody>;
 
 export function createRefreshTokenRequestMessage(): RefreshTokenRequestMessage {
   const msg: RefreshTokenRequestMessage = {

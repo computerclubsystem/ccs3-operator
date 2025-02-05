@@ -7,8 +7,7 @@ export interface PingRequestMessageBody {
   token?: string;
 }
 
-export interface PingRequestMessage extends Message<PingRequestMessageBody> {
-}
+export type PingRequestMessage = Message<PingRequestMessageBody>;
 
 export function createPingRequestMessage(): PingRequestMessage {
   const msg: PingRequestMessage = {

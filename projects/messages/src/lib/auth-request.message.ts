@@ -7,8 +7,7 @@ export interface AuthRequestMessageBody {
   token?: string;
 }
 
-export interface AuthRequestMessage extends Message<AuthRequestMessageBody> {
-}
+export type AuthRequestMessage = Message<AuthRequestMessageBody>;
 
 export function createAuthRequestMessage(): AuthRequestMessage {
   const msg: AuthRequestMessage = {

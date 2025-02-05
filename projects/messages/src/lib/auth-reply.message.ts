@@ -7,5 +7,4 @@ export interface AuthReplyMessageBody {
   tokenExpiresAt?: number;
 }
 
-export interface AuthReplyMessage extends ReplyMessage<AuthReplyMessageBody> {
-}
+export type AuthReplyMessage = ReplyMessage<AuthReplyMessageBody>;

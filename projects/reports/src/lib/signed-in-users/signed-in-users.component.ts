@@ -47,7 +47,7 @@ export class SignedInUsersComponent implements OnInit {
     const username = group.items[0].username;
     this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(replyMsg => this.processForceSignOutAllUserSessionsReplyMessage(replyMsg, username));
+    ).subscribe(replyMsg => this.processForceSignOutAllUserSessionsReplyMessage(replyMsg as ForceSignOutAllUserSessionsReplyMessage, username));
   }
 
   processForceSignOutAllUserSessionsReplyMessage(replyMsg: ForceSignOutAllUserSessionsReplyMessage, username: string): void {
@@ -70,7 +70,7 @@ export class SignedInUsersComponent implements OnInit {
     const reqMsg = createGetSignedInUsersRequestMessage();
     this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(replyMsg => this.processGetSignedInUsersReplyMessage(replyMsg));
+    ).subscribe(replyMsg => this.processGetSignedInUsersReplyMessage(replyMsg as GetSignedInUsersReplyMessage));
   }
 
   processGetSignedInUsersReplyMessage(replyMsg: GetSignedInUsersReplyMessage): void {
@@ -112,8 +112,7 @@ export class SignedInUsersComponent implements OnInit {
   }
 }
 
-interface SignedInUserGroup extends Group<number, SignedInUser> {
-}
+type SignedInUserGroup = Group<number, SignedInUser>;
 
 interface Signals {
   signedInUsers: WritableSignal<SignedInUser[]>;

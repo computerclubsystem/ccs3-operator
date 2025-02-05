@@ -1,11 +1,9 @@
 import { Message } from './declarations/message';
 import { MessageType } from './declarations/message-type';
 
-export interface GetAllPermissionsRequestMessageBody {
-}
+export type GetAllPermissionsRequestMessageBody = object;
 
-export interface GetAllPermissionsRequestMessage extends Message<GetAllPermissionsRequestMessageBody> {
-}
+export type GetAllPermissionsRequestMessage = Message<GetAllPermissionsRequestMessageBody>;
 
 export function createGetAllPermissionsRequestMessage(): GetAllPermissionsRequestMessage {
   const msg: GetAllPermissionsRequestMessage = {

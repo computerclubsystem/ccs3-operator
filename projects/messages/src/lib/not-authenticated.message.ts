@@ -5,5 +5,4 @@ export interface NotAuthenticatedMessageBody {
   requestedMessageType: MessageType;
 }
 
-export interface NotAuthenticatedMessage extends Message<NotAuthenticatedMessageBody> {
-}
+export type NotAuthenticatedMessage = Message<NotAuthenticatedMessageBody>;

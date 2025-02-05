@@ -5,5 +5,4 @@ export interface GetDeviceStatusesReplyMessageBody {
   deviceStatuses: DeviceStatus[];
 }
 
-export interface GetDeviceStatusesReplyMessage extends ReplyMessage<GetDeviceStatusesReplyMessageBody> {
-}
+export type GetDeviceStatusesReplyMessage = ReplyMessage<GetDeviceStatusesReplyMessageBody>;

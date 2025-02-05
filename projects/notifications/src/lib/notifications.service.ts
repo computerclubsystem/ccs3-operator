@@ -15,7 +15,7 @@ export class NotificationsService {
   private duration = 8000;
   private idSequence = 0;
 
-  show(type: NotificationType, title: string, description?: string | null, icon?: IconName | null, customData?: any): void {
+  show(type: NotificationType, title: string, description?: string | null, icon?: IconName | null, customData?: unknown | null): void {
     const item: NotificationItem = {
       id: this.getNextId(),
       addedAt: this.getNow(),

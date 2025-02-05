@@ -43,7 +43,7 @@ export class DevicesComponent implements OnInit {
   requestAllDevices(): void {
     const msg = createGetAllDevicesRequestMessage();
     this.messageTransportSvc.sendAndAwaitForReply<GetAllDevicesRequestMessageBody>(msg)
-      .subscribe(getAllDevicesReplyMsg => this.processGetAllDevicesReplyMessage(getAllDevicesReplyMsg));
+      .subscribe(getAllDevicesReplyMsg => this.processGetAllDevicesReplyMessage(getAllDevicesReplyMsg as GetAllDevicesReplyMessage));
   }
 
   processGetAllDevicesReplyMessage(getAllDevicesReplyMsg: GetAllDevicesReplyMessage): void {

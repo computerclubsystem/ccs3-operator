@@ -7,5 +7,4 @@ export interface GetRoleWithPermissionsReplyMessageBody {
   allPermissions?: Permission[];
 }
 
-export interface GetRoleWithPermissionsReplyMessage extends ReplyMessage<GetRoleWithPermissionsReplyMessageBody> {
-}
+export type GetRoleWithPermissionsReplyMessage = ReplyMessage<GetRoleWithPermissionsReplyMessageBody>;

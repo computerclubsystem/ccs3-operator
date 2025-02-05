@@ -5,8 +5,7 @@ export interface RechargeTariffDurationRequestMessageBody {
   tariffId: number;
 }
 
-export interface RechargeTariffDurationRequestMessage extends Message<RechargeTariffDurationRequestMessageBody> {
-}
+export type RechargeTariffDurationRequestMessage = Message<RechargeTariffDurationRequestMessageBody>;
 
 export function createRechargeTariffDurationRequestMessage(): RechargeTariffDurationRequestMessage {
   const msg: RechargeTariffDurationRequestMessage = {

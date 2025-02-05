@@ -6,5 +6,4 @@ export interface UpdateUserWithRolesReplyMessageBody {
   roleIds?: number[];
 }
 
-export interface UpdateUserWithRolesReplyMessage extends ReplyMessage<UpdateUserWithRolesReplyMessageBody> {
-}
+export type UpdateUserWithRolesReplyMessage = ReplyMessage<UpdateUserWithRolesReplyMessageBody>;

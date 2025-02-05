@@ -6,5 +6,4 @@ export interface CreateUserWithRolesReplyMessageBody {
   roleIds?: number[];
 }
 
-export interface CreateUserWithRolesReplyMessage extends ReplyMessage<CreateUserWithRolesReplyMessageBody> {
-}
+export type CreateUserWithRolesReplyMessage = ReplyMessage<CreateUserWithRolesReplyMessageBody>;

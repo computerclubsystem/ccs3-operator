@@ -44,7 +44,7 @@ export class UsersComponent implements OnInit {
     const requestMsg = createGetAllUsersRequestMessage();
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(getAllUsersReplyMsg => this.processGetAllUsersReplyMessage(getAllUsersReplyMsg));
+    ).subscribe(getAllUsersReplyMsg => this.processGetAllUsersReplyMessage(getAllUsersReplyMsg as GetAllUsersReplyMessage));
   }
 
   processGetAllUsersReplyMessage(getAllUsersReplyMsg: GetAllUsersReplyMessage): void {

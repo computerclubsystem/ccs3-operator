@@ -5,5 +5,4 @@ export interface UpdateDeviceReplyMessageBody {
   device?: Device;
 }
 
-export interface UpdateDeviceReplyMessage extends ReplyMessage<UpdateDeviceReplyMessageBody> {
-}
+export type UpdateDeviceReplyMessage = ReplyMessage<UpdateDeviceReplyMessageBody>;

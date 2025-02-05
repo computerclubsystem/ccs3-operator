@@ -5,8 +5,7 @@ export interface GetUserWithRolesRequestMessageBody {
   userId: number;
 }
 
-export interface GetUserWithRolesRequestMessage extends Message<GetUserWithRolesRequestMessageBody> {
-}
+export type GetUserWithRolesRequestMessage = Message<GetUserWithRolesRequestMessageBody>;
 
 export function createGetUserWithRolesRequestMessage(): GetUserWithRolesRequestMessage {
   const msg: GetUserWithRolesRequestMessage = {

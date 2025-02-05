@@ -5,8 +5,7 @@ export interface GetRoleWithPermissionsRequestMessageBody {
   roleId: number;
 }
 
-export interface GetRoleWithPermissionsRequestMessage extends Message<GetRoleWithPermissionsRequestMessageBody> {
-}
+export type GetRoleWithPermissionsRequestMessage = Message<GetRoleWithPermissionsRequestMessageBody>;
 
 export function createGetRoleWithPermissionsRequestMessage(): GetRoleWithPermissionsRequestMessage {
   const msg: GetRoleWithPermissionsRequestMessage = {

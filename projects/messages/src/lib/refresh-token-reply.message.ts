@@ -6,5 +6,4 @@ export interface RefreshTokenReplyMessageBody {
   tokenExpiresAt?: number;
 }
 
-export interface RefreshTokenReplyMessage extends Message<RefreshTokenReplyMessageBody> {
-}
+export type RefreshTokenReplyMessage = Message<RefreshTokenReplyMessageBody>;

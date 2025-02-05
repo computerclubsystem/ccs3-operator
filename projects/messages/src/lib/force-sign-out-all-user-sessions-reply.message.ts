@@ -5,5 +5,4 @@ export interface ForceSignOutAllUserSessionsReplyMessageBody {
   connectionsCount: number;
 }
 
-export interface ForceSignOutAllUserSessionsReplyMessage extends ReplyMessage<ForceSignOutAllUserSessionsReplyMessageBody> {
-}
+export type ForceSignOutAllUserSessionsReplyMessage = ReplyMessage<ForceSignOutAllUserSessionsReplyMessageBody>;

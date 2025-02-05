@@ -1,11 +1,9 @@
 import { Message } from './declarations/message';
 import { MessageType } from './declarations/message-type';
 
-export interface GetAllRolesRequestMessageBody {
-}
+export type GetAllRolesRequestMessageBody = object;
 
-export interface GetAllRolesRequestMessage extends Message<GetAllRolesRequestMessageBody> {
-}
+export type GetAllRolesRequestMessage = Message<GetAllRolesRequestMessageBody>;
 
 export function createGetAllRolesRequestMessage(): GetAllRolesRequestMessage {
   const msg: GetAllRolesRequestMessage = {

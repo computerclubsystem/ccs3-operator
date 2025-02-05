@@ -6,8 +6,7 @@ export interface GetAllTariffsRequestMessageBody {
   types?: TariffType[];
 }
 
-export interface GetAllTariffsRequestMessage extends Message<GetAllTariffsRequestMessageBody> {
-}
+export type GetAllTariffsRequestMessage = Message<GetAllTariffsRequestMessageBody>;
 
 export function createGetAllTariffsRequestMessage(): GetAllTariffsRequestMessage {
   const msg: GetAllTariffsRequestMessage = {

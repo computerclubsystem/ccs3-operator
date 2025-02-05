@@ -5,5 +5,4 @@ export interface GetAllTariffsReplyMessageBody {
   tariffs: Tariff[];
 }
 
-export interface GetAllTariffsReplyMessage extends Message<GetAllTariffsReplyMessageBody> {
-}
+export type GetAllTariffsReplyMessage = Message<GetAllTariffsReplyMessageBody>;

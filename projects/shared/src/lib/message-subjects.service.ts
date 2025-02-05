@@ -1,37 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject, Subject } from 'rxjs';
-
-import { Message } from '@ccs3-operator/messages';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageSubjectsService {
-  private readonly appMessageReceivedSubject = new Subject<any>();
-  private readonly appMessageSendSubject = new Subject<any>();
+  private readonly appMessageReceivedSubject = new Subject<unknown>();
 
-  /**
-   * Returns the subject that is used to send messages.
-   * Do not use this directly - use MessageSenderService.sendMessage instead
-   * @returns
-   */
-  getAppMessageSendSubject<TBody>(): Subject<Message<TBody>> {
-    return this.appMessageSendSubject;
-  }
-
-  /**
-   * Returns the observable that will emit when MessageSenderService.sendMessage is called
-   * @returns
-   */
-  getAppMessageSendObservable<TBody>(): Observable<Message<TBody>> {
-    return this.appMessageSendSubject.asObservable();
-  }
-
-  getAppMessageReceivedSubject(): Subject<any> {
+  getAppMessageReceivedSubject(): Subject<unknown> {
     return this.appMessageReceivedSubject;
   }
 
-  getAppMessageReceivedObservable(): Observable<any> {
-    return this.appMessageReceivedSubject.asObservable();
+  getAppMessageReceivedObservable<TBody>(): Observable<TBody> {
+    return this.appMessageReceivedSubject.asObservable() as Observable<TBody>;
   }
 }

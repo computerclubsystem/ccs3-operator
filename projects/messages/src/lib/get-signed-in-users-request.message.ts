@@ -1,11 +1,9 @@
 import { Message } from './declarations/message';
 import { MessageType } from './declarations/message-type';
 
-export interface GetSignedInUsersRequestMessageBody {
-}
+export type GetSignedInUsersRequestMessageBody = object;
 
-export interface GetSignedInUsersRequestMessage extends Message<GetSignedInUsersRequestMessageBody> {
-}
+export type GetSignedInUsersRequestMessage = Message<GetSignedInUsersRequestMessageBody>;
 
 export function createGetSignedInUsersRequestMessage(): GetSignedInUsersRequestMessage {
   const msg: GetSignedInUsersRequestMessage = {

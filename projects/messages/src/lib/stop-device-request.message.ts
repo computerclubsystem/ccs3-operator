@@ -6,8 +6,7 @@ export interface StopDeviceRequestMessageBody {
   note?: string | null;
 }
 
-export interface StopDeviceRequestMessage extends Message<StopDeviceRequestMessageBody> {
-}
+export type StopDeviceRequestMessage = Message<StopDeviceRequestMessageBody>;
 
 export function createStopDeviceRequestMessage(): StopDeviceRequestMessage {
   const msg: StopDeviceRequestMessage = {

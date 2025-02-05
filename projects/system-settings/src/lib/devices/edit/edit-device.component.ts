@@ -51,7 +51,7 @@ export class EditDeviceComponent implements OnInit {
     const msg = createGetDeviceByIdRequestMessage();
     msg.body.deviceId = deviceId;
     this.messageTransportSvc.sendAndAwaitForReply(msg)
-      .subscribe(getAllDevicesReplyMsg => this.processGetDeviceByIdReplyMessage(getAllDevicesReplyMsg));
+      .subscribe(getAllDevicesReplyMsg => this.processGetDeviceByIdReplyMessage(getAllDevicesReplyMsg as GetDeviceByIdReplyMessage));
   }
 
   processGetDeviceByIdReplyMessage(replyMsg: GetDeviceByIdReplyMessage): void {
@@ -80,7 +80,7 @@ export class EditDeviceComponent implements OnInit {
       name: this.form.value.name!,
     } as Device;
     this.messageTransportSvc.sendAndAwaitForReply(msg)
-      .subscribe(updateDeviceReplyMsg => this.processUpdateDeviceReplyMessage(updateDeviceReplyMsg));
+      .subscribe(updateDeviceReplyMsg => this.processUpdateDeviceReplyMessage(updateDeviceReplyMsg as UpdateDeviceReplyMessage));
   }
 
   processUpdateDeviceReplyMessage(updateDeviceReplyMessage: UpdateDeviceReplyMessage): void {

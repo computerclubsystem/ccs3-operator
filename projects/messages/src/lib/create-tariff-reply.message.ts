@@ -5,5 +5,4 @@ export interface CreateTariffReplyMessageBody {
   tariff: Tariff;
 }
 
-export interface CreateTariffReplyMessage extends ReplyMessage<CreateTariffReplyMessageBody> {
-}
+export type CreateTariffReplyMessage = ReplyMessage<CreateTariffReplyMessageBody>;

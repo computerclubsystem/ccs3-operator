@@ -5,5 +5,4 @@ export interface OperatorDeviceConnectivitiesNotificationMessageBody {
   connectivityItems: DeviceConnectivityItem[];
 }
 
-export interface OperatorDeviceConnectivitiesNotificationMessage extends NotificationMessage<OperatorDeviceConnectivitiesNotificationMessageBody> {
-}
+export type OperatorDeviceConnectivitiesNotificationMessage = NotificationMessage<OperatorDeviceConnectivitiesNotificationMessageBody>;

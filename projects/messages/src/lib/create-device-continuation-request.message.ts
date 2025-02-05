@@ -6,8 +6,7 @@ export interface CreateDeviceContinuationRequestMessageBody {
   deviceContinuation: DeviceContinuation;
 }
 
-export interface CreateDeviceContinuationRequestMessage extends Message<CreateDeviceContinuationRequestMessageBody> {
-}
+export type CreateDeviceContinuationRequestMessage = Message<CreateDeviceContinuationRequestMessageBody>;
 
 export function createCreateDeviceContinuationRequestMessage(): CreateDeviceContinuationRequestMessage {
   const msg: CreateDeviceContinuationRequestMessage = {

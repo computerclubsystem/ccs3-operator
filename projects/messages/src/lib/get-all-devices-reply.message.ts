@@ -5,5 +5,4 @@ export interface GetAllDevicesReplyMessageBody {
   devices: Device[];
 }
 
-export interface GetAllDevicesReplyMessage extends Message<GetAllDevicesReplyMessageBody> {
-}
+export type GetAllDevicesReplyMessage = Message<GetAllDevicesReplyMessageBody>;

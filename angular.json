@@ -16,8 +16,7 @@
             "outputPath": "dist/ccs3-operator",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-            ],
+            "polyfills": [],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -80,8 +79,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-            ],
+            "polyfills": [],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               {
@@ -93,6 +91,15 @@
               "src/styles.css"
             ],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
@@ -122,8 +129,17 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/connector/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/connector/**/*.ts",
+              "projects/connector/**/*.html"
+            ],
+            "eslintConfig": "projects/connector/eslint.config.js"
           }
         }
       }
@@ -153,8 +169,17 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/messages/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/messages/**/*.ts",
+              "projects/messages/**/*.html"
+            ],
+            "eslintConfig": "projects/messages/eslint.config.js"
           }
         }
       }
@@ -184,8 +209,17 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/sign-in/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/sign-in/**/*.ts",
+              "projects/sign-in/**/*.html"
+            ],
+            "eslintConfig": "projects/sign-in/eslint.config.js"
           }
         }
       }
@@ -215,8 +249,17 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/shared/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/shared/**/*.ts",
+              "projects/shared/**/*.html"
+            ],
+            "eslintConfig": "projects/shared/eslint.config.js"
           }
         }
       }
@@ -246,8 +289,17 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/toolbar/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/toolbar/**/*.ts",
+              "projects/toolbar/**/*.html"
+            ],
+            "eslintConfig": "projects/toolbar/eslint.config.js"
           }
         }
       }
@@ -277,8 +329,17 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/notifications/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/notifications/**/*.ts",
+              "projects/notifications/**/*.html"
+            ],
+            "eslintConfig": "projects/notifications/eslint.config.js"
           }
         }
       }
@@ -308,8 +369,17 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/computer-statuses/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/computer-statuses/**/*.ts",
+              "projects/computer-statuses/**/*.html"
+            ],
+            "eslintConfig": "projects/computer-statuses/eslint.config.js"
           }
         }
       }
@@ -339,8 +409,17 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/signed-out-session-stats/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/signed-out-session-stats/**/*.ts",
+              "projects/signed-out-session-stats/**/*.html"
+            ],
+            "eslintConfig": "projects/signed-out-session-stats/eslint.config.js"
           }
         }
       }
@@ -370,8 +449,17 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/system-settings/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/system-settings/**/*.ts",
+              "projects/system-settings/**/*.html"
+            ],
+            "eslintConfig": "projects/system-settings/eslint.config.js"
           }
         }
       }
@@ -380,7 +468,7 @@
       "projectType": "library",
       "root": "projects/money-formatter",
       "sourceRoot": "projects/money-formatter/src",
-      "prefix": "lib",
+      "prefix": "ccs3-op",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
@@ -406,6 +494,16 @@
               "zone.js/testing"
             ]
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/money-formatter/**/*.ts",
+              "projects/money-formatter/**/*.html"
+            ],
+            "eslintConfig": "projects/money-formatter/eslint.config.js"
+          }
         }
       }
     },
@@ -413,7 +511,7 @@
       "projectType": "library",
       "root": "projects/seconds-formatter",
       "sourceRoot": "projects/seconds-formatter/src",
-      "prefix": "lib",
+      "prefix": "ccs3-op",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
@@ -439,6 +537,16 @@
               "zone.js/testing"
             ]
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/seconds-formatter/**/*.ts",
+              "projects/seconds-formatter/**/*.html"
+            ],
+            "eslintConfig": "projects/seconds-formatter/eslint.config.js"
+          }
         }
       }
     },
@@ -446,7 +554,7 @@
       "projectType": "library",
       "root": "projects/expand-button",
       "sourceRoot": "projects/expand-button/src",
-      "prefix": "lib",
+      "prefix": "ccs3-op",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
@@ -472,6 +580,16 @@
               "zone.js/testing"
             ]
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/expand-button/**/*.ts",
+              "projects/expand-button/**/*.html"
+            ],
+            "eslintConfig": "projects/expand-button/eslint.config.js"
+          }
         }
       }
     },
@@ -479,7 +597,7 @@
       "projectType": "library",
       "root": "projects/boolean-indicator",
       "sourceRoot": "projects/boolean-indicator/src",
-      "prefix": "lib",
+      "prefix": "ccs3-op",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
@@ -505,6 +623,16 @@
               "zone.js/testing"
             ]
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/boolean-indicator/**/*.ts",
+              "projects/boolean-indicator/**/*.html"
+            ],
+            "eslintConfig": "projects/boolean-indicator/eslint.config.js"
+          }
         }
       }
     },
@@ -512,7 +640,7 @@
       "projectType": "library",
       "root": "projects/reports",
       "sourceRoot": "projects/reports/src",
-      "prefix": "lib",
+      "prefix": "ccs3-op",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
@@ -538,6 +666,16 @@
               "zone.js/testing"
             ]
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/reports/**/*.ts",
+              "projects/reports/**/*.html"
+            ],
+            "eslintConfig": "projects/reports/eslint.config.js"
+          }
         }
       }
     },
@@ -545,7 +683,7 @@
       "projectType": "library",
       "root": "projects/signed-out-by-administrator",
       "sourceRoot": "projects/signed-out-by-administrator/src",
-      "prefix": "lib",
+      "prefix": "ccs3-op",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
@@ -570,6 +708,16 @@
               "zone.js",
               "zone.js/testing"
             ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/signed-out-by-administrator/**/*.ts",
+              "projects/signed-out-by-administrator/**/*.html"
+            ],
+            "eslintConfig": "projects/signed-out-by-administrator/eslint.config.js"
           }
         }
       }

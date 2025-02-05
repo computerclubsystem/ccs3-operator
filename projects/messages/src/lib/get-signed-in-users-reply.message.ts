@@ -5,5 +5,4 @@ export interface GetSignedInUsersReplyMessageBody {
   signedInUsers: SignedInUser[];
 }
 
-export interface GetSignedInUsersReplyMessage extends ReplyMessage<GetSignedInUsersReplyMessageBody> {
-}
+export type GetSignedInUsersReplyMessage = ReplyMessage<GetSignedInUsersReplyMessageBody>;

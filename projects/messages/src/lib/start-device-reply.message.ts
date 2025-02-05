@@ -5,5 +5,4 @@ export interface StartDeviceReplyMessageBody {
   deviceStatus: DeviceStatus;
 }
 
-export interface StartDeviceReplyMessage extends ReplyMessage<StartDeviceReplyMessageBody> {
-}
+export type StartDeviceReplyMessage = ReplyMessage<StartDeviceReplyMessageBody> ;

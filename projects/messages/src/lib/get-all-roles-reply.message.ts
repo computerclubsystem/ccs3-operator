@@ -5,5 +5,4 @@ export interface GetAllRolesReplyMessageBody {
   roles: Role[];
 }
 
-export interface GetAllRolesReplyMessage extends ReplyMessage<GetAllRolesReplyMessageBody> {
-}
+export type GetAllRolesReplyMessage = ReplyMessage<GetAllRolesReplyMessageBody>;

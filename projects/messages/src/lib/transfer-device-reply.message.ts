@@ -6,5 +6,4 @@ export interface TransferDeviceReplyMessageBody {
   targetDeviceStatus: DeviceStatus;
 }
 
-export interface TransferDeviceReplyMessage extends ReplyMessage<TransferDeviceReplyMessageBody> {
-}
+export type TransferDeviceReplyMessage = ReplyMessage<TransferDeviceReplyMessageBody>;

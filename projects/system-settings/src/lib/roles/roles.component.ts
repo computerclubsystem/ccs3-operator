@@ -50,7 +50,7 @@ export class RolesComponent implements OnInit {
     const requestMsg = createGetAllRolesRequestMessage();
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(getAllRolesReplyMsg => this.processGetAllRolesReplyMessage(getAllRolesReplyMsg));
+    ).subscribe(getAllRolesReplyMsg => this.processGetAllRolesReplyMessage(getAllRolesReplyMsg as GetAllRolesReplyMessage));
   }
 
   processGetAllRolesReplyMessage(getAllRolesReplyMsg: GetAllRolesReplyMessage): void {

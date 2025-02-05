@@ -15,7 +15,7 @@ import {
   HashService,
   InternalSubjectsService, MessageTransportService, NotificationType, TimeConverterService, ValidatorsService
 } from '@ccs3-operator/shared';
-import { SecondsFormatterComponent, SecondsFormatterPipe } from '@ccs3-operator/seconds-formatter';
+import { SecondsFormatterComponent } from '@ccs3-operator/seconds-formatter';
 import {
   createCreateTariffRequestMessage, createGetTariffByIdRequestMessage, createRechargeTariffDurationRequestMessage, CreateTariffReplyMessage,
   createUpdateTariffRequestMessage, GetTariffByIdReplyMessage, RechargeTariffDurationReplyMessage, Tariff, TariffType, UpdateTariffReplyMessage
@@ -72,10 +72,10 @@ export class CreatePrepaidTariffComponent implements OnInit {
   subscribeToFormChanges(): void {
     this.form.controls.durationGroup.controls.duration.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(durationValue => this.processDurationValueChanges(durationValue));
+    ).subscribe(() => this.processDurationValueChanges());
     this.form.controls.price.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(priceValue => this.processPriceValueChanges(priceValue));
+    ).subscribe(() => this.processPriceValueChanges());
     this.form.controls.setPassword.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(setPasswordValue => this.processSetPasswordValueChanged(setPasswordValue!));
@@ -134,7 +134,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
     getTariffRequestMsg.body.tariffId = tariffId;
     this.messageTransportSvc.sendAndAwaitForReply(getTariffRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(getTariffByIdReplyMsg => this.processGetTariffByIdReplyMessage(getTariffByIdReplyMsg));
+    ).subscribe(getTariffByIdReplyMsg => this.processGetTariffByIdReplyMessage(getTariffByIdReplyMsg as GetTariffByIdReplyMessage));
   }
 
   processGetTariffByIdReplyMessage(getTariffByIdReplyMsg: GetTariffByIdReplyMessage): void {
@@ -164,14 +164,14 @@ export class CreatePrepaidTariffComponent implements OnInit {
     this.signals.isLoading.set(false);
   }
 
-  processDurationValueChanges(durationValue: string | null): void {
+  processDurationValueChanges(): void {
     const durationConrol = this.form.controls.durationGroup.controls.duration;
     this.signals.durationHasNotTwoPartsError.set(durationConrol.hasError('notTwoParts'));
     this.signals.durationHasOutOfRangeError.set(durationConrol.hasError('outOfRange'));
     this.signals.durationHasInvalidCharError.set(durationConrol.hasError('invalidChar'));
   }
 
-  processPriceValueChanges(priceValue: number | null): void {
+  processPriceValueChanges(): void {
     const priceControl = this.form.controls.price;
     this.signals.priceHasError.set(priceControl.invalid);
   }
@@ -181,9 +181,9 @@ export class CreatePrepaidTariffComponent implements OnInit {
     requestMsg.body.tariffId = this.signals.tariff()!.id;
     this.signals.rechargingTariffInProgress.set(true);
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
-      finalize(() => timer(3000).subscribe(_ => this.signals.rechargingTariffInProgress.set(false))),
+      finalize(() => timer(3000).subscribe(() => this.signals.rechargingTariffInProgress.set(false))),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(replyMsg => this.processRechargeTariffDurationReplyMessage(replyMsg));
+    ).subscribe(replyMsg => this.processRechargeTariffDurationReplyMessage(replyMsg as RechargeTariffDurationReplyMessage));
   }
 
   processRechargeTariffDurationReplyMessage(replyMsg: RechargeTariffDurationReplyMessage): void {
@@ -218,7 +218,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
       }
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(replyMsg => this.processUpdateTariffReplyMessage(replyMsg));
+      ).subscribe(replyMsg => this.processUpdateTariffReplyMessage(replyMsg as UpdateTariffReplyMessage));
     } else {
       this.signals.createdTariff.set(null);
       const requestMsg = createCreateTariffRequestMessage();
@@ -228,7 +228,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
       }
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(replyMsg => this.processCreateTariffReplyMessage(replyMsg));
+      ).subscribe(replyMsg => this.processCreateTariffReplyMessage(replyMsg as CreateTariffReplyMessage));
     }
   }
 

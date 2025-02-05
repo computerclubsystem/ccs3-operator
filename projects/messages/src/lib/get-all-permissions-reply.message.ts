@@ -5,5 +5,4 @@ export interface GetAllPermissionsReplyMessageBody {
   permissions: Permission[];
 }
 
-export interface GetAllPermissionsReplyMessage extends ReplyMessage<GetAllPermissionsReplyMessageBody> {
-}
+export type GetAllPermissionsReplyMessage = ReplyMessage<GetAllPermissionsReplyMessageBody>;

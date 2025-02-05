@@ -9,7 +9,7 @@ import { Observable, Subject } from 'rxjs';
 export class ConnectorService {
   // private ws!: WebSocket;
   private settings!: ConnectorSettings;
-  private messageSubject = new Subject<any>();
+  private messageSubject = new Subject<unknown>();
   private connectedSubject = new Subject<void>();
   private errorSubject = new Subject<OnErrorEventArgs>();
   private sendMessageErrorSubject = new Subject<SendMessageErrorArgs>();
@@ -23,7 +23,7 @@ export class ConnectorService {
   }
 
   // sendMessage<TBody>(msg: Message<TBody>): void {
-  sendMessage(msg: any): boolean {
+  sendMessage(msg: unknown): boolean {
     // const array = this.toBinary(msg);
     if (!this.state.ws) {
       return false;
@@ -50,11 +50,11 @@ export class ConnectorService {
     }
   }
 
-  getMessageObservable(): Observable<any> {
+  getMessageObservable(): Observable<unknown> {
     return this.messageSubject.asObservable();
   }
 
-  getSendMessageErrorObservable(): Observable<any> {
+  getSendMessageErrorObservable(): Observable<SendMessageErrorArgs> {
     return this.sendMessageErrorSubject.asObservable();
   }
 
@@ -62,11 +62,11 @@ export class ConnectorService {
     return this.connectedSubject.asObservable();
   }
 
-  getErrorObservable(): Observable<any> {
+  getErrorObservable(): Observable<OnErrorEventArgs> {
     return this.errorSubject.asObservable();
   }
 
-  getClosedObservable(): Observable<any> {
+  getClosedObservable(): Observable<OnCloseEventArgs> {
     return this.closeSubject.asObservable();
   }
 
@@ -79,7 +79,7 @@ export class ConnectorService {
   private connect(): void {
     this.state.ws = new WebSocket(this.settings.url);
     const ws = this.state.ws;
-    ws.onopen = ev => {
+    ws.onopen = () => {
       this.connectedSubject.next();
     };
     ws.onmessage = msgEv => {

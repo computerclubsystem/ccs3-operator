@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, Signal, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -60,8 +60,7 @@ interface Signals {
   isConnected: Signal<boolean | undefined>;
 }
 
-interface LanguageMenuItem extends MenuItem<LanguageMenuItemId> {
-}
+type LanguageMenuItem = MenuItem<LanguageMenuItemId>;
 
 const enum LanguageMenuItemId {
   en = 'en',

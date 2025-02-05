@@ -25,7 +25,7 @@ import { QueryParamName, RouteName } from './app.routes';
 import { NotificationsHelperService } from './notifications-helper.service';
 
 @Component({
-  selector: 'app-root',
+  selector: 'ccs3-op-app-root',
   standalone: true,
   imports: [RouterOutlet, ToolbarComponent],
   templateUrl: 'app.component.html',
@@ -66,7 +66,7 @@ export class AppComponent implements OnInit {
 
   subscribeToConnectorService(): void {
     this.connectorSvc.getMessageObservable().subscribe(data => this.processConnectorMessage(data));
-    this.connectorSvc.getConnectedObservable().subscribe(ev => this.processConnectorConnected(ev));
+    this.connectorSvc.getConnectedObservable().subscribe(() => this.processConnectorConnected());
     this.connectorSvc.getClosedObservable().subscribe(ev => this.processConnectorConnectionClosed(ev));
     this.connectorSvc.getErrorObservable().subscribe(ev => this.processConnectorError(ev));
     this.connectorSvc.getSendMessageErrorObservable().subscribe(ev => this.processConnectorSendMessageError(ev));
@@ -97,7 +97,7 @@ export class AppComponent implements OnInit {
     this.router.navigate([RouteName.signIn]);
   }
 
-  processFailureReplyMessageReceived(msg: ReplyMessage<any>): void {
+  processFailureReplyMessageReceived(msg: ReplyMessage<unknown>): void {
     const errors = msg.header.errors;
     const type = msg.header.type;
     const errorItems = errors?.map(x => translate('Error code') + ` '${x.code || ""}'` + (x.description ? `: ${x.description}` : ''));
@@ -145,7 +145,7 @@ export class AppComponent implements OnInit {
 
   processSignInRequested(authRequestMsg: AuthRequestMessage): void {
     this.messageTransportSvc.sendAndAwaitForReply(authRequestMsg)
-      .subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg));
+      .subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg as AuthReplyMessage));
   }
 
   processLanguageSelected(language: string): void {
@@ -189,9 +189,9 @@ export class AppComponent implements OnInit {
     this.messageTransportSvc.sendAndAwaitForReply(signOutRequestMsg).subscribe({
       next: signOutReplyMsg => {
         // Receiving sign out reply message means it suceeded
-        this.performSignOut(signOutReplyMsg);
+        this.performSignOut(signOutReplyMsg as SignOutReplyMessage | null);
       },
-      error: err => {
+      error: () => {
         // On error also sign out
         const signOutReplyMsg: SignOutReplyMessage = {
           body: {
@@ -249,7 +249,7 @@ export class AppComponent implements OnInit {
         const authRequestMsg = createAuthRequestMessage();
         authRequestMsg.body.token = tokenData.token;
         this.messageTransportSvc.sendAndAwaitForReply(authRequestMsg)
-          .subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg));
+          .subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg as AuthReplyMessage));
       } else {
         this.internalSubjectsSvc.setSignedIn(false);
         // TODO: Find routes that should not be redirected like "You have been signed out by administrator" route
@@ -260,7 +260,7 @@ export class AppComponent implements OnInit {
     });
   }
 
-  private async processConnectorMessage(data: any): Promise<void> {
+  private async processConnectorMessage(data: unknown): Promise<void> {
     const message = await this.parseMessage(data);
     if (!message?.header?.type) {
       return;
@@ -305,7 +305,7 @@ export class AppComponent implements OnInit {
       const newTokenData: TokenData = {
         token: message.body.token!,
         tokenExpiresAt: message.body.tokenExpiresAt!,
-        permissions: existingTokenData?.permissions!,
+        permissions: existingTokenData?.permissions || [],
       };
       this.storeTokenData(newTokenData);
       this.setUpRefreshTokenTimer(message.body.tokenExpiresAt!);
@@ -326,7 +326,7 @@ export class AppComponent implements OnInit {
     let permissions = message?.body?.permissions as PermissionName[];
     if (!permissions) {
       const tokenData = this.getStoredTokenData();
-      permissions = tokenData?.permissions! as PermissionName[];
+      permissions = (tokenData?.permissions || []) as PermissionName[];
     }
     this.permissionsSvc.setPermissions(permissions);
     this.messageTransportSvc.setToken(message.body.token);
@@ -451,12 +451,13 @@ export class AppComponent implements OnInit {
         const refreshTokenMsg = createRefreshTokenRequestMessage();
         refreshTokenMsg.body.currentToken = token;
         // this.messageTransportSvc.sendMessage(refreshTokenMsg);
-        this.messageTransportSvc.sendAndAwaitForReply(refreshTokenMsg).subscribe(replyMsg => this.processRefreshTokenReplyMessage(replyMsg));
+        this.messageTransportSvc.sendAndAwaitForReply(refreshTokenMsg)
+          .subscribe(replyMsg => this.processRefreshTokenReplyMessage(replyMsg as RefreshTokenReplyMessage));
       }
     }, interval);
   }
 
-  private processConnectorConnected(ev: any): void {
+  private processConnectorConnected(): void {
     // TODO: This can happen faster than the translations file is loaded. If this is the case, warning will be logged in the browser console
     this.notificationsHelperSvc.showConnected();
     this.internalSubjectsSvc.setConnected(true);
@@ -472,12 +473,12 @@ export class AppComponent implements OnInit {
     this.notificationsHelperSvc.showConnectionError(args);
   }
 
-  private processConnectorSendMessageError(err: any): void {
+  private processConnectorSendMessageError(err: unknown): void {
     this.notificationsHelperSvc.showSendMessageError(err);
   }
 
-  private async parseMessage<TBody>(data: any): Promise<Message<TBody> | undefined> {
-    let message: Message<any>;
+  private async parseMessage<TBody>(data: unknown): Promise<Message<TBody> | undefined> {
+    let message: Message<TBody>;
     if (typeof data === 'string') {
       message = JSON.parse(data);
     } else {
@@ -506,7 +507,7 @@ export class AppComponent implements OnInit {
     let result: TokenData | null = null;
     try {
       result = JSON.parse(value);
-    } catch (err) {
+    } catch {
       this.removeStoredTokenData();
     }
     return result;

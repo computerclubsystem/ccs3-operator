@@ -3,7 +3,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({ name: 'secondsToTime', standalone: true })
 export class SecondsToTimePipe implements PipeTransform {
 
-  transform(value: any, ...args: any[]) {
+  transform(value: number | null | undefined): string {
+    if (!value) {
+      return '0:00';
+    }
     const totalSeconds = +value;
     if (isNaN(totalSeconds) || totalSeconds === 0) {
       return '0:00';

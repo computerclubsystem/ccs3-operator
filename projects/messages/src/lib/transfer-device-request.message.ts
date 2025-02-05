@@ -6,8 +6,7 @@ export interface TransferDeviceRequestMessageBody {
   targetDeviceId: number;
 }
 
-export interface TransferDeviceRequestMessage extends Message<TransferDeviceRequestMessageBody> {
-}
+export type TransferDeviceRequestMessage = Message<TransferDeviceRequestMessageBody>;
 
 export function createTransferDeviceRequestMessage(): TransferDeviceRequestMessage {
   const msg: TransferDeviceRequestMessage = {

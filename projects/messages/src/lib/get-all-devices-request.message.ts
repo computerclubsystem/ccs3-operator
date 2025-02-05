@@ -1,11 +1,9 @@
 import { Message } from './declarations/message';
 import { MessageType } from './declarations/message-type';
 
-export interface GetAllDevicesRequestMessageBody {
-}
+export type GetAllDevicesRequestMessageBody = object;
 
-export interface GetAllDevicesRequestMessage extends Message<GetAllDevicesRequestMessageBody> {
-}
+export type GetAllDevicesRequestMessage = Message<GetAllDevicesRequestMessageBody>;
 
 export function createGetAllDevicesRequestMessage(): GetAllDevicesRequestMessage {
   const msg: GetAllDevicesRequestMessage = {

@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class TimeConverterService {
-  convertTimeToMinutes(time: string): number {
+  convertTimeToMinutes(time?: string | null): number {
+    if (!time) {
+      return 0;
+    }
     const trimmedDuration = time.trim();
     const parts = trimmedDuration.split(':');
     const hours = +parts[0];

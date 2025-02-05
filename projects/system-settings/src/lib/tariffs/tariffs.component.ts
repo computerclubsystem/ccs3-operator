@@ -45,7 +45,7 @@ export class TariffsComponent implements OnInit {
     const msg = createGetAllTariffsRequestMessage();
     msg.body.types = [TariffType.duration, TariffType.fromTo];
     this.messageTransportSvc.sendAndAwaitForReply<GetAllTariffsRequestMessageBody>(msg)
-      .subscribe(getAllTariffsReplyMsg => this.processGetAllTariffsReplyMessage(getAllTariffsReplyMsg));
+      .subscribe(getAllTariffsReplyMsg => this.processGetAllTariffsReplyMessage(getAllTariffsReplyMsg as GetAllTariffsReplyMessage));
   }
 
   processGetAllTariffsReplyMessage(getAllTariffsReplyMsg: GetAllTariffsReplyMessage): void {

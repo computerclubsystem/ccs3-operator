@@ -5,7 +5,7 @@ import { DatePipe } from '@angular/common';
 export class NoYearDatePipe implements PipeTransform {
   private datePipe = inject(DatePipe);
 
-  transform(value: any, ...args: any[]) {
+  transform(value: Date | string | number | null): string | null {
     return this.datePipe.transform(value, 'MMM-dd HH:mm:ss');
   }
 }

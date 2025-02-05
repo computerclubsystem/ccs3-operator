@@ -7,5 +7,4 @@ export enum MainMenuItemId {
   reports = 'reports',
 }
 
-export interface MainMenuItem extends MenuItem<MainMenuItemId> {
-}
+export type MainMenuItem = MenuItem<MainMenuItemId>;

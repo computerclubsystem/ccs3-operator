@@ -6,7 +6,7 @@ import { staticTranslations } from './static-translations/static-translations';
 @Injectable({ providedIn: 'root' })
 export class TranslocoHttpLoader implements TranslocoLoader {
   async getTranslation(lang: string): Promise<Translation> {
-    const staticTranslationForSelectedLanguage = (staticTranslations as any)[lang];
+    const staticTranslationForSelectedLanguage = (staticTranslations as Record<string, unknown>)[lang];
     if (staticTranslationForSelectedLanguage) {
       return staticTranslationForSelectedLanguage;
     }

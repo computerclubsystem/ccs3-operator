@@ -6,5 +6,4 @@ export interface CreateRoleWithPermissionsReplyMessageBody {
   rolePermissionIds?: number[];
 }
 
-export interface CreateRoleWithPermissionsReplyMessage extends ReplyMessage<CreateRoleWithPermissionsReplyMessageBody> {
-}
+export type CreateRoleWithPermissionsReplyMessage = ReplyMessage<CreateRoleWithPermissionsReplyMessageBody>;

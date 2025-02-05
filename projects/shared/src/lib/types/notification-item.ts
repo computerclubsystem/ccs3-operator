@@ -8,5 +8,5 @@ export interface NotificationItem {
   title: string;
   description?: string | null;
   addedAt: number;
-  customData?: any;
+  customData?: unknown | null;
 }

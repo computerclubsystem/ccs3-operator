@@ -6,8 +6,7 @@ export interface StartDeviceRequestMessageBody {
   tariffId: number;
 }
 
-export interface StartDeviceRequestMessage extends Message<StartDeviceRequestMessageBody> {
-}
+export type StartDeviceRequestMessage = Message<StartDeviceRequestMessageBody>;
 
 export function createStartDeviceRequestMessage(): StartDeviceRequestMessage {
   const msg: StartDeviceRequestMessage = {

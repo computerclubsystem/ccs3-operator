@@ -1,11 +1,9 @@
 import { Message } from './declarations/message';
 import { MessageType } from './declarations/message-type';
 
-export interface SignOutRequestMessageBody {
-}
+export type SignOutRequestMessageBody = object;
 
-export interface SignOutRequestMessage extends Message<SignOutRequestMessageBody> {
-}
+export type SignOutRequestMessage = Message<SignOutRequestMessageBody>;
 
 export function createSignOutRequestMessage(): SignOutRequestMessage {
   const msg: SignOutRequestMessage = {

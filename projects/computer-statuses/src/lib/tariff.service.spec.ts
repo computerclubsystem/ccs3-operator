@@ -14,7 +14,7 @@ describe('TariffService', () => {
       currentDayMinute: number;
     }
     const nonFromToTariffTypes = Object.values(TariffType).filter(x => x !== TariffType.fromTo);
-    const nonFromToTariffTypesTestItems = nonFromToTariffTypes.map(x => ({ result: { canUse: true }, currentDayMinute: 0, tariff: { type: TariffType.duration } as Tariff } as CanUseTariffTestItem));
+    const nonFromToTariffTypesTestItems = nonFromToTariffTypes.map(() => ({ result: { canUse: true }, currentDayMinute: 0, tariff: { type: TariffType.duration } as Tariff } as CanUseTariffTestItem));
     const canUseTariffTestItems: CanUseTariffTestItem[] = [
       // Non TariffType.fromTo should always be available
       ...nonFromToTariffTypesTestItems,

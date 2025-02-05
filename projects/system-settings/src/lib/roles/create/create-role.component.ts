@@ -68,7 +68,7 @@ export class CreateRoleComponent implements OnInit {
     requestMsg.body.roleId = roleId;
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(getRoleWithPermissionsReplyMsg => this.processGetRoleWithPermissionsReplyMessage(getRoleWithPermissionsReplyMsg));
+    ).subscribe(getRoleWithPermissionsReplyMsg => this.processGetRoleWithPermissionsReplyMessage(getRoleWithPermissionsReplyMsg as GetRoleWithPermissionsReplyMessage));
   }
 
   processGetRoleWithPermissionsReplyMessage(getRoleWithPermissionsReplyMsg: GetRoleWithPermissionsReplyMessage): void {
@@ -104,7 +104,7 @@ export class CreateRoleComponent implements OnInit {
     const requestMsg = createGetAllPermissionsRequestMessage();
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(getAllPermissionsReplyMsg => this.processGetAllPermissionsReplyMessage(getAllPermissionsReplyMsg));
+    ).subscribe(getAllPermissionsReplyMsg => this.processGetAllPermissionsReplyMessage(getAllPermissionsReplyMsg as GetAllPermissionsReplyMessage));
   }
 
   processGetAllPermissionsReplyMessage(getAllPermissionsReplyMsg: GetAllPermissionsReplyMessage): void {
@@ -153,7 +153,7 @@ export class CreateRoleComponent implements OnInit {
       requestMsg.body.rolePermissionIds = this.signals.rolePermissions().map(x => x.id);
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(createRoleWithPermissionsReplyMsg => this.processCreateRoleWithPermissionsReplyMessage(createRoleWithPermissionsReplyMsg));
+      ).subscribe(createRoleWithPermissionsReplyMsg => this.processCreateRoleWithPermissionsReplyMessage(createRoleWithPermissionsReplyMsg as CreateRoleWithPermissionsReplyMessage));
     } else {
       // Edit existing
       const currentRole = this.signals.role();
@@ -164,7 +164,7 @@ export class CreateRoleComponent implements OnInit {
         requestMsg.body.rolePermissionIds = this.signals.rolePermissions().map(x => x.id);
         this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
           takeUntilDestroyed(this.destroyRef)
-        ).subscribe(updateRoleWithPermissionsReplyMsg => this.processUpdateRoleWithPermissionsReplyMessage(updateRoleWithPermissionsReplyMsg));
+        ).subscribe(updateRoleWithPermissionsReplyMsg => this.processUpdateRoleWithPermissionsReplyMessage(updateRoleWithPermissionsReplyMsg as UpdateRoleWithPermissionsReplyMessage));
 
       } else {
         // The role was not loaded

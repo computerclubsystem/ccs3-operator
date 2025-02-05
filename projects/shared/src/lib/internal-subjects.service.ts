@@ -20,13 +20,13 @@ export class InternalSubjectsService {
   private readonly manualAuthSucceededSubject = new Subject<void>();
   private readonly signOutReplyMessageSubject = new ReplaySubject<SignOutReplyMessage>(1);
   private readonly messageTimedOutSubject = new Subject<MessageTimedOutErrorData>();
-  private readonly setFailureReplyMessageReceivedSubject = new Subject<ReplyMessage<any>>();
+  private readonly setFailureReplyMessageReceivedSubject = new Subject<ReplyMessage<unknown>>();
 
-  setFailureReplyMessageReceived(msg: ReplyMessage<any>): void {
+  setFailureReplyMessageReceived(msg: ReplyMessage<unknown>): void {
     this.setFailureReplyMessageReceivedSubject.next(msg);
   }
 
-  getFailureReplyMessageReceived(): Observable<ReplyMessage<any>> {
+  getFailureReplyMessageReceived(): Observable<ReplyMessage<unknown>> {
     return this.setFailureReplyMessageReceivedSubject.asObservable();
   }
 

@@ -1,7 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import {
-  AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators
-} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { translate } from '@jsverse/transloco';
 
 import { DurationFormControls, FormControls, FromToFormControls } from './declarations';

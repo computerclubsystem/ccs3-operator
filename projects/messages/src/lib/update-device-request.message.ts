@@ -6,8 +6,7 @@ export interface UpdateDeviceRequestMessageBody {
   device: Device;
 }
 
-export interface UpdateDeviceRequestMessage extends Message<UpdateDeviceRequestMessageBody> {
-}
+export type UpdateDeviceRequestMessage = Message<UpdateDeviceRequestMessageBody>;
 
 export function createUpdateDeviceRequestMessage(): UpdateDeviceRequestMessage {
   const msg: UpdateDeviceRequestMessage = {

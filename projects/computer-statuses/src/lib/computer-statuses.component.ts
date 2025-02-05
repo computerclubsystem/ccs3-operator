@@ -86,7 +86,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     const getDeviceStatusesRequestMsg = createGetDeviceStatusesRequestMessage();
     this.messageTransportSvc.sendAndAwaitForReply(getDeviceStatusesRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(getDeviceStatusesReplyMsg => this.processGetDeviceStatusesReplyMessage(getDeviceStatusesReplyMsg));
+    ).subscribe(getDeviceStatusesReplyMsg => this.processGetDeviceStatusesReplyMessage(getDeviceStatusesReplyMsg as GetDeviceStatusesReplyMessage));
   }
 
   isCloseToEnd(item: DeviceStatusItem): boolean {
@@ -120,7 +120,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     startDeviceRequestMsg.body.tariffId = item.selectedTariffItem.id;
     this.messageTransportSvc.sendAndAwaitForReply(startDeviceRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(startDeviceReplyMsg => this.processStartDeviceReplyMessage(startDeviceReplyMsg));
+    ).subscribe(startDeviceReplyMsg => this.processStartDeviceReplyMessage(startDeviceReplyMsg as StartDeviceReplyMessage));
   }
 
   processGetDeviceStatusesReplyMessage(getDeviceStatusesReplyMsg: GetDeviceStatusesReplyMessage): void {
@@ -149,11 +149,11 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     const getAllDevicesRequestMsg = createGetAllDevicesRequestMessage();
     this.messageTransportSvc.sendAndAwaitForReply(getAllDevicesRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(allDevicesReplyMsg => this.processAllDevicesReplyMessage(allDevicesReplyMsg));
+    ).subscribe(allDevicesReplyMsg => this.processAllDevicesReplyMessage(allDevicesReplyMsg as GetAllDevicesReplyMessage));
     const getAllTariffsRequestMsg = createGetAllTariffsRequestMessage();
     this.messageTransportSvc.sendAndAwaitForReply(getAllTariffsRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(allTariffsReplyMsg => this.processAllTariffsReplyMessage(allTariffsReplyMsg));
+    ).subscribe(allTariffsReplyMsg => this.processAllTariffsReplyMessage(allTariffsReplyMsg as GetAllTariffsReplyMessage));
   }
 
   onTariffSelected(selectedTariff: Tariff, item: DeviceStatusItem): void {
@@ -347,7 +347,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     requestMsg.body.deviceId = item.deviceStatus.deviceId;
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(replyMsg => this.processDeleteDeviceContinuationReplyMessage(replyMsg));
+    ).subscribe(replyMsg => this.processDeleteDeviceContinuationReplyMessage(replyMsg as DeleteDeviceContinuationReplyMessage));
   }
 
   processDeleteDeviceContinuationReplyMessage(replyMsg: DeleteDeviceContinuationReplyMessage): void {
@@ -371,7 +371,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     requestMsg.body.note = item.stopNote;
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(stopDeviceReplyMsg => this.processStopDeviceReplyMessage(stopDeviceReplyMsg));
+    ).subscribe(stopDeviceReplyMsg => this.processStopDeviceReplyMessage(stopDeviceReplyMsg as StopDeviceReplyMessage));
   }
 
   onTransferToChanged(transferToDeviceId: number, sourceItem: DeviceStatusItem): void {
@@ -399,7 +399,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     };
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(replyMsg => this.processCreateDeviceContinuationReplyMessage(replyMsg, item));
+    ).subscribe(replyMsg => this.processCreateDeviceContinuationReplyMessage(replyMsg as CreateDeviceContinuationReplyMessage, item));
   }
 
   processCreateDeviceContinuationReplyMessage(replyMsg: CreateDeviceContinuationReplyMessage, item: DeviceStatusItem): void {
@@ -425,7 +425,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     requestMsg.body.targetDeviceId = targetDeviceId;
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(replyMsg => this.processTransferDeviceReplyMessage(replyMsg));
+    ).subscribe(replyMsg => this.processTransferDeviceReplyMessage(replyMsg as TransferDeviceReplyMessage));
   }
 
   processTransferDeviceReplyMessage(replyMsg: TransferDeviceReplyMessage): void {

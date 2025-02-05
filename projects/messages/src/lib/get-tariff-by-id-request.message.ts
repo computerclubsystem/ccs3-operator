@@ -5,8 +5,7 @@ export interface GetTariffByIdRequestMessageBody {
   tariffId: number;
 }
 
-export interface GetTariffByIdRequestMessage extends Message<GetTariffByIdRequestMessageBody> {
-}
+export type GetTariffByIdRequestMessage = Message<GetTariffByIdRequestMessageBody>;
 
 export function createGetTariffByIdRequestMessage(): GetTariffByIdRequestMessage {
   const msg: GetTariffByIdRequestMessage = {

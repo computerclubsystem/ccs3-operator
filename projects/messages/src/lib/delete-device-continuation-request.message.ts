@@ -5,8 +5,7 @@ export interface DeleteDeviceContinuationRequestMessageBody {
   deviceId: number;
 }
 
-export interface DeleteDeviceContinuationRequestMessage extends Message<DeleteDeviceContinuationRequestMessageBody> {
-}
+export type DeleteDeviceContinuationRequestMessage = Message<DeleteDeviceContinuationRequestMessageBody>;
 
 export function createDeleteDeviceContinuationRequestMessage(): DeleteDeviceContinuationRequestMessage {
   const msg: DeleteDeviceContinuationRequestMessage = {

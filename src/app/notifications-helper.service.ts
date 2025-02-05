@@ -19,7 +19,7 @@ export class NotificationsHelperService {
     this.ntfSvc.show(NotificationType.info, translate('Signed out successfully'), null, IconName.check, signOutReplyMsg);
   }
 
-  showSendMessageError(err: any): void {
+  showSendMessageError(err: unknown): void {
     this.ntfSvc.show(NotificationType.warn, translate('Send message error'), translate('Error occured when sending message to the server'), IconName.priority_high, err);
   }
 

@@ -5,5 +5,4 @@ export interface StopDeviceReplyMessageBody {
   deviceStatus: DeviceStatus;
 }
 
-export interface StopDeviceReplyMessage extends ReplyMessage<StopDeviceReplyMessageBody> {
-}
+export type StopDeviceReplyMessage = ReplyMessage<StopDeviceReplyMessageBody> ;

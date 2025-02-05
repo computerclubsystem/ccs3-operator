@@ -1,8 +1,5 @@
 import { ReplyMessage } from './declarations/message';
 
-export interface DeleteDeviceContinuationReplyMessageBody {
-  // TODO: In the future the server will return DeviceStatus so the interface can be immediatelly updated
-}
+export type DeleteDeviceContinuationReplyMessageBody = object;
 
-export interface DeleteDeviceContinuationReplyMessage extends ReplyMessage<DeleteDeviceContinuationReplyMessageBody> {
-}
+export type DeleteDeviceContinuationReplyMessage = ReplyMessage<DeleteDeviceContinuationReplyMessageBody>;

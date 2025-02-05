@@ -8,8 +8,7 @@ export interface UpdateUserWithRolesRequestMessageBody {
   roleIds: number[];
 }
 
-export interface UpdateUserWithRolesRequestMessage extends Message<UpdateUserWithRolesRequestMessageBody> {
-}
+export type UpdateUserWithRolesRequestMessage = Message<UpdateUserWithRolesRequestMessageBody>;
 
 export function createUpdateUserWithRolesRequestMessage(): UpdateUserWithRolesRequestMessage {
   const msg: UpdateUserWithRolesRequestMessage = {
