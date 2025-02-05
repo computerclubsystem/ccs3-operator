@@ -5,6 +5,9 @@ import { formatDate } from '@angular/common';
 export class FullDatePipe implements PipeTransform {
 
   transform(value: string | number | Date | null | undefined): string {
-    return formatDate(value || '', 'yyyy-MM-dd HH:mm:ss', 'en');
+    if (!value) {
+      return '';
+    }
+    return formatDate(value, 'yyyy-MM-dd HH:mm:ss', 'en');
   }
 }

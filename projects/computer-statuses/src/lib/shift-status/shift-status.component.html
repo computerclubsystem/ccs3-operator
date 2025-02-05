@@ -1,0 +1,58 @@
+<mat-card *transloco="let t;">
+  <mat-card-header>
+    <mat-card-title>
+      <span>{{t('Shift status')}}</span>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <section class="ccs3-op-flex-column">
+      @let replyMessage = currentShiftReply();
+      @if (replyMessage) {
+      @let shiftStatus = replyMessage.body.shiftStatus;
+      <table>
+        <thead>
+          <th></th>
+          <th class="ccs3-op-align-text-end">{{t('Total sum')}}</th>
+          <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{t('Running sessions')}}</td>
+            <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                [value]="shiftStatus.runningSessionsTotal"></ccs3-op-money-formatter>
+            </td>
+            <td class="ccs3-op-align-text-end">{{shiftStatus.runningSessionsCount}}</td>
+          </tr>
+          <tr>
+            <td>{{t('Continuations')}}</td>
+            <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                [value]="shiftStatus.continuationsTotal"></ccs3-op-money-formatter>
+            </td>
+            <td class="ccs3-op-align-text-end">{{shiftStatus.continuationsCount}}</td>
+          </tr>
+          <tr>
+            <td>{{t('Completed sessions')}}</td>
+            <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                [value]="shiftStatus.completedSessionsTotal"></ccs3-op-money-formatter>
+            </td>
+            <td class="ccs3-op-align-text-end">{{shiftStatus.completedSessionsCount}}</td>
+          </tr>
+          <tr>
+            <td>{{t('Total')}}</td>
+            <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                [value]="shiftStatus.totalAmount"></ccs3-op-money-formatter>
+            </td>
+            <td class="ccs3-op-align-text-end">{{shiftStatus.totalCount}}</td>
+          </tr>
+        </tbody>
+      </table>
+      }
+    </section>
+  </mat-card-content>
+  <mat-card-actions>
+    <section class="ccs3-op-flex-row">
+      <button (click)="onRefreshCurrentShiftStatus()" mat-raised-button>{{t('Refresh shift status')}}</button>
+      <button (click)="onCompleteShift()" mat-flat-button>{{t('Complete shift')}}</button>
+    </section>
+  </mat-card-actions>
+</mat-card>

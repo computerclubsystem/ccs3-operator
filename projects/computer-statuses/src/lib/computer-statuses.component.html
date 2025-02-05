@@ -4,18 +4,30 @@
       <mat-expansion-panel-header>
         <span>{{t('Tools')}}</span>
       </mat-expansion-panel-header>
-      <section class="ccs3-op-computer-statuses-global-actions">
+      <section class="ccs3-op-computer-statuses-tools ccs3-op-flex-row ccs3-op-align-items-flex-start">
+        <section class="ccs3-op-computer-statuses-current-shift-status ccs3-op-max-width-medium-text">
+          <ccs3-op-shift-status [currentShiftReply]="signals.currentShiftReply()"
+            (refreshed)="onRefreshCurrentShiftStatus()" (shiftCompleted)="onCompleteShift()"></ccs3-op-shift-status>
+        </section>
         <section class="layout-rows-controls ccs3-op-flex-row">
-          <span>{{t('Layout rows')}}</span>
-          <section class="layout-rows-modification-container ccs3-op-flex-row ccs3-no-gap">
-            <button (click)="onDecreaseLayoutRows()" mat-icon-button>
-              <mat-icon>{{iconName.remove}}</mat-icon>
-            </button>
-            <span>{{signals.layoutRowsCount()}}</span>
-            <button (click)="onIncreaseLayoutRows()" mat-icon-button>
-              <mat-icon>{{iconName.add}}</mat-icon>
-            </button>
-          </section>
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>
+                <span>{{t('Layout rows')}}</span>
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <section class="layout-rows-modification-container ccs3-op-flex-row ccs3-no-gap">
+                <button (click)="onDecreaseLayoutRows()" mat-icon-button>
+                  <mat-icon>{{iconName.remove}}</mat-icon>
+                </button>
+                <span>{{signals.layoutRowsCount()}}</span>
+                <button (click)="onIncreaseLayoutRows()" mat-icon-button>
+                  <mat-icon>{{iconName.add}}</mat-icon>
+                </button>
+              </section>
+            </mat-card-content>
+          </mat-card>
         </section>
       </section>
     </mat-expansion-panel>
@@ -248,7 +260,7 @@
                       </span>
                     </button>
                     <button (click)="onCancelContinuation(item)" mat-icon-button [title]="t('Cancel continuation')">
-                      <mat-icon>{{iconName.close}}</mat-icon>
+                      <mat-icon class="ccs3-op-error-color">{{iconName.remove}}</mat-icon>
                     </button>
                   </section>
                 </section>

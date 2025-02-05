@@ -131,6 +131,10 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   align-items: start;
 }
 
+.ccs3-op-align-items-flex-start {
+  align-items: flex-start;
+}
+
 .ccs3-op-align-text-start {
   text-align: start;
 }

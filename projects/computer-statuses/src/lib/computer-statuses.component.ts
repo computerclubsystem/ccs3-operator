@@ -17,13 +17,15 @@ import { filter } from 'rxjs';
 import {
   createCreateDeviceContinuationRequestMessage, createDeleteDeviceContinuationRequestMessage,
   CreateDeviceContinuationReplyMessage, createGetAllDevicesRequestMessage,
-  createGetAllTariffsRequestMessage, createGetDeviceStatusesRequestMessage,
+  createGetAllTariffsRequestMessage, createGetCurrentShiftStatusRequestMessage, createGetDeviceStatusesRequestMessage,
   createStartDeviceRequestMessage, createStopDeviceRequestMessage, createTransferDeviceRequestMessage,
   DeleteDeviceContinuationReplyMessage, Device, DeviceConnectivityItem, DeviceStatus,
   DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage, GetAllTariffsReplyMessage,
   GetDeviceStatusesReplyMessage, NotificationMessageType,
-  OperatorDeviceConnectivitiesNotificationMessage, StartDeviceReplyMessage,
-  StopDeviceReplyMessage, Tariff, TariffType, TransferDeviceReplyMessage
+  OperatorDeviceConnectivitiesNotificationMessage, GetCurrentShiftStatusReplyMessage, StartDeviceReplyMessage,
+  StopDeviceReplyMessage, Tariff, TariffType, TransferDeviceReplyMessage,
+  createCompleteShiftRequestMessage,
+  CompleteShiftReplyMessage
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe } from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
@@ -32,6 +34,7 @@ import { SecondsFormatterComponent } from '@ccs3-operator/seconds-formatter';
 import { ExpandButtonComponent, ExpandButtonType } from '@ccs3-operator/expand-button';
 import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { TariffService } from './tariff.service';
+import { ShiftStatusComponent } from './shift-status/shift-status.component';
 
 @Component({
   selector: 'ccs3-op-computer-statuses',
@@ -41,7 +44,7 @@ import { TariffService } from './tariff.service';
   imports: [
     NgClass, MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
     TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
-    SecondsFormatterComponent, ExpandButtonComponent,
+    SecondsFormatterComponent, ExpandButtonComponent, ShiftStatusComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -80,6 +83,43 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     this.loadEntities();
     this.subscribeToSubjects();
     this.requestDeviceStatuses();
+  }
+
+  onCompleteShift(): void {
+    const shiftStatus = this.signals.currentShiftReply()?.body.shiftStatus;
+    const reqMsg = createCompleteShiftRequestMessage();
+    reqMsg.body.shiftStatus = shiftStatus!;
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processCompleteShiftReplyMessage(replyMsg as CompleteShiftReplyMessage));
+  }
+
+  processCompleteShiftReplyMessage(replyMsg: CompleteShiftReplyMessage): void {
+    if (replyMsg.header.failure) {
+      return;
+    }
+    const msg = translate('The current shift has been completed');
+    this.notificationsSvc.show(NotificationType.success, msg, null, IconName.check, replyMsg);
+  }
+
+  onRefreshCurrentShiftStatus(): void {
+    this.setShiftStatusReplyMessage({ body: { shiftStatus: {} } } as GetCurrentShiftStatusReplyMessage);
+    const reqMsg = createGetCurrentShiftStatusRequestMessage();
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processLoadCurrentShiftStatusReplyMessage(replyMsg as GetCurrentShiftStatusReplyMessage));
+  }
+
+  processLoadCurrentShiftStatusReplyMessage(replyMsg: GetCurrentShiftStatusReplyMessage): void {
+    if (replyMsg.header.failure) {
+      return;
+    }
+    this.setShiftStatusReplyMessage(replyMsg);
+  }
+
+  setShiftStatusReplyMessage(replyMsg: GetCurrentShiftStatusReplyMessage): void {
+    this.signals.currentShiftReply.set(replyMsg);
+    this.changeDetectorRef.markForCheck();
   }
 
   requestDeviceStatuses(): void {
@@ -460,6 +500,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       allAvailableTariffs: signal([]),
       notStartedDeviceStatusItems: signal([]),
       layoutRowsCount: signal(5),
+      currentShiftReply: signal(null),
     };
     signals.allAvailableTariffs = computed(() => {
       const allTariffs = Array.from(this.signals.allTariffsMap().values());
@@ -478,6 +519,7 @@ interface Signals {
   allAvailableTariffs: Signal<Tariff[]>;
   notStartedDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;
   layoutRowsCount: WritableSignal<number>;
+  currentShiftReply: WritableSignal<GetCurrentShiftStatusReplyMessage | null>;
 }
 
 interface OptionsVisibility {

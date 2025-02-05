@@ -58,6 +58,10 @@ export const enum MessageType {
   getSignedInUsersReply = 'get-signed-in-users-reply',
   forceSignOutAllUserSessionsRequest = 'force-sign-out-all-user-sessions-request',
   forceSignOutAllUserSessionsReply = 'force-sign-out-all-user-sessions-reply',
+  getCurrentShiftStatusRequest = 'get-current-shift-status-request',
+  getCurrentShiftStatusReply = 'get-current-shift-status-reply',
+  completeShiftRequest = 'complete-shift-request',
+  completeShiftReply = 'complete-shift-reply',
 }
 
 export const enum ReplyMessageType {
