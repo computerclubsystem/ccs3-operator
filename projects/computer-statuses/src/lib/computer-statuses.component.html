@@ -57,7 +57,8 @@
     @let item = deviceStatusItemIdentity(templateContext);
     <mat-card appearance="outlined" class="computer-status-container" [ngClass]="{
         'started': item.deviceStatus.started,
-        'not-started': !item.deviceStatus.started
+        'not-started': !item.deviceStatus.started,
+        'will-stop-soon': item.deviceStatus.started && isCloseToEnd(item),
       }" [attr.tariff-type]="item.tariffType" [attr.tariff-id]="item.tariffId">
       <mat-card-header>
         <mat-card-title>
@@ -79,7 +80,7 @@
                 [attr.aria-label]="unknownConnectionStatusTranslation"
                 class="unknown-connection-state-icon ccs3-op-warn-container">{{iconName.signal_wifi_statusbar_not_connected}}</mat-icon>
               }
-              <span class="computer-name" [ngClass]="{'will-stop-soon': isCloseToEnd(item)}">{{item.deviceName}}</span>
+              <span class="computer-name">{{item.deviceName}}</span>
             </section>
             <ccs3-op-money-formatter [value]="item.deviceStatus.totalSum" [title]="totalTranslation"
               class="total-sum"></ccs3-op-money-formatter>

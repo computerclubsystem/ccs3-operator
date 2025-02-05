@@ -277,7 +277,8 @@ ccs3-op-computer-statuses .device-options-expanders ccs3-op-expand-button .expan
   border-width: var(--ccs3-op-active-border-width);
 }
 
-ccs3-op-computer-statuses .computer-name.will-stop-soon {
+ccs3-op-computer-statuses .computer-status-container.will-stop-soon .computer-name,
+ccs3-op-computer-statuses .computer-status-container.will-stop-soon .remaining-time  {
   background-color: var(--ccs3-op-notification-warn-background-color);
   color: var(--ccs3-op-notification-warn-color);
   padding: var(--ccs3-op-half-padding);
