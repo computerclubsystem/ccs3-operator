@@ -1,7 +1,7 @@
 import { inject, Pipe, PipeTransform } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
-@Pipe({ name: 'noYearDate', standalone: true })
+@Pipe({ name: 'noYearDate' })
 export class NoYearDatePipe implements PipeTransform {
   private datePipe = inject(DatePipe);
 

@@ -10,7 +10,6 @@ import { NotificationItem } from '@ccs3-operator/shared';
 @Component({
   selector: 'ccs3-op-notification-component',
   templateUrl: 'notification.component.html',
-  standalone: true,
   imports: [MatIconModule, MatButtonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

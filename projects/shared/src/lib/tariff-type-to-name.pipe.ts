@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TariffType } from '@ccs3-operator/messages';
 
-@Pipe({ name: 'tariffTypeToName', standalone: true })
+@Pipe({ name: 'tariffTypeToName' })
 export class TariffTypeToNamePipe implements PipeTransform {
 
   transform(value: TariffType): string {

@@ -35,12 +35,12 @@ import { ExpandButtonComponent, ExpandButtonType } from '@ccs3-operator/expand-b
 import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { TariffService } from './tariff.service';
 import { ShiftStatusComponent } from './shift-status/shift-status.component';
+import { ShiftCompletedEventArgs } from './shift-status/declarations';
 
 @Component({
   selector: 'ccs3-op-computer-statuses',
   templateUrl: 'computer-statuses.component.html',
   styleUrls: ['computer-statuses.component.css'],
-  standalone: true,
   imports: [
     NgClass, MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
     TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
@@ -85,10 +85,11 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     this.requestDeviceStatuses();
   }
 
-  onCompleteShift(): void {
+  onCompleteShift(args: ShiftCompletedEventArgs): void {
     const shiftStatus = this.signals.currentShiftReply()?.body.shiftStatus;
     const reqMsg = createCompleteShiftRequestMessage();
     reqMsg.body.shiftStatus = shiftStatus!;
+    reqMsg.body.note = args.note;
     this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(replyMsg => this.processCompleteShiftReplyMessage(replyMsg as CompleteShiftReplyMessage));

@@ -23,7 +23,6 @@ import { DurationFormControls, FormControls, FromToFormControls, Signals } from 
 @Component({
   selector: 'ccs3-op-system-settings-create-tariff',
   templateUrl: 'create-tariff.component.html',
-  standalone: true,
   imports: [
     ReactiveFormsModule, MatInputModule, MatSelectModule, MatFormFieldModule, MatButtonModule, MatCardModule,
     TranslocoDirective, MatCheckboxModule,

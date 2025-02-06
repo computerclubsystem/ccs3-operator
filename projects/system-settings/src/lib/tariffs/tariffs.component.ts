@@ -18,7 +18,6 @@ import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 @Component({
   selector: 'ccs3-op-system-settings-tariffs',
   templateUrl: 'tariffs.component.html',
-  standalone: true,
   imports: [
     MatButtonModule, MatIconModule, TranslocoDirective, BooleanIndicatorComponent, FullDatePipe, MinutesToTimePipe,
     TariffTypeToNamePipe

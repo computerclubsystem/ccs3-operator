@@ -6,7 +6,6 @@ import { TranslocoPipe } from '@jsverse/transloco';
 @Component({
   selector: 'ccs3-op-system-settings',
   templateUrl: 'system-settings.component.html',
-  standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive, MatButtonModule, TranslocoPipe],
 })
 export class SystemSettingsComponent {

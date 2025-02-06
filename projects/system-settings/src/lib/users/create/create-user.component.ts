@@ -26,7 +26,6 @@ import { NotificationsService } from '@ccs3-operator/notifications';
 @Component({
   selector: 'ccs3-op-system-settings-users-create',
   templateUrl: 'create-user.component.html',
-  standalone: true,
   imports: [
     ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatCheckboxModule, MatCardModule,
     MatDividerModule, MatIconModule, TranslocoDirective

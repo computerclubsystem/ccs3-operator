@@ -7,7 +7,6 @@ import { SecondsFormatterService } from './seconds-formatter.service';
 @Component({
   selector: 'ccs3-op-seconds-formatter',
   templateUrl: 'seconds-formatter.component.html',
-  standalone: true,
   imports: [TranslocoDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

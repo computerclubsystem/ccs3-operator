@@ -15,7 +15,6 @@ import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 @Component({
   selector: 'ccs3-op-system-settings-devices',
   templateUrl: 'devices.component.html',
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, BooleanIndicatorComponent, TranslocoPipe, FullDatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

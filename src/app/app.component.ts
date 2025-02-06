@@ -26,7 +26,6 @@ import { NotificationsHelperService } from './notifications-helper.service';
 
 @Component({
   selector: 'ccs3-op-app-root',
-  standalone: true,
   imports: [RouterOutlet, ToolbarComponent],
   templateUrl: 'app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -12,7 +12,6 @@ import { InternalSubjectsService, NotificationItem } from '@ccs3-operator/shared
 @Component({
   selector: 'ccs3-op-notification-list-component',
   templateUrl: 'notification-list.component.html',
-  standalone: true,
   imports: [MatListModule, MatIconModule, MatExpansionModule, DatePipe, JsonPipe, TranslocoPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

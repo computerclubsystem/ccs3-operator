@@ -2,7 +2,7 @@ import { inject, Pipe, PipeTransform } from '@angular/core';
 
 import { SecondsFormatterService } from './seconds-formatter.service';
 
-@Pipe({ name: 'secondsFormatter', standalone: true })
+@Pipe({ name: 'secondsFormatter' })
 export class SecondsFormatterPipe implements PipeTransform {
   private readonly secondsFormatterSvc = inject(SecondsFormatterService);
 

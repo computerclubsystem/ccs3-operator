@@ -11,7 +11,6 @@ import { IconName, MenuItem, MainMenuItem, AccountMenuItem } from '@ccs3-operato
 
 @Component({
   selector: 'ccs3-op-toolbar',
-  standalone: true,
   imports: [MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule, TranslocoPipe],
   templateUrl: 'toolbar.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

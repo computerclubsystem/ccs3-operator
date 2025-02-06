@@ -19,7 +19,6 @@ import { IconName } from '@ccs3-operator/shared/types';
 @Component({
   selector: 'ccs3-op-edit-device',
   templateUrl: 'edit-device.component.html',
-  standalone: true,
   imports: [
     ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatCheckboxModule,
     TranslocoDirective, MatButtonModule, FullDatePipe

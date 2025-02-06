@@ -13,7 +13,6 @@ import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 @Component({
   selector: 'ccs3-op-system-settings-roles',
   templateUrl: 'roles.component.html',
-  standalone: true,
   imports: [MatButtonModule, MatIconModule, TranslocoDirective, BooleanIndicatorComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

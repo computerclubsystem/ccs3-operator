@@ -25,7 +25,6 @@ import { FormControls } from './declarations';
 @Component({
   selector: 'ccs3-op-system-settings-create-role',
   templateUrl: 'create-role.component.html',
-  standalone: true,
   imports: [
     ReactiveFormsModule, MatCardModule, MatCheckboxModule, MatButtonModule, MatIconModule, MatFormFieldModule,
     MatInputModule, MatDividerModule, TranslocoDirective,

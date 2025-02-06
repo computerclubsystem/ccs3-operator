@@ -64,9 +64,18 @@
     </section>
   </mat-card-content>
   <mat-card-actions>
-    <section class="ccs3-op-flex-row">
+    <section class="ccs3-op-flex-column">
       <button (click)="onRefreshCurrentShiftStatus()" mat-raised-button>{{t('Refresh shift status')}}</button>
-      <button (click)="onCompleteShift()" [disabled]="!replyMessage" mat-flat-button>
+      <mat-checkbox #allowShiftCompletionCheckbox [disabled]="!replyMessage">
+        {{t('Allow shift completion')}}
+      </mat-checkbox>
+      <form [formGroup]="form">
+        <mat-form-field>
+          <textarea [formControl]="form.controls.shiftNote" matInput></textarea>
+        </mat-form-field>
+      </form>
+      <button (click)="allowShiftCompletionCheckbox.checked = false; onCompleteShift()"
+        [disabled]="!allowShiftCompletionCheckbox.checked || !replyMessage" mat-flat-button>
         {{t('Complete shift')}}
       </button>
     </section>
