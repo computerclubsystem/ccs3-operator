@@ -1,5 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { AbstractControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal
+} from '@angular/core';
+import {
+  AbstractControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,22 +13,22 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
-import { finalize, timer } from 'rxjs';
 
 import {
-  HashService,
-  InternalSubjectsService, MessageTransportService, NotificationType, TimeConverterService, ValidatorsService
+  HashService, InternalSubjectsService, MessageTransportService, NotificationType, TimeConverterService,
+  ValidatorsService
 } from '@ccs3-operator/shared';
-import { SecondsFormatterComponent } from '@ccs3-operator/seconds-formatter';
+import { SecondsFormatterComponent, SecondsFormatterService } from '@ccs3-operator/seconds-formatter';
 import {
-  createCreateTariffRequestMessage, createGetTariffByIdRequestMessage, createRechargeTariffDurationRequestMessage, CreateTariffReplyMessage,
-  createUpdateTariffRequestMessage, GetTariffByIdReplyMessage, RechargeTariffDurationReplyMessage, Tariff, TariffType, UpdateTariffReplyMessage
+  createCreateTariffRequestMessage, createGetTariffByIdRequestMessage,
+  createRechargeTariffDurationRequestMessage, CreateTariffReplyMessage,
+  createUpdateTariffRequestMessage, GetTariffByIdReplyMessage, RechargeTariffDurationReplyMessage,
+  Tariff, TariffType, UpdateTariffReplyMessage
 } from '@ccs3-operator/messages';
 import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
 import { DurationFormControls, FormControls, Signals } from './declarations';
 import { CreatePrepaidTariffService } from './create-prepaid-tariff.service';
-import { SecondsFormatterService } from 'projects/seconds-formatter/src/lib/seconds-formatter.service';
 
 @Component({
   selector: 'ccs3-op-system-settings-create-prepaid-tariff',
@@ -179,9 +183,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
   onRecharge(): void {
     const requestMsg = createRechargeTariffDurationRequestMessage();
     requestMsg.body.tariffId = this.signals.tariff()!.id;
-    this.signals.rechargingTariffInProgress.set(true);
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
-      finalize(() => timer(3000).subscribe(() => this.signals.rechargingTariffInProgress.set(false))),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(replyMsg => this.processRechargeTariffDurationReplyMessage(replyMsg as RechargeTariffDurationReplyMessage));
   }
@@ -290,7 +292,6 @@ export class CreatePrepaidTariffComponent implements OnInit {
       showPasswords: signal(false),
       initialDuration: signal(null),
       initialPrice: signal(null),
-      rechargingTariffInProgress: signal(false),
     };
     return signals;
   }

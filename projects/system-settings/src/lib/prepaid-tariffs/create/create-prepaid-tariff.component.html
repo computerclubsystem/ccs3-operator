@@ -56,9 +56,12 @@
       </section>
       <section class="add-tariff-duration">
         @let translationParams = {duration: signals.initialDuration(), price: signals.initialPrice()};
-        <button (click)="onRecharge()" [disabled]="signals.rechargingTariffInProgress()" mat-flat-button>
-          {{t('Recharge duration {{duration}} for price {{price}}', translationParams)}}
-        </button>
+        <section class="ccs3-op-flex-row">
+          <mat-checkbox #rechargeCheckbox>{{t('Recharge')}}</mat-checkbox>
+          <button (click)="onRecharge(); rechargeCheckbox.checked = false;" [disabled]="!rechargeCheckbox.checked" mat-flat-button>
+            {{t('Recharge duration {{duration}} for price {{price}}', translationParams)}}
+          </button>
+        </section>
       </section>
       }
       <mat-checkbox [formControl]="form.controls.canBeStartedByCustomer">

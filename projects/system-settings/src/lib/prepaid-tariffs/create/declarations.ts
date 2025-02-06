@@ -32,5 +32,4 @@ export interface Signals {
   showPasswords: WritableSignal<boolean>;
   initialDuration: WritableSignal<string | null>;
   initialPrice: WritableSignal<number | null>;
-  rechargingTariffInProgress: WritableSignal<boolean>;
 }

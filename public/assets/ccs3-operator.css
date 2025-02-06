@@ -184,6 +184,10 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   font-size: smaller;
 }
 
+.ccs3-op-font-size-double {
+  font-size: 2em;
+}
+
 .ccs3-op-line-height-normal {
   line-height: normal;
 }

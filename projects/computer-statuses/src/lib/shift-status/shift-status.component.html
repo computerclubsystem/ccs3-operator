@@ -1,4 +1,5 @@
 <mat-card *transloco="let t;">
+  @let replyMessage = currentShiftReply();
   <mat-card-header>
     <mat-card-title>
       <span>{{t('Shift status')}}</span>
@@ -6,7 +7,6 @@
   </mat-card-header>
   <mat-card-content>
     <section class="ccs3-op-flex-column">
-      @let replyMessage = currentShiftReply();
       @if (replyMessage) {
       @let shiftStatus = replyMessage.body.shiftStatus;
       <table>
@@ -38,8 +38,22 @@
             <td class="ccs3-op-align-text-end">{{shiftStatus.completedSessionsCount}}</td>
           </tr>
           <tr>
-            <td>{{t('Total')}}</td>
+            <td>{{t('Created prepaid tariffs')}}</td>
             <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                [value]="shiftStatus.createdPrepaidTariffsTotal"></ccs3-op-money-formatter>
+            </td>
+            <td class="ccs3-op-align-text-end">{{shiftStatus.createdPrepaidTariffsCount}}</td>
+          </tr>
+          <tr>
+            <td>{{t('Recharged prepaid tariffs')}}</td>
+            <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                [value]="shiftStatus.rechargedPrepaidTariffsTotal"></ccs3-op-money-formatter>
+            </td>
+            <td class="ccs3-op-align-text-end">{{shiftStatus.rechargedPrepaidTariffsCount}}</td>
+          </tr>
+          <tr>
+            <td>{{t('Total')}}</td>
+            <td class="ccs3-op-align-text-end ccs3-op-font-size-double"><ccs3-op-money-formatter
                 [value]="shiftStatus.totalAmount"></ccs3-op-money-formatter>
             </td>
             <td class="ccs3-op-align-text-end">{{shiftStatus.totalCount}}</td>
@@ -52,7 +66,9 @@
   <mat-card-actions>
     <section class="ccs3-op-flex-row">
       <button (click)="onRefreshCurrentShiftStatus()" mat-raised-button>{{t('Refresh shift status')}}</button>
-      <button (click)="onCompleteShift()" mat-flat-button>{{t('Complete shift')}}</button>
+      <button (click)="onCompleteShift()" [disabled]="!replyMessage" mat-flat-button>
+        {{t('Complete shift')}}
+      </button>
     </section>
   </mat-card-actions>
 </mat-card>
