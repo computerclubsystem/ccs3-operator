@@ -2,7 +2,7 @@
   @let tariffDisplayItems = signals.tariffDisplayItems();
   @let editTranslated = t('Edit');
 
-  <table class="ccs3-op-border-spacing">
+  <table>
     <thead>
       <tr>
         <th class="ccs3-op-align-text-start">{{t('Edit')}}</th>
@@ -49,7 +49,7 @@
           {{tariffDisplayItem.tariff.toTime | minutesToTime}}
           }
         </td>
-        <td class="ccs3-op-align-text-end">{{tariff.price}}</td>
+        <td class="ccs3-op-align-text-end">{{tariff.price | moneyFormat}}</td>
         <td class="ccs3-op-align-text-start">{{tariff.restrictStartTime}}</td>
         @if (tariff.restrictStartTime){
         <td class="ccs3-op-align-text-end">{{tariff.restrictStartFromTime | minutesToTime}}</td>

@@ -12,6 +12,8 @@ export { FullDatePipe } from './lib/full-date.pipe';
 export { MinutesToTimePipe } from './lib/minutes-to-time.pipe';
 export { SecondsToTimePipe } from './lib/seconds-to-time.pipe';
 export { TariffTypeToNamePipe } from './lib/tariff-type-to-name.pipe';
+export { MoneyFormatPipe } from './lib/money-format.pipe';
+export { EmptyNumberReplacementPipe } from './lib/empty-number-replacement.pipe';
 export { RouteNavigationService } from './lib/route-navigation.service';
 export { ValidatorsService } from './lib/validators.service';
 export { HashService } from './lib/hash.service';

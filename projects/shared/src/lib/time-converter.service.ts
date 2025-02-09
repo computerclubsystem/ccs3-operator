@@ -2,6 +2,18 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class TimeConverterService {
+  getDateTimeForHTMLInputString(date: Date): string {
+    const getPadded = (value: number) => value.toString().padStart(2, '0');
+    const year = date.getFullYear().toString();
+    // getMonth() starts from 0 for January
+    const month = getPadded(date.getMonth() + 1);
+    const day = getPadded(date.getDate());
+    const hour = getPadded(date.getHours());
+    const minute = getPadded(date.getMinutes());
+    const result = `${year}-${month}-${day}T${hour}:${minute}`;
+    return result;
+  }
+
   convertTimeToMinutes(time?: string | null): number {
     if (!time) {
       return 0;

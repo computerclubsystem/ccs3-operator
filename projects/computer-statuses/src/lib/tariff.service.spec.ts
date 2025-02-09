@@ -4,7 +4,7 @@ import { CanUseTariffResult, TariffService } from './tariff.service';
 describe('TariffService', () => {
   let service: TariffService;
   beforeEach(() => {
-    service = new TariffService;
+    service = new TariffService();
   });
 
   describe('canUseTariff', () => {

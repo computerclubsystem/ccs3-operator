@@ -10,7 +10,8 @@ import {
 } from '@ccs3-operator/messages';
 import {
   InternalSubjectsService, MessageTransportService, FullDatePipe, MinutesToTimePipe, TariffTypeToNamePipe,
-  RouteNavigationService
+  RouteNavigationService,
+  MoneyFormatPipe
 } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
 import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
@@ -20,7 +21,7 @@ import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
   templateUrl: 'tariffs.component.html',
   imports: [
     MatButtonModule, MatIconModule, TranslocoDirective, BooleanIndicatorComponent, FullDatePipe, MinutesToTimePipe,
-    TariffTypeToNamePipe
+    TariffTypeToNamePipe, MoneyFormatPipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

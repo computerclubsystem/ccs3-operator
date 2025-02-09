@@ -71,6 +71,8 @@ export * from './lib/get-current-shift-status-request.message';
 export * from './lib/get-current-shift-status-reply.message';
 export * from './lib/complete-shift-request.message';
 export * from './lib/complete-shift-reply.message';
+export * from './lib/get-shifts-request.message';
+export * from './lib/get-shifts-reply.message';
 
 export * from './lib/entities/device-connectivity-item';
 export * from './lib/entities/device';
@@ -82,3 +84,4 @@ export * from './lib/entities/user';
 export * from './lib/entities/signed-in-user';
 export * from './lib/entities/shift-status';
 export * from './lib/entities/shift';
+export * from './lib/entities/shifts-summary';

@@ -205,7 +205,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   }
 
   processAllDevicesReplyMessage(allDevicesReplyMsg: GetAllDevicesReplyMessage): void {
-    if (!allDevicesReplyMsg.body.devices) {
+    if (allDevicesReplyMsg.header.failure || !allDevicesReplyMsg.body.devices) {
       return;
     }
     const mapItems: [number, Device][] = allDevicesReplyMsg.body.devices.map(device => ([device.id, device]));

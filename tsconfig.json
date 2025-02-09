@@ -83,6 +83,9 @@
       "@ccs3-operator/reports/signed-in-users": [
         "projects/reports/src/lib/signed-in-users/public-api.ts"
       ],
+      "@ccs3-operator/reports/shifts": [
+        "projects/reports/src/lib/shifts/public-api.ts"
+      ],
       "@ccs3-operator/signed-out-by-administrator": [
         "projects/signed-out-by-administrator/src/public-api.ts"
       ],

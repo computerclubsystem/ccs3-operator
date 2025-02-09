@@ -11,7 +11,7 @@ import {
   TariffType
 } from '@ccs3-operator/messages';
 import {
-  FullDatePipe, InternalSubjectsService, MessageTransportService, MinutesToTimePipe, RouteNavigationService, SecondsToTimePipe,
+  FullDatePipe, InternalSubjectsService, MessageTransportService, MinutesToTimePipe, MoneyFormatPipe, RouteNavigationService, SecondsToTimePipe,
 } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
 import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
@@ -19,7 +19,9 @@ import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 @Component({
   selector: 'ccs3-op-system-settings-prepaid-tariffs',
   templateUrl: 'prepaid-tariffs.component.html',
-  imports: [MatButtonModule, MatIconModule, TranslocoDirective, BooleanIndicatorComponent, FullDatePipe, MinutesToTimePipe, SecondsToTimePipe,
+  imports: [
+    MatButtonModule, MatIconModule, TranslocoDirective, BooleanIndicatorComponent, FullDatePipe,
+    MinutesToTimePipe, SecondsToTimePipe, MoneyFormatPipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

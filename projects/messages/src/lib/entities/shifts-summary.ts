@@ -1,6 +1,4 @@
-export interface Shift {
-  id: number;
-  userId: number;
+export interface ShiftsSummary {
   completedSessionsTotal: number;
   completedSessionsCount: number;
   runningSessionsTotal: number;
@@ -12,6 +10,4 @@ export interface Shift {
   rechargedPrepaidTariffsTotal: number;
   rechargedPrepaidTariffsCount: number;
   totalAmount: number;
-  completedAt: string;
-  note?: string | null;
 }

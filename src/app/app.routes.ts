@@ -19,6 +19,7 @@ export enum RouteName {
   sharedRouteEdit = 'edit',
   reports = 'reports',
   reportsSignedInUsers = 'signed-in-users',
+  reportsShifts = 'shifts',
   signedOutByAdministrator = 'signed-out-by-administrator'
 }
 
@@ -113,6 +114,10 @@ export const routes: Routes = [
       {
         path: RouteName.reportsSignedInUsers,
         loadComponent: () => import('@ccs3-operator/reports/signed-in-users').then(x => x.SignedInUsersComponent),
+      },
+      {
+        path: RouteName.reportsShifts,
+        loadComponent: () => import('@ccs3-operator/reports/shifts').then(x => x.ShiftsComponent),
       },
     ],
   }

@@ -1,7 +1,7 @@
 <ng-container *transloco="let t;">
   @let tariffDisplayItems = signals.tariffDisplayItems();
   @let editTranslated = t('Edit');
-  <table class="ccs3-op-border-spacing">
+  <table>
     <thead>
       <tr>
         <th class="ccs3-op-align-text-start">{{t('Edit')}}</th>
@@ -30,7 +30,7 @@
         <td class="ccs3-op-align-text-start">{{tariff.id}}</td>
         <td class="ccs3-op-align-text-start">{{tariff.name}}</td>
         <td class="ccs3-op-align-text-end">{{tariffDisplayItem.tariff.duration | minutesToTime}}</td>
-        <td class="ccs3-op-align-text-end">{{tariff.price}}</td>
+        <td class="ccs3-op-align-text-end">{{tariff.price | moneyFormat}}</td>
         <td class="ccs3-op-align-text-end">{{tariff.remainingSeconds | secondsToTime}}</td>
         <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="tariff.enabled" /></td>
         <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="tariff.canBeStartedByCustomer" /></td>

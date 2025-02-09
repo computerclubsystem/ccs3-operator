@@ -62,6 +62,8 @@ export const enum MessageType {
   getCurrentShiftStatusReply = 'get-current-shift-status-reply',
   completeShiftRequest = 'complete-shift-request',
   completeShiftReply = 'complete-shift-reply',
+  getShiftsRequest = 'get-shifts-request',
+  getShiftsReply = 'get-shifts-reply',
 }
 
 export const enum ReplyMessageType {
