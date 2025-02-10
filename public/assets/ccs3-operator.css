@@ -314,6 +314,11 @@ ccs3-op-computer-statuses .computer-status-container.will-stop-soon .remaining-t
   padding: var(--ccs3-op-half-padding);
 }
 
+/* Misc */
+.ccs3-op-main-container {
+  padding-inline: var(--ccs3-op-half-padding);
+}
+
 /* Material */
 button[mat-button].mat-tonal-button {
   background-color: var(--mat-sys-secondary-container);

@@ -1,4 +1,8 @@
 export const enum MessageType {
+  updateSystemSettingsValuesRequest = 'update-system-settings-values-request',
+  updateSystemSettingsValuesReply = 'update-system-settings-values-reply',
+  getAllSystemSettingsRequest = 'get-all-system-settings-request',
+  getAllSystemSettingsReply = 'get-all-system-settings-reply',
   authRequest = 'auth-request',
   authReply = 'auth-reply',
   configuration = 'configuration',

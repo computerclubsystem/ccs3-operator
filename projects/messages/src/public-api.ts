@@ -73,6 +73,10 @@ export * from './lib/complete-shift-request.message';
 export * from './lib/complete-shift-reply.message';
 export * from './lib/get-shifts-request.message';
 export * from './lib/get-shifts-reply.message';
+export * from './lib/get-all-system-settings-request.message';
+export * from './lib/get-all-system-settings-reply.message';
+export * from './lib/update-system-settings-values-request.message';
+export * from './lib/update-system-settings-values-reply.message';
 
 export * from './lib/entities/device-connectivity-item';
 export * from './lib/entities/device';
@@ -85,3 +89,6 @@ export * from './lib/entities/signed-in-user';
 export * from './lib/entities/shift-status';
 export * from './lib/entities/shift';
 export * from './lib/entities/shifts-summary';
+export * from './lib/entities/system-setting';
+export * from './lib/entities/system-setting-type';
+export * from './lib/entities/system-setting-name-with-value';

@@ -1,0 +1,26 @@
+<section *transloco="let t;" class="ccs3-op-configuration-component ccs3-op-flex-column">
+  @let systemSettings = signals.allSystemSettings();
+  <section class="ccs3-op-flex-column">
+    @for (setting of systemSettings; track setting.name) {
+    <section class="ccs3-op-flex-row">
+      <section
+        class="system-setting-description ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-overflow-wrap-anywhere">
+        <section class="ccs3-op-flex-row">
+          <span class="system-setting-name-label">{{t('Name')}}:</span>
+          <span class="system-setting-name"><strong>{{setting.name}}</strong></span>
+        </section>
+        <span class="system-setting-description">{{setting.description}}</span>
+      </section>
+      <section class="system-setting-input-field">
+        <mat-form-field>
+          <input (input)="onSettingValueChanged(setting, $event)" [value]="setting.value" matInput type="text" />
+        </mat-form-field>
+      </section>
+    </section>
+    <mat-divider></mat-divider>
+    }
+  </section>
+  <section>
+    <button (click)="onSave()" [disabled]="!signals.hasChanges()" mat-flat-button>{{t('Save')}}</button>
+  </section>
+</section>

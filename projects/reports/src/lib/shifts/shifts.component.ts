@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal,
   WritableSignal
 } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,7 +21,6 @@ import {
   GetShiftsReplyMessage, Shift, ShiftsSummary, User
 } from '@ccs3-operator/messages';
 import { NotificationsService } from '@ccs3-operator/notifications';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'ccs3-op-shifts',

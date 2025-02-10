@@ -18,7 +18,7 @@ export class SystemSettingsComponent {
       { routerLink: 'prepaid-tariffs', translationKey: 'Prepaid tariffs' },
       { routerLink: 'users', translationKey: 'Users' },
       { routerLink: 'roles', translationKey: 'Roles' },
-      // { routerLink: 'system-variables', translationKey: 'System variables' },
+      { routerLink: 'configuration', translationKey: 'Configuration' },
     ];
     const signals: Signals = {
       links: signal(links),

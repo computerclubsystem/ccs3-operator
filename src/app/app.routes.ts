@@ -15,12 +15,13 @@ export enum RouteName {
   systemSettingsPrepaidTariffs = 'prepaid-tariffs',
   systemSettingsUsers = 'users',
   systemSettingsRoles = 'roles',
+  systemSettingsConfiguration = 'configuration',
   sharedRouteCreate = 'create',
   sharedRouteEdit = 'edit',
   reports = 'reports',
   reportsSignedInUsers = 'signed-in-users',
   reportsShifts = 'shifts',
-  signedOutByAdministrator = 'signed-out-by-administrator'
+  signedOutByAdministrator = 'signed-out-by-administrator',
 }
 
 export const routes: Routes = [
@@ -104,6 +105,10 @@ export const routes: Routes = [
       {
         path: `${RouteName.systemSettingsRoles}/:roleId/${RouteName.sharedRouteEdit}`,
         loadComponent: () => import('@ccs3-operator/system-settings/roles/create').then(x => x.CreateRoleComponent),
+      },
+      {
+        path: RouteName.systemSettingsConfiguration,
+        loadComponent: () => import('@ccs3-operator/system-settings/configuration').then(x => x.ConfigurationComponent),
       },
     ]
   },
