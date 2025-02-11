@@ -142,12 +142,24 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   max-width: 20ch;
 }
 
+.ccs3-op-width-small-text {
+  width: 20ch;
+}
+
 .ccs3-op-max-width-medium-text {
   max-width: 40ch;
 }
 
+.ccs3-op-width-medium-text {
+  width: 40ch;
+}
+
 .ccs3-op-max-width-large-text {
   max-width: 60ch;
+}
+
+.ccs3-op-width-large-text {
+  width: 60ch;
 }
 
 .ccs3-op-max-height-small-text {
@@ -182,6 +194,7 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
 .ccs3-op-overflow-auto {
   overflow: auto;
 }
+
 .ccs3-op-overflow-wrap-anywhere {
   overflow-wrap: anywhere;
 }

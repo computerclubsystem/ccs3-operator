@@ -10,8 +10,8 @@ import { translate, TranslocoDirective } from '@jsverse/transloco';
 
 import { InternalSubjectsService, MessageTransportService, NotificationType } from '@ccs3-operator/shared';
 import {
-  createGetAllSystemSettingsRequestMessage, createUpdateSystemSettingsValuesRequestMessage, GetAllSystemSettingsReplyMessage, SystemSetting,
-  SystemSettingNameWithValue,
+  createGetAllSystemSettingsRequestMessage, createUpdateSystemSettingsValuesRequestMessage,
+  GetAllSystemSettingsReplyMessage, SystemSetting, SystemSettingNameWithValue,
   UpdateSystemSettingsValuesReplyMessage
 } from '@ccs3-operator/messages';
 import { NotificationsService } from '@ccs3-operator/notifications';
