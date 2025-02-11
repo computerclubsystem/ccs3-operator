@@ -14,7 +14,7 @@ import { translate, TranslocoDirective } from '@jsverse/transloco';
 import {
   FullDatePipe,
   InternalSubjectsService, MessageTransportService, MoneyFormatPipe, NotificationType,
-  TimeConverterService, EmptyNumberReplacementPipe
+  TimeConverterService
 } from '@ccs3-operator/shared';
 import {
   createGetAllUsersRequestMessage, createGetShiftsRequestMessage, GetAllUsersReplyMessage,
@@ -27,7 +27,7 @@ import { NotificationsService } from '@ccs3-operator/notifications';
   templateUrl: 'shifts.component.html',
   imports: [
     ReactiveFormsModule, NgClass, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-    TranslocoDirective, MoneyFormatPipe, FullDatePipe, EmptyNumberReplacementPipe
+    TranslocoDirective, MoneyFormatPipe, FullDatePipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

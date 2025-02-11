@@ -1,9 +1,9 @@
 :root {
-  --ccs3-op-gap: 1em;
+  --ccs3-op-gap: 1rem;
   --ccs3-op-half-gap: calc(var(--ccs3-op-gap) / 2);
   --ccs3-op-double-gap: calc(var(--ccs3-op-gap) * 2);
   --ccs3-op-no-gap: 0;
-  --ccs3-op-padding: 1em;
+  --ccs3-op-padding: 1rem;
   --ccs3-op-half-padding: calc(var(--ccs3-op-padding) / 2);
   --ccs3-op-double-padding: calc(var(--ccs3-op-padding) * 2);
   --ccs3-op-no-padding: 0;
@@ -20,9 +20,10 @@
   --ccs3-op-sys-error-container: var(--mat-sys-error-container);
   --ccs3-op-sys-tertiary: var(--mat-sys-tertiary);
   --ccs3-op-sys-tertiary-container: var(--mat-sys-tertiary-container);
-  --ccs3-op-active-border-width: 0.33em;
+  --ccs3-op-active-border-width: 0.33rem;
   --ccs3-op-table-alternate-background-odd: var(--mat-sys-surface-container-highest);
   --ccs3-op-table-alternate-background-even: var(--mat-sys-surface-container-low);
+  --ccs3-op-font-size-half: 0.5rem;
 }
 
 /* Flex */
@@ -317,6 +318,10 @@ ccs3-op-computer-statuses .computer-status-container.will-stop-soon .remaining-t
 /* Misc */
 .ccs3-op-main-container {
   padding-inline: var(--ccs3-op-half-padding);
+}
+
+.ccs3-op-zero-value-table-cell {
+  font-size: var(--ccs3-op-font-size-half);
 }
 
 /* Material */

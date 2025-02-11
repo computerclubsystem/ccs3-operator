@@ -54,48 +54,47 @@
           <td class="ccs3-op-align-text-end"></td>
           <td class="ccs3-op-align-text-end ccs3-op-important-table-cell"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.totalAmount}">
-            {{shift.totalAmount | moneyFormat | emptyNumberReplacement}}
+            {{shift.totalAmount | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end">{{shift.completedAt | fullDate}}</td>
           <td class="ccs3-op-align-text-start">{{shiftItem.username}} ({{shift.userId}})</td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.completedSessionsTotal}">
-            {{shift.completedSessionsTotal | moneyFormat | emptyNumberReplacement}}
+            {{shift.completedSessionsTotal | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.completedSessionsCount}">
-            {{shift.completedSessionsCount | emptyNumberReplacement}}
+            {{shift.completedSessionsCount}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.createdPrepaidTariffsTotal}">
-            {{shift.createdPrepaidTariffsTotal | moneyFormat | emptyNumberReplacement}}
+            {{shift.createdPrepaidTariffsTotal | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.createdPrepaidTariffsCount}">
-            {{shift.createdPrepaidTariffsCount | emptyNumberReplacement}}
+            {{shift.createdPrepaidTariffsCount}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.rechargedPrepaidTariffsTotal}">
-            {{shift.rechargedPrepaidTariffsTotal | moneyFormat | emptyNumberReplacement}}
+            {{shift.rechargedPrepaidTariffsTotal | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.rechargedPrepaidTariffsCount}">
-            {{shift.rechargedPrepaidTariffsCount | emptyNumberReplacement}}
+            {{shift.rechargedPrepaidTariffsCount}}
           </td>
           <td class="ccs3-op-align-text-end" [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.runningSessionsTotal}">
-            {{shift.runningSessionsTotal | moneyFormat | emptyNumberReplacement}}
+            {{shift.runningSessionsTotal | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end" [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.runningSessionsCount}">
-            {{shift.runningSessionsCount | emptyNumberReplacement}}
+            {{shift.runningSessionsCount}}
           </td>
           <td class="ccs3-op-align-text-end" [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.continuationsTotal}">
-            {{shift.continuationsTotal | moneyFormat | emptyNumberReplacement}}
+            {{shift.continuationsTotal | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end" [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.continuationsCount}">
-            {{shift.continuationsCount | emptyNumberReplacement}}
+            {{shift.continuationsCount}}
           </td>
-          <td class="ccs3-op-align-text-end"
-            [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.completedSessionsTotal}">{{shift.id}}
+          <td class="ccs3-op-align-text-end">{{shift.id}}
           </td>
         </tr>
         }
@@ -110,49 +109,49 @@
           <td class="ccs3-op-align-text-end">{{t('Summary')}}</td>
           <td class="ccs3-op-align-text-end ccs3-op-important-table-cell"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.totalAmount}">
-            {{shiftsSummary.totalAmount | moneyFormat | emptyNumberReplacement}}
+            {{shiftsSummary.totalAmount | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end"></td>
           <td class="ccs3-op-align-text-start"></td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.completedSessionsTotal}">
-            {{shiftsSummary.completedSessionsTotal | moneyFormat | emptyNumberReplacement}}
+            {{shiftsSummary.completedSessionsTotal | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.completedSessionsCount}">
-            {{shiftsSummary.completedSessionsCount | emptyNumberReplacement}}
+            {{shiftsSummary.completedSessionsCount}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.createdPrepaidTariffsTotal}">
-            {{shiftsSummary.createdPrepaidTariffsTotal | moneyFormat | emptyNumberReplacement}}
+            {{shiftsSummary.createdPrepaidTariffsTotal | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.createdPrepaidTariffsCount}">
-            {{shiftsSummary.createdPrepaidTariffsCount | emptyNumberReplacement}}
+            {{shiftsSummary.createdPrepaidTariffsCount}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.rechargedPrepaidTariffsTotal}">
-            {{shiftsSummary.rechargedPrepaidTariffsTotal | moneyFormat | emptyNumberReplacement}}
+            {{shiftsSummary.rechargedPrepaidTariffsTotal | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.rechargedPrepaidTariffsCount}">
-            {{shiftsSummary.rechargedPrepaidTariffsCount | emptyNumberReplacement}}
+            {{shiftsSummary.rechargedPrepaidTariffsCount}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.runningSessionsTotal}">
-            {{shiftsSummary.runningSessionsTotal | moneyFormat | emptyNumberReplacement}}
+            {{shiftsSummary.runningSessionsTotal | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.runningSessionsCount}">
-            {{shiftsSummary.runningSessionsCount | emptyNumberReplacement}}
+            {{shiftsSummary.runningSessionsCount}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.continuationsTotal}">
-            {{shiftsSummary.continuationsTotal | moneyFormat | emptyNumberReplacement}}
+            {{shiftsSummary.continuationsTotal | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.continuationsCount}">
-            {{shiftsSummary.continuationsCount | emptyNumberReplacement}}
+            {{shiftsSummary.continuationsCount}}
           </td>
           <td class="ccs3-op-align-text-end"></td>
         </tr>
