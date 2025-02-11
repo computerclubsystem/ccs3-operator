@@ -1,25 +1,25 @@
 <section *transloco="let t;" class="ccs3-op-configuration-component ccs3-op-flex-column">
   @let systemSettings = signals.allSystemSettings();
-  <section class="ccs3-op-flex-column">
+  <section class="system-settings-container ccs3-op-flex-column">
     @for (setting of systemSettings; track setting.name) {
-    <section class="ccs3-op-flex-column ccs3-op-overflow-wrap-anywhere">
-      <section class="ccs3-op-flex-row ccs3-op-half-gap">
+    <section class="system-setting-container ccs3-op-flex-column ccs3-op-overflow-wrap-anywhere">
+      <section class="system-setting-name-container ccs3-op-flex-row ccs3-op-half-gap">
         <span class="system-setting-name-label">{{t('Name')}}:</span>
         <span class="system-setting-name"><strong>{{setting.name}}</strong></span>
       </section>
       <span class="system-setting-description ccs3-op-max-width-medium-text">
         {{setting.description}}
       </span>
-      <section>
+      <section class="system-setting-field-container">
         <mat-form-field subscriptSizing="dynamic" class="ccs3-op-full-width ccs3-op-max-width-medium-text">
           <input (input)="onSettingValueChanged(setting, $event)" [value]="setting.value" matInput type="text" />
         </mat-form-field>
       </section>
     </section>
-    <mat-divider></mat-divider>
+    <mat-divider class="system-setting-divider"></mat-divider>
     }
   </section>
-  <section>
-    <button (click)="onSave()" [disabled]="!signals.hasChanges()" mat-flat-button>{{t('Save')}}</button>
+  <section class="system-settings-actions">
+    <button (click)="onSave()" [disabled]="!signals.hasChanges()" mat-flat-button class="save-button">{{t('Save')}}</button>
   </section>
 </section>
