@@ -124,7 +124,13 @@ export class CreateDeviceComponent implements OnInit {
   }
 
   onGoToList(): void {
-    this.router.navigate(['../..'], { relativeTo: this.activatedRoute });
+    if (this.signals.isCreate()) {
+      // We are in create mode
+      this.router.navigate(['../'], { relativeTo: this.activatedRoute });
+    } else {
+      // We are in edit mode - go back more steps
+      this.router.navigate(['../../'], { relativeTo: this.activatedRoute });
+    }
   }
 
   createDevice(): Device {
