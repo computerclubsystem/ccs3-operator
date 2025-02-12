@@ -10,22 +10,23 @@ import { MatButtonModule } from '@angular/material/button';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
 
 import {
-  Device, GetDeviceByIdReplyMessage, UpdateDeviceReplyMessage, createGetDeviceByIdRequestMessage, createUpdateDeviceRequestMessage,
+  CreateDeviceReplyMessage,
+  Device, GetDeviceByIdReplyMessage, UpdateDeviceReplyMessage, createCreateDeviceRequestMessage, createGetDeviceByIdRequestMessage, createUpdateDeviceRequestMessage,
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, FullDatePipe, NotificationType } from '@ccs3-operator/shared';
+import { InternalSubjectsService, MessageTransportService, NotificationType } from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
 
 @Component({
-  selector: 'ccs3-op-edit-device',
-  templateUrl: 'edit-device.component.html',
+  selector: 'ccs3-op-create-device',
+  templateUrl: 'create-device.component.html',
   imports: [
     ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatCheckboxModule,
-    TranslocoDirective, MatButtonModule, FullDatePipe
+    TranslocoDirective, MatButtonModule
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditDeviceComponent implements OnInit {
+export class CreateDeviceComponent implements OnInit {
   signals = this.createSignals();
   form!: FormGroup<FormControls>;
 
@@ -43,10 +44,18 @@ export class EditDeviceComponent implements OnInit {
     this.deviceId = +this.activatedRoute.snapshot.paramMap.get('deviceId')!;
     this.internalSubjectsSvc.whenSignedIn().pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadDevice(this.deviceId));
+    ).subscribe(() => this.init());
+  }
+
+  init(): void {
+    this.signals.isCreate.set(!this.deviceId);
+    if (this.deviceId) {
+      this.loadDevice(this.deviceId);
+    }
   }
 
   loadDevice(deviceId: number): void {
+    this.signals.isLoading.set(true);
     const msg = createGetDeviceByIdRequestMessage();
     msg.body.deviceId = deviceId;
     this.messageTransportSvc.sendAndAwaitForReply(msg)
@@ -54,6 +63,10 @@ export class EditDeviceComponent implements OnInit {
   }
 
   processGetDeviceByIdReplyMessage(replyMsg: GetDeviceByIdReplyMessage): void {
+    this.signals.isLoading.set(false);
+    if (replyMsg.header.failure) {
+      return;
+    }
     const device = replyMsg.body.device;
     this.form.patchValue({
       approved: device.approved,
@@ -68,18 +81,39 @@ export class EditDeviceComponent implements OnInit {
   }
 
   onSave(): void {
-    const msg = createUpdateDeviceRequestMessage();
-    msg.body.device = {
-      id: this.deviceId,
-      approved: this.form.value.approved!,
-      certificateThumbprint: this.form.value.certificateThumbprint!,
-      enabled: this.form.value.enabled!,
-      ipAddress: this.form.value.ipAddress!,
-      description: this.form.value.description!,
-      name: this.form.value.name!,
-    } as Device;
-    this.messageTransportSvc.sendAndAwaitForReply(msg)
-      .subscribe(updateDeviceReplyMsg => this.processUpdateDeviceReplyMessage(updateDeviceReplyMsg as UpdateDeviceReplyMessage));
+    const formRawValue = this.form.getRawValue();
+    const device = this.signals.device();
+    if (device) {
+      // Update device
+      const msg = createUpdateDeviceRequestMessage();
+      msg.body.device = {
+        id: this.deviceId,
+        approved: formRawValue.approved!,
+        certificateThumbprint: formRawValue.certificateThumbprint!,
+        enabled: formRawValue.enabled!,
+        ipAddress: formRawValue.ipAddress!,
+        description: formRawValue.description!,
+        name: formRawValue.name!,
+      } as Device;
+      this.messageTransportSvc.sendAndAwaitForReply(msg)
+        .subscribe(updateDeviceReplyMsg => this.processUpdateDeviceReplyMessage(updateDeviceReplyMsg as UpdateDeviceReplyMessage));
+    } else {
+      // Create device
+      this.signals.createdDevice.set(null);
+      const requestMsg = createCreateDeviceRequestMessage();
+      requestMsg.body.device = this.createDevice();
+      this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe(replyMsg => this.processCreateDeviceReplyMessage(replyMsg as CreateDeviceReplyMessage));
+    }
+  }
+
+  processCreateDeviceReplyMessage(replyMsg: CreateDeviceReplyMessage): void {
+    if (replyMsg.header.failure) {
+      return;
+    }
+    this.signals.createdDevice.set(replyMsg.body.device);
+    this.notificationsSvc.show(NotificationType.success, translate('Device created'), null, IconName.check, replyMsg);
   }
 
   processUpdateDeviceReplyMessage(updateDeviceReplyMessage: UpdateDeviceReplyMessage): void {
@@ -93,6 +127,19 @@ export class EditDeviceComponent implements OnInit {
     this.router.navigate(['../..'], { relativeTo: this.activatedRoute });
   }
 
+  createDevice(): Device {
+    const formValue = this.form.getRawValue();
+    const device = {
+      approved: formValue.approved,
+      certificateThumbprint: formValue.certificateThumbprint,
+      enabled: formValue.enabled,
+      ipAddress: formValue.ipAddress,
+      description: formValue.description,
+      name: formValue.name,
+    } as Device;
+    return device;
+  }
+
   createForm(): FormGroup<FormControls> {
     const formControls: FormControls = {
       id: new FormControl(),
@@ -100,8 +147,8 @@ export class EditDeviceComponent implements OnInit {
       approved: new FormControl(false),
       enabled: new FormControl(false),
       description: new FormControl(''),
-      certificateThumbprint: new FormControl('', { validators: [Validators.required] }),
-      ipAddress: new FormControl(''),
+      certificateThumbprint: new FormControl(''),
+      ipAddress: new FormControl('', { validators: [Validators.required] }),
     };
     formControls.id.disable();
     const form = this.formBuilder.group<FormControls>(formControls);
@@ -111,6 +158,9 @@ export class EditDeviceComponent implements OnInit {
   createSignals(): Signals {
     const signals: Signals = {
       device: signal(null),
+      createdDevice: signal(null),
+      isCreate: signal(false),
+      isLoading: signal(false),
     };
     return signals;
   }
@@ -118,6 +168,9 @@ export class EditDeviceComponent implements OnInit {
 
 interface Signals {
   device: WritableSignal<Device | null>;
+  createdDevice: WritableSignal<Device | null>;
+  isCreate: WritableSignal<boolean>;
+  isLoading: WritableSignal<boolean>;
 }
 
 interface FormControls {

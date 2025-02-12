@@ -90,6 +90,7 @@ export class AppComponent implements OnInit {
     this.routeNavigationSvc.getNavigateToCreateNewRoleRequested().subscribe(() => this.processNavigateToCreateNewRoleRequested());
     this.routeNavigationSvc.getNavigateToEditRoleRequested().subscribe(roleId => this.processNavigateToEditRoleRequested(roleId));
     this.routeNavigationSvc.getNavigateToEditDeviceRequested().subscribe(deviceId => this.processNavigateToEditDeviceRequested(deviceId));
+    this.routeNavigationSvc.getNavigateToCreateDeviceRequested().subscribe(() => this.processNavigateToCreateDeviceRequested());
   }
 
   processNavigateToSignInRequested(): void {
@@ -103,7 +104,6 @@ export class AppComponent implements OnInit {
     const requestType = msg.header.requestType ? translate(`Request message type '{{requestMessageType}}'`, { requestMessageType: msg.header.requestType }) + '.' : '';
     const errorsText = errorItems?.join(' ; ') + (requestType ? '. ' + requestType : '');
     this.notificationsSvc.show(NotificationType.error, translate(`Reply message '{{messageType}}' indicates failure`, { messageType: type }), errorsText, IconName.error, msg);
-
   }
 
   processNavigateToEditRoleRequested(roleId: number): void {
@@ -132,6 +132,10 @@ export class AppComponent implements OnInit {
 
   processNavigateToEditDeviceRequested(deviceId: number): void {
     this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsDevices, deviceId, RouteName.sharedRouteEdit]);
+  }
+
+  processNavigateToCreateDeviceRequested(): void {
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsDevices, RouteName.sharedRouteCreate]);
   }
 
   processMessageTimedOutErrorData(messageTimedOutErrorData: MessageTimedOutErrorData): void {

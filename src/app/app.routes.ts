@@ -55,8 +55,12 @@ export const routes: Routes = [
         loadComponent: () => import('@ccs3-operator/system-settings/devices').then(x => x.DevicesComponent),
       },
       {
+        path: `${RouteName.systemSettingsDevices}/${RouteName.sharedRouteCreate}`,
+        loadComponent: () => import('@ccs3-operator/system-settings/devices/create').then(x => x.CreateDeviceComponent),
+      },
+      {
         path: `${RouteName.systemSettingsDevices}/:deviceId/${RouteName.sharedRouteEdit}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/devices/edit').then(x => x.EditDeviceComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings/devices/create').then(x => x.CreateDeviceComponent),
       },
       {
         path: RouteName.systemSettingsTariffs,

@@ -1,13 +1,21 @@
 <mat-card *transloco="let t">
   @let device = signals.device();
 
-  @if (device) {
   <mat-card-header>
-    <mat-card-title>{{t('Edit device')}} ID {{device.id}}</mat-card-title>
+    <mat-card-title>
+      @if (signals.isCreate()){
+      {{t('Create device')}}
+      } @else {
+      {{t('Edit device')}} ID {{device?.id}}
+      }
+    </mat-card-title>
     <mat-card-subtitle>
-      <span>{{t('Created at')}} {{device.createdAt | fullDate}}</span>
+      @if (signals.isLoading()){
+      <span>{{t('Loading...')}}</span>
+      }
     </mat-card-subtitle>
   </mat-card-header>
+  @if (!signals.isLoading()) {
   <mat-card-content>
     <form [formGroup]="form" class="ccs3-op-flex-column ccs3-op-no-gap ccs3-op-max-width-large-text">
       <mat-form-field>
@@ -18,7 +26,8 @@
       <mat-checkbox [formControl]="form.controls.enabled">{{t('Active')}}</mat-checkbox>
       <mat-form-field>
         <mat-label>{{t('Description')}}</mat-label>
-        <input matInput type="text" [formControl]="form.controls.description" />
+        <textarea matInput type="text" [formControl]="form.controls.description">
+        </textarea>
       </mat-form-field>
       <mat-form-field>
         <mat-label>{{t('Certificate thumbprint')}}</mat-label>
@@ -32,7 +41,8 @@
   </mat-card-content>
   <mat-card-actions>
     <section class="ccs3-op-flex-row">
-      <button (click)="onSave()" mat-flat-button>{{t('Save')}}</button>
+      @let saveButtonText = signals.isCreate() ? t('Create') : t('Update');
+      <button (click)="onSave()" mat-flat-button [disabled]="form.invalid">{{saveButtonText}}</button>
       <button (click)="onGoToList()" mat-raised-button>{{t('Go back to list')}}</button>
     </section>
   </mat-card-actions>

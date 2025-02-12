@@ -1,39 +1,44 @@
-@let devices = signals.allDevices();
-<table>
-  <thead>
-    <tr>
-      <th class="ccs3-op-align-text-start">{{'Edit' | transloco}}</th>
-      <th class="ccs3-op-align-text-start">{{'Name' | transloco}}</th>
-      <th class="ccs3-op-align-text-start">{{'Appoved' | transloco}}</th>
-      <th class="ccs3-op-align-text-start">{{'Active' | transloco}}</th>
-      <th class="ccs3-op-align-text-start">{{'Created at' | transloco}}</th>
-      <th class="ccs3-op-align-text-start">{{'Description' | transloco}}</th>
-      <th class="ccs3-op-align-text-start">{{'Certificate thumbprint' | transloco}}</th>
-      <th class="ccs3-op-align-text-start">{{'IP address' | transloco}}</th>
-      <th class="ccs3-op-align-text-start">{{'Group Id' | transloco}}</th>
-      <th class="ccs3-op-align-text-start">Id</th>
-    </tr>
-  </thead>
-  <tbody>
-    @for (device of devices; track device.id) {
-    <tr>
-      <td class="ccs3-op-align-text-start">
-        @let editTranslated = 'Edit' | transloco;
-        <button mat-icon-button (click)="onEditDevice(device)" title="{{editTranslated}}"
-          [attr.aria-label]="editTranslated">
-          <mat-icon>{{iconName.edit}}</mat-icon>
-        </button>
-      </td>
-      <td class="ccs3-op-align-text-start">{{device.name}}</td>
-      <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="device.approved" /></td>
-      <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="device.enabled" /></td>
-      <td class="ccs3-op-align-text-start">{{device.createdAt | fullDate}}</td>
-      <td class="ccs3-op-align-text-start">{{device.description}}</td>
-      <td class="ccs3-op-align-text-start">{{device.certificateThumbprint}}</td>
-      <td class="ccs3-op-align-text-start">{{device.ipAddress}}</td>
-      <td class="ccs3-op-align-text-start">{{device.deviceGroupId}}</td>
-      <td class="ccs3-op-align-text-start">{{device.id}}</td>
-    </tr>
-    }
-  </tbody>
-</table>
+<section *transloco="let t;" class="ccs3-op-system-settings-devices-component">
+  @let devices = signals.allDevices();
+  @let editTranslated = t('Edit');
+  <table>
+    <thead>
+      <tr>
+        <th class="ccs3-op-align-text-start">{{editTranslated}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Name')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Appoved')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Active')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Created at')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Description')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Certificate thumbprint')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('IP address')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Group Id')}}</th>
+        <th class="ccs3-op-align-text-start">Id</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (device of devices; track device.id) {
+      <tr>
+        <td class="ccs3-op-align-text-start">
+          <button mat-icon-button (click)="onEditDevice(device)" title="{{editTranslated}}"
+            [attr.aria-label]="editTranslated">
+            <mat-icon>{{iconName.edit}}</mat-icon>
+          </button>
+        </td>
+        <td class="ccs3-op-align-text-start">{{device.name}}</td>
+        <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="device.approved" /></td>
+        <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="device.enabled" /></td>
+        <td class="ccs3-op-align-text-start">{{device.createdAt | fullDate}}</td>
+        <td class="ccs3-op-align-text-start">{{device.description}}</td>
+        <td class="ccs3-op-align-text-start">{{device.certificateThumbprint}}</td>
+        <td class="ccs3-op-align-text-start">{{device.ipAddress}}</td>
+        <td class="ccs3-op-align-text-start">{{device.deviceGroupId}}</td>
+        <td class="ccs3-op-align-text-start">{{device.id}}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <section class="ccs3-op-flex-row">
+    <button (click)="onCreateNew()" mat-flat-button>{{t('Create')}}</button>
+  </section>
+</section>

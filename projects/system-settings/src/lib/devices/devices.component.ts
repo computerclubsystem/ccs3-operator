@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal,
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslocoPipe } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { filter, first } from 'rxjs';
 
 import {
@@ -15,7 +15,7 @@ import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 @Component({
   selector: 'ccs3-op-system-settings-devices',
   templateUrl: 'devices.component.html',
-  imports: [MatButtonModule, MatIconModule, BooleanIndicatorComponent, TranslocoPipe, FullDatePipe],
+  imports: [MatButtonModule, MatIconModule, BooleanIndicatorComponent, TranslocoDirective, FullDatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DevicesComponent implements OnInit {
@@ -37,6 +37,10 @@ export class DevicesComponent implements OnInit {
 
   onEditDevice(device: Device): void {
     this.routeNavigationSvc.navigateToEditDeviceRequested(device.id);
+  }
+
+  onCreateNew(): void {
+    this.routeNavigationSvc.navigateToCreateDeviceRequested();
   }
 
   requestAllDevices(): void {

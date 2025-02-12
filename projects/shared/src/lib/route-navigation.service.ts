@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class RouteNavigationService {
   private readonly navigateToEditDeviceRequestedSubject = new Subject<number>();
+  private readonly navigateToCreateDeviceRequestedSubject = new Subject<void>();
   private readonly navigateToCreateNewTariffRequestedSubject = new Subject<void>();
   private readonly navigateToCreateNewPrepaidTariffRequestedSubject = new Subject<void>();
   private readonly navigateToEditTariffRequestedSubject = new Subject<number>();
@@ -66,6 +67,14 @@ export class RouteNavigationService {
 
   getNavigateToCreateNewPrepaidTariffRequested(): Observable<void> {
     return this.navigateToCreateNewPrepaidTariffRequestedSubject.asObservable();
+  }
+
+  navigateToCreateDeviceRequested(): void {
+    this.navigateToCreateDeviceRequestedSubject.next();
+  }
+
+  getNavigateToCreateDeviceRequested(): Observable<void> {
+    return this.navigateToCreateDeviceRequestedSubject.asObservable();
   }
 
   navigateToEditDeviceRequested(deviceId: number): void {

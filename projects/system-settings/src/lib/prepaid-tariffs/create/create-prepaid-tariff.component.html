@@ -58,7 +58,8 @@
         @let translationParams = {duration: signals.initialDuration(), price: signals.initialPrice()};
         <section class="ccs3-op-flex-row">
           <mat-checkbox #rechargeCheckbox>{{t('Allow recharge')}}</mat-checkbox>
-          <button (click)="onRecharge(); rechargeCheckbox.checked = false;" [disabled]="!rechargeCheckbox.checked" mat-flat-button>
+          <button (click)="onRecharge(); rechargeCheckbox.checked = false;" [disabled]="!rechargeCheckbox.checked"
+            mat-flat-button>
             {{t('Recharge duration {{duration}} for price {{price}}', translationParams)}}
           </button>
         </section>
@@ -101,7 +102,8 @@
   </mat-card-content>
   <mat-card-actions>
     <section class="ccs3-op-flex-row">
-      <button (click)="onSave()" mat-flat-button [disabled]="form.invalid">{{t('Save')}}</button>
+      @let saveButtonText = signals.isCreate() ? t('Create') : t('Update');
+      <button (click)="onSave()" mat-flat-button [disabled]="form.invalid">{{saveButtonText}}</button>
       <button (click)="onGoToList()" mat-raised-button>{{t('Go back to list')}}</button>
     </section>
   </mat-card-actions>

@@ -19,6 +19,8 @@ export * from './lib/get-all-devices-request.message';
 export * from './lib/get-all-devices-reply.message';
 export * from './lib/get-device-by-id-request.message';
 export * from './lib/get-device-by-id-reply.message';
+export * from './lib/create-device-request.message';
+export * from './lib/create-device-reply.message';
 export * from './lib/update-device-request.message';
 export * from './lib/update-device-reply.message';
 export * from './lib/get-all-tariffs-request.message';
