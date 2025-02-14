@@ -20,8 +20,8 @@ import {
 } from '@ccs3-operator/shared';
 import { SecondsFormatterComponent, SecondsFormatterService } from '@ccs3-operator/seconds-formatter';
 import {
-  createCreateTariffRequestMessage, createGetTariffByIdRequestMessage,
-  createRechargeTariffDurationRequestMessage, CreateTariffReplyMessage,
+  createCreatePrepaidTariffRequestMessage, createGetTariffByIdRequestMessage,
+  createRechargeTariffDurationRequestMessage, CreatePrepaidTariffReplyMessage,
   createUpdateTariffRequestMessage, GetTariffByIdReplyMessage, RechargeTariffDurationReplyMessage,
   Tariff, TariffType, UpdateTariffReplyMessage
 } from '@ccs3-operator/messages';
@@ -213,7 +213,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
     if (tariff) {
       // Update tariff
       const requestMsg = createUpdateTariffRequestMessage();
-      requestMsg.body.tariff = this.createTariff();
+      requestMsg.body.tariff = this.createPrepaidTariff();
       requestMsg.body.tariff.id = tariff.id;
       if (formRawValue.setPassword) {
         requestMsg.body.passwordHash = await this.hashSvc.getSha512(formRawValue.password!);
@@ -223,14 +223,14 @@ export class CreatePrepaidTariffComponent implements OnInit {
       ).subscribe(replyMsg => this.processUpdateTariffReplyMessage(replyMsg as UpdateTariffReplyMessage));
     } else {
       this.signals.createdTariff.set(null);
-      const requestMsg = createCreateTariffRequestMessage();
-      requestMsg.body.tariff = this.createTariff();
+      const requestMsg = createCreatePrepaidTariffRequestMessage();
+      requestMsg.body.tariff = this.createPrepaidTariff();
       if (formRawValue.setPassword) {
         requestMsg.body.passwordHash = await this.hashSvc.getSha512(formRawValue.password!);
       }
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(replyMsg => this.processCreateTariffReplyMessage(replyMsg as CreateTariffReplyMessage));
+      ).subscribe(replyMsg => this.processCreatePrepaidTariffReplyMessage(replyMsg as CreatePrepaidTariffReplyMessage));
     }
   }
 
@@ -242,10 +242,10 @@ export class CreatePrepaidTariffComponent implements OnInit {
     }
   }
 
-  processCreateTariffReplyMessage(createTariffReplyMsg: CreateTariffReplyMessage): void {
-    if (!createTariffReplyMsg.header.failure) {
-      this.notificationsSvc.show(NotificationType.success, translate('Tariff with ID {{id}} created', { id: createTariffReplyMsg.body.tariff.id }), null, IconName.check, createTariffReplyMsg);
-      this.signals.createdTariff.set(createTariffReplyMsg.body.tariff);
+  processCreatePrepaidTariffReplyMessage(createPrepaidTariffReplyMsg: CreatePrepaidTariffReplyMessage): void {
+    if (!createPrepaidTariffReplyMsg.header.failure) {
+      this.notificationsSvc.show(NotificationType.success, translate('Tariff with ID {{id}} created', { id: createPrepaidTariffReplyMsg.body.tariff.id }), null, IconName.check, createPrepaidTariffReplyMsg);
+      this.signals.createdTariff.set(createPrepaidTariffReplyMsg.body.tariff);
     }
   }
 
@@ -263,7 +263,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
     return this.form.controls.durationGroup.controls;
   }
 
-  createTariff(): Tariff {
+  createPrepaidTariff(): Tariff {
     const formValue = this.form.getRawValue();
     const tariffDuration = this.timeConverterSvc.convertTimeToMinutes(formValue.durationGroup!.duration!);
     const tariff = {

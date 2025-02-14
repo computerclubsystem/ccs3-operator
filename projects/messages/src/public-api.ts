@@ -27,6 +27,8 @@ export * from './lib/get-all-tariffs-request.message';
 export * from './lib/get-all-tariffs-reply.message';
 export * from './lib/create-tariff-reply.message';
 export * from './lib/create-tariff-request.message';
+export * from './lib/create-prepaid-tariff-reply.message';
+export * from './lib/create-prepaid-tariff-request.message';
 export * from './lib/get-tariff-by-id-reply.message';
 export * from './lib/get-tariff-by-id-request.message';
 export * from './lib/update-tariff-reply.message';

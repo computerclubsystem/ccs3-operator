@@ -26,6 +26,8 @@ export const enum MessageType {
   getTariffByIdReply = 'get-tariff-by-id-reply',
   createTariffRequest = 'create-tariff-request',
   createTariffReply = 'create-tariff-reply',
+  createPrepaidTariffRequest = 'create-prepaid-tariff-request',
+  createPrepaidTariffReply = 'create-prepaid-tariff-reply',
   updateTariffRequest = 'update-tariff-request',
   updateTariffReply = 'update-tariff-reply',
   startDeviceRequest = 'start-device-request',
