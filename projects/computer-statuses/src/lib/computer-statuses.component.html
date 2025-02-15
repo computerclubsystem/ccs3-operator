@@ -186,11 +186,13 @@
                 [title]="stopOptionsTranslation">
                 <mat-icon>{{iconName.stop_circle}}</mat-icon>
               </ccs3-op-expand-button>
+              @if (!item.device.disableTransfer) {
               <ccs3-op-expand-button (click)="onToggleOptionTransferVisibility(item)"
                 [type]="expandButtonType.matStrokedButton" [isExpanded]="item.optionsVisibility.transfer"
                 [title]="transferOptionsTranslation">
                 <mat-icon>{{iconName.swap_horiz}}</mat-icon>
               </ccs3-op-expand-button>
+              }
               <ccs3-op-expand-button (click)="onToggleOptionContinueWithVisibility(item)"
                 [type]="expandButtonType.matStrokedButton" [isExpanded]="item.optionsVisibility.continueWith"
                 [title]="continueWithOptionsTranslation">
@@ -218,7 +220,7 @@
                   <mat-label>{{t('Transfer to')}}</mat-label>
                   <mat-select (valueChange)="onTransferToChanged($event, item)"
                     [value]="item.selectedTransferToDeviceId">
-                    @for (notStartedItem of signals.notStartedDeviceStatusItems(); track
+                    @for (notStartedItem of signals.transferrableDeviceStatusItems(); track
                     notStartedItem.deviceStatus.deviceId) {
                     <mat-option [value]="notStartedItem.deviceStatus.deviceId"
                       [title]="notStartedItem.deviceName">{{notStartedItem.deviceName}}</mat-option>

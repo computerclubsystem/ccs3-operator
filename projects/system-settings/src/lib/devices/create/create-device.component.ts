@@ -76,6 +76,7 @@ export class CreateDeviceComponent implements OnInit {
       id: device.id,
       ipAddress: device.ipAddress,
       name: device.name,
+      transferAllowed: !device.disableTransfer,
     })
     this.signals.device.set(device);
   }
@@ -94,6 +95,7 @@ export class CreateDeviceComponent implements OnInit {
         ipAddress: formRawValue.ipAddress!,
         description: formRawValue.description!,
         name: formRawValue.name!,
+        disableTransfer: !formRawValue.transferAllowed,
       } as Device;
       this.messageTransportSvc.sendAndAwaitForReply(msg)
         .subscribe(updateDeviceReplyMsg => this.processUpdateDeviceReplyMessage(updateDeviceReplyMsg as UpdateDeviceReplyMessage));
@@ -142,6 +144,7 @@ export class CreateDeviceComponent implements OnInit {
       ipAddress: formValue.ipAddress,
       description: formValue.description,
       name: formValue.name,
+      disableTransfer: !formValue.transferAllowed,
     } as Device;
     return device;
   }
@@ -152,6 +155,7 @@ export class CreateDeviceComponent implements OnInit {
       name: new FormControl('', { validators: [Validators.required] }),
       approved: new FormControl(false),
       enabled: new FormControl(false),
+      transferAllowed: new FormControl(true),
       description: new FormControl(''),
       certificateThumbprint: new FormControl(''),
       ipAddress: new FormControl('', { validators: [Validators.required] }),
@@ -184,6 +188,7 @@ interface FormControls {
   name: FormControl<string | null>;
   approved: FormControl<boolean | null>;
   enabled: FormControl<boolean | null>;
+  transferAllowed: FormControl<boolean | null>;
   description: FormControl<string | null>;
   certificateThumbprint: FormControl<string | null>;
   ipAddress: FormControl<string | null>;

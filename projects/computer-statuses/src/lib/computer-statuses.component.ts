@@ -278,8 +278,8 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     // this selection is now invalid, because the target device is now started
     this.refreshTransferToDeviceSelections(deviceStatusItems);
     this.signals.deviceStatusItems.set(deviceStatusItems);
-    const notStartedDeviceStatusItems = deviceStatusItems.filter(x => !x.deviceStatus.started);
-    this.signals.notStartedDeviceStatusItems.set(notStartedDeviceStatusItems);
+    const notStartedAndAllowedForTransferDeviceStatusItems = deviceStatusItems.filter(x => !x.deviceStatus.started && !x.device.disableTransfer);
+    this.signals.transferrableDeviceStatusItems.set(notStartedAndAllowedForTransferDeviceStatusItems);
     this.changeDetectorRef.markForCheck();
   }
 
@@ -307,6 +307,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     const tariff = this.getTariff(deviceStatus.tariff);
     const deviceStatusItem = {
       deviceName: this.getDeviceName(deviceStatus.deviceId),
+      device: this.getDevice(deviceStatus.deviceId),
       deviceStatus: deviceStatus,
       tariffName: tariff?.name || '',
       tariffType: tariff?.type || '',
@@ -349,6 +350,10 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
 
   getDeviceName(deviceId: number): string {
     return this.signals.allDevicesMap().get(deviceId)?.name || ''
+  }
+
+  getDevice(deviceId: number): Device {
+    return this.signals.allDevicesMap().get(deviceId)!;
   }
 
   toggleActionsExpanded(item: DeviceStatusItem): void {
@@ -499,7 +504,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       allDevicesMap: signal(new Map<number, Device>()),
       allTariffsMap: signal(new Map<number, Tariff>()),
       allAvailableTariffs: signal([]),
-      notStartedDeviceStatusItems: signal([]),
+      transferrableDeviceStatusItems: signal([]),
       layoutRowsCount: signal(5),
       currentShiftReply: signal(null),
     };
@@ -518,7 +523,7 @@ interface Signals {
   allDevicesMap: WritableSignal<Map<number, Device>>;
   allTariffsMap: WritableSignal<Map<number, Tariff>>;
   allAvailableTariffs: Signal<Tariff[]>;
-  notStartedDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;
+  transferrableDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;
   layoutRowsCount: WritableSignal<number>;
   currentShiftReply: WritableSignal<GetCurrentShiftStatusReplyMessage | null>;
 }
@@ -532,6 +537,7 @@ interface OptionsVisibility {
 interface DeviceStatusItem {
   deviceStatus: DeviceStatus;
   deviceName: string;
+  device: Device;
   tariffName: string;
   tariffType: TariffType;
   tariffId: number;
