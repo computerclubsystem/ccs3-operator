@@ -92,6 +92,9 @@
       "@ccs3-operator/signed-out-by-administrator": [
         "projects/signed-out-by-administrator/src/public-api.ts"
       ],
+      "@ccs3-operator/user-profile": [
+        "projects/user-profile/src/public-api.ts"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

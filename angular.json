@@ -490,8 +490,6 @@
           "options": {
             "tsConfig": "projects/money-formatter/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         },
@@ -533,8 +531,6 @@
           "options": {
             "tsConfig": "projects/seconds-formatter/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         },
@@ -576,8 +572,6 @@
           "options": {
             "tsConfig": "projects/expand-button/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         },
@@ -619,8 +613,6 @@
           "options": {
             "tsConfig": "projects/boolean-indicator/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         },
@@ -662,8 +654,6 @@
           "options": {
             "tsConfig": "projects/reports/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         },
@@ -705,8 +695,6 @@
           "options": {
             "tsConfig": "projects/signed-out-by-administrator/tsconfig.spec.json",
             "polyfills": [
-              "zone.js",
-              "zone.js/testing"
             ]
           }
         },
@@ -718,6 +706,37 @@
               "projects/signed-out-by-administrator/**/*.html"
             ],
             "eslintConfig": "projects/signed-out-by-administrator/eslint.config.js"
+          }
+        }
+      }
+    },
+    "user-profile": {
+      "projectType": "library",
+      "root": "projects/user-profile",
+      "sourceRoot": "projects/user-profile/src",
+      "prefix": "ccs3-op",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/user-profile/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/user-profile/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/user-profile/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/user-profile/tsconfig.spec.json",
+            "polyfills": [
+            ]
           }
         }
       }

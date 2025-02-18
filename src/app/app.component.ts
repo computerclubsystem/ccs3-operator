@@ -180,9 +180,14 @@ export class AppComponent implements OnInit {
       case AccountMenuItemId.signOut:
         this.processSignOutAccountMenuSelected();
         break;
-      case AccountMenuItemId.settings:
+      case AccountMenuItemId.profileSettings:
+        this.processProfileSettingsAccountMenuSelected();
         break;
     }
+  }
+
+  processProfileSettingsAccountMenuSelected(): void {
+    this.router.navigate([RouteName.profileSettings]);
   }
 
   processSignOutAccountMenuSelected(): void {
@@ -391,7 +396,7 @@ export class AppComponent implements OnInit {
 
   private setSignedInAccountMenuItems(): void {
     const signedInAccountMenuItems: AccountMenuItem[] = [
-      { id: AccountMenuItemId.settings, icon: IconName.user_attributes, translationKey: 'Profile settings' },
+      { id: AccountMenuItemId.profileSettings, icon: IconName.user_attributes, translationKey: 'Profile settings' },
       { id: AccountMenuItemId.signOut, icon: IconName.logout, translationKey: 'Sign out' },
     ];
     this.internalSubjectsSvc.setAccountMenuItems(signedInAccountMenuItems);

@@ -22,9 +22,14 @@ export enum RouteName {
   reportsSignedInUsers = 'signed-in-users',
   reportsShifts = 'shifts',
   signedOutByAdministrator = 'signed-out-by-administrator',
+  profileSettings = 'user-profile',
 }
 
 export const routes: Routes = [
+  {
+    path: RouteName.profileSettings,
+    loadComponent: () => import('@ccs3-operator/user-profile').then(x => x.UserProfileComponent),
+  },
   {
     path: RouteName.signedOutByAdministrator,
     // loadComponent: () => import('@ccs3-operator/signed-out-by-administrator').then(x => x.SignedOutByAdministratorComponent),

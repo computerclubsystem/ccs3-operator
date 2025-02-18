@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,8 +20,6 @@ export class ToolbarComponent {
   readonly signals = this.createSignals();
   readonly languageMenuItems = this.createLanguageMenuItems();
   iconName = IconName;
-
-  private readonly destroyRef = inject(DestroyRef);
 
   onMainMenuItemClick(mainMenuItem: MainMenuItem): void {
     this.internalSubjectsSvc.setMainMenuSelected(mainMenuItem);

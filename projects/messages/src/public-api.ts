@@ -81,6 +81,8 @@ export * from './lib/get-all-system-settings-request.message';
 export * from './lib/get-all-system-settings-reply.message';
 export * from './lib/update-system-settings-values-request.message';
 export * from './lib/update-system-settings-values-reply.message';
+export * from './lib/change-password-request.message';
+export * from './lib/change-password-reply.message';
 
 export * from './lib/entities/device-connectivity-item';
 export * from './lib/entities/device';
