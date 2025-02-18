@@ -10,15 +10,17 @@ import {
   Message, MessageType, AuthReplyMessage, ConfigurationMessage,
   createPingRequestMessage, createAuthRequestMessage, createRefreshTokenRequestMessage,
   RefreshTokenReplyMessage, NotAuthenticatedMessage, AuthRequestMessage,
-  SignOutReplyMessage, createSignOutRequestMessage, ReplyMessage,
-  NotificationMessageType,
-  NotificationMessage,
-  createGetProfileSettingsRequestMessage,
-  GetProfileSettingsReplyMessage,
+  SignOutReplyMessage, createSignOutRequestMessage, ReplyMessage, NotificationMessageType,
+  NotificationMessage, createGetProfileSettingsRequestMessage, GetProfileSettingsReplyMessage,
   UserProfileSettingName,
 } from '@ccs3-operator/messages';
-import { CustomStylesService, MessageSubjectsService, NotificationType, PermissionName, PermissionsService, RouteNavigationService } from '@ccs3-operator/shared';
-import { AccountMenuItem, AccountMenuItemId, IconName, MainMenuItem, MainMenuItemId, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';
+import {
+  CustomStylesService, MessageSubjectsService, NotificationType, PermissionName, PermissionsService,
+  RouteNavigationService
+} from '@ccs3-operator/shared';
+import {
+  AccountMenuItem, AccountMenuItemId, IconName, MainMenuItem, MainMenuItemId, MessageTimedOutErrorData
+} from '@ccs3-operator/shared/types';
 import { ToolbarComponent } from '@ccs3-operator/toolbar';
 import { MessageTransportService } from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
@@ -229,6 +231,7 @@ export class AppComponent implements OnInit {
   }
 
   performSignOut(signOutReplyMessage: SignOutReplyMessage | null): void {
+    this.applyCustomCss('');
     this.stopPing();
     this.stopRefreshTokenTimer();
     this.removeStoredTokenData();
