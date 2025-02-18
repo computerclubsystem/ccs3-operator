@@ -87,6 +87,10 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   padding-block-end: var(--ccs3-op-padding);
 }
 
+.ccs3-op-block-padding {
+  padding-block: var(--ccs3-op-padding);
+}
+
 /* Spacing */
 .ccs3-op-no-gap {
   gap: 0;
@@ -258,11 +262,11 @@ table th, table td {
   padding-inline: var(--ccs3-op-half-padding);
 }
 
-table tbody tr:nth-child(odd) {
+table:not(.ccs3-op-no-alt-colors) tbody tr:nth-child(odd) {
   background-color: var(--ccs3-op-table-alternate-background-odd);
 }
 
-table tbody tr:nth-child(even) {
+table:not(.ccs3-op-no-alt-colors) tbody tr:nth-child(even) {
   background-color: var(--ccs3-op-table-alternate-background-even);
 }
 

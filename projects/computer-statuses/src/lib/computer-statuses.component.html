@@ -1,39 +1,50 @@
 <section *transloco="let t;" class="ccs3-op-computer-statuses-component-content-container">
   <section class="ccs3-op-computer-statuses-toolbar">
-    <mat-expansion-panel togglePosition="before">
+    <mat-expansion-panel #toolsExpansionPanel togglePosition="before">
       <mat-expansion-panel-header>
         <span>{{t('Tools')}}</span>
       </mat-expansion-panel-header>
-      <section class="ccs3-op-computer-statuses-tools ccs3-op-flex-row ccs3-op-align-items-flex-start">
-        <section class="ccs3-op-computer-statuses-current-shift-status ccs3-op-max-width-medium-text">
-          <ccs3-op-shift-status [currentShiftReply]="signals.currentShiftReply()"
-            (refreshed)="onRefreshCurrentShiftStatus()"
-            (shiftCompleted)="onCompleteShift($event)"></ccs3-op-shift-status>
-        </section>
-        <section class="layout-rows-controls ccs3-op-flex-row">
-          <mat-card>
-            <mat-card-header>
-              <mat-card-title>
-                <span>{{t('Layout rows')}}</span>
-              </mat-card-title>
-            </mat-card-header>
-            <mat-card-content>
-              <section class="layout-rows-modification-container ccs3-op-flex-row ccs3-no-gap">
-                <button (click)="onDecreaseLayoutRows()" mat-icon-button>
-                  <mat-icon>{{iconName.remove}}</mat-icon>
-                </button>
-                <span>{{signals.layoutRowsCount()}}</span>
-                <button (click)="onIncreaseLayoutRows()" mat-icon-button>
-                  <mat-icon>{{iconName.add}}</mat-icon>
-                </button>
-              </section>
-            </mat-card-content>
-          </mat-card>
-        </section>
-      </section>
+      <ng-template matExpansionPanelContent>
+        @if (toolsExpansionPanel.expanded) {
+        <mat-card-content class="computer-statuses-tools-content">
+          <section class="ccs3-op-flex-row ccs3-op-align-items-flex-start computer-statuses-tools-section">
+            <section class="ccs3-op-computer-statuses-current-shift-status ccs3-op-max-width-medium-text">
+              <ccs3-op-shift-status [currentShiftReply]="signals.currentShiftReply()"
+                (refreshed)="onRefreshCurrentShiftStatus()"
+                (shiftCompleted)="onCompleteShift($event)"></ccs3-op-shift-status>
+            </section>
+            <section class="ccs3-op-remaining-time-rank ccs3-op-max-width-medium-text">
+              <ccs3-op-remaining-time-rank [allDevicesMap]="signals.allDevicesMap()"
+                [allTariffsMap]="signals.allTariffsMap()" [deviceStatuses]="signals.deviceStatuses()">
+              </ccs3-op-remaining-time-rank>
+            </section>
+            <section class="layout-rows-controls ccs3-op-flex-row">
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>
+                    <span>{{t('Layout rows')}}</span>
+                  </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <section class="layout-rows-modification-container ccs3-op-flex-row ccs3-no-gap">
+                    <button (click)="onDecreaseLayoutRows()" mat-icon-button>
+                      <mat-icon>{{iconName.remove}}</mat-icon>
+                    </button>
+                    <span>{{signals.layoutRowsCount()}}</span>
+                    <button (click)="onIncreaseLayoutRows()" mat-icon-button>
+                      <mat-icon>{{iconName.add}}</mat-icon>
+                    </button>
+                  </section>
+                </mat-card-content>
+              </mat-card>
+            </section>
+          </section>
+        </mat-card-content>
+        }
+      </ng-template>
     </mat-expansion-panel>
   </section>
-  <section class="ccs3-op-computer-statuses-container">
+  <section class="computer-statuses-container">
     <section #computersContainer class="computers-container">
       @let items = signals.deviceStatusItems();
       @for (item of items; track item.deviceStatus.deviceId) {

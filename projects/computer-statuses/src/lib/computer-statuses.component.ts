@@ -36,6 +36,7 @@ import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { TariffService } from './tariff.service';
 import { ShiftStatusComponent } from './shift-status/shift-status.component';
 import { ShiftCompletedEventArgs } from './shift-status/declarations';
+import { RemainingTimeRankComponent } from './remaining-time-rank/remaining-time-rank.component';
 
 @Component({
   selector: 'ccs3-op-computer-statuses',
@@ -44,7 +45,7 @@ import { ShiftCompletedEventArgs } from './shift-status/declarations';
   imports: [
     NgClass, MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
     TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
-    SecondsFormatterComponent, ExpandButtonComponent, ShiftStatusComponent
+    SecondsFormatterComponent, ExpandButtonComponent, ShiftStatusComponent, RemainingTimeRankComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -208,6 +209,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     if (allDevicesReplyMsg.header.failure || !allDevicesReplyMsg.body.devices) {
       return;
     }
+    this.signals.allDevices.set(allDevicesReplyMsg.body.devices);
     const mapItems: [number, Device][] = allDevicesReplyMsg.body.devices.map(device => ([device.id, device]));
     this.signals.allDevicesMap.set(new Map<number, Device>(mapItems));
     // When all devices are available, we must refresh the signals.deviceStatusItems to show device names
@@ -278,7 +280,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     // this selection is now invalid, because the target device is now started
     this.refreshTransferToDeviceSelections(deviceStatusItems);
     this.signals.deviceStatusItems.set(deviceStatusItems);
-    const notStartedAndAllowedForTransferDeviceStatusItems = deviceStatusItems.filter(x => !x.deviceStatus.started && !x.device.disableTransfer);
+    const notStartedAndAllowedForTransferDeviceStatusItems = deviceStatusItems.filter(x => !x.deviceStatus.started && !x.device?.disableTransfer);
     this.signals.transferrableDeviceStatusItems.set(notStartedAndAllowedForTransferDeviceStatusItems);
     this.changeDetectorRef.markForCheck();
   }
@@ -500,8 +502,11 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   createSignals(): Signals {
     const signals: Signals = {
       deviceStatusItems: signal([]),
+      deviceStatuses: signal([]),
       lastDeviceStatusesNotificationMessage: signal(null),
+      allDevices: signal([]),
       allDevicesMap: signal(new Map<number, Device>()),
+      allTariffs: signal([]),
       allTariffsMap: signal(new Map<number, Tariff>()),
       allAvailableTariffs: signal([]),
       transferrableDeviceStatusItems: signal([]),
@@ -513,14 +518,26 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       const allAvailableTariffs = allTariffs.filter(x => x.enabled && x.type !== TariffType.prepaid);
       return allAvailableTariffs;
     });
+    signals.allTariffs = computed(() => {
+      const allTariffs = Array.from(this.signals.allTariffsMap().values());
+      return allTariffs;
+    });
+    signals.deviceStatuses = computed(() => {
+      const deviceStatusItems = this.signals.deviceStatusItems();
+      const deviceStatuses = deviceStatusItems.map(x => x.deviceStatus);
+      return deviceStatuses;
+    });
     return signals;
   }
 }
 
 interface Signals {
   deviceStatusItems: WritableSignal<DeviceStatusItem[]>;
+  deviceStatuses: Signal<DeviceStatus[]>;
   lastDeviceStatusesNotificationMessage: WritableSignal<DeviceStatusesNotificationMessage | null>;
+  allDevices: WritableSignal<Device[]>;
   allDevicesMap: WritableSignal<Map<number, Device>>;
+  allTariffs: Signal<Tariff[]>;
   allTariffsMap: WritableSignal<Map<number, Tariff>>;
   allAvailableTariffs: Signal<Tariff[]>;
   transferrableDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;

@@ -1,4 +1,4 @@
-<mat-card *transloco="let t;">
+<mat-card *transloco="let t;" class="ccs3-op-flex-column">
   @let replyMessage = currentShiftReply();
   <mat-card-header>
     <mat-card-title>
@@ -9,68 +9,104 @@
     <section class="ccs3-op-flex-column">
       @if (replyMessage) {
       @let shiftStatus = replyMessage.body.shiftStatus;
-      <table>
-        <thead>
-          <th></th>
-          <th class="ccs3-op-align-text-end">{{t('Total sum')}}</th>
-          <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{t('Running sessions')}}</td>
-            <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
-                [value]="shiftStatus.runningSessionsTotal"></ccs3-op-money-formatter>
-            </td>
-            <td class="ccs3-op-align-text-end">{{shiftStatus.runningSessionsCount}}</td>
-          </tr>
-          <tr>
-            <td>{{t('Continuations')}}</td>
-            <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
-                [value]="shiftStatus.continuationsTotal"></ccs3-op-money-formatter>
-            </td>
-            <td class="ccs3-op-align-text-end">{{shiftStatus.continuationsCount}}</td>
-          </tr>
-          <tr>
-            <td>{{t('Completed sessions')}}</td>
-            <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
-                [value]="shiftStatus.completedSessionsTotal"></ccs3-op-money-formatter>
-            </td>
-            <td class="ccs3-op-align-text-end">{{shiftStatus.completedSessionsCount}}</td>
-          </tr>
-          <tr>
-            <td>{{t('Created prepaid tariffs')}}</td>
-            <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
-                [value]="shiftStatus.createdPrepaidTariffsTotal"></ccs3-op-money-formatter>
-            </td>
-            <td class="ccs3-op-align-text-end">{{shiftStatus.createdPrepaidTariffsCount}}</td>
-          </tr>
-          <tr>
-            <td>{{t('Recharged prepaid tariffs')}}</td>
-            <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
-                [value]="shiftStatus.rechargedPrepaidTariffsTotal"></ccs3-op-money-formatter>
-            </td>
-            <td class="ccs3-op-align-text-end">{{shiftStatus.rechargedPrepaidTariffsCount}}</td>
-          </tr>
-          <tr>
-            <td>{{t('Total')}}</td>
-            <td class="ccs3-op-align-text-end ccs3-op-font-size-double"><ccs3-op-money-formatter
-                [value]="shiftStatus.totalAmount"></ccs3-op-money-formatter>
-            </td>
-            <td class="ccs3-op-align-text-end">{{shiftStatus.totalCount}}</td>
-          </tr>
-        </tbody>
-      </table>
+
+      <mat-divider></mat-divider>
+
+      <mat-card class="ccs3-op-flex-column running-sessions-card">
+        <mat-card-title class="running-sessions-cart-title ccs3-op-success-color">
+          <section class="ccs3-op-flex-row ccs3-op-align-items-flex-end">
+            <span>{{t('Running')}}</span>
+            <span>=</span>
+            <ccs3-op-money-formatter class="running-devices-total ccs3-op-font-size-double"
+              [value]="shiftStatus.runningSessionsTotal + shiftStatus.continuationsTotal"></ccs3-op-money-formatter>
+          </section>
+        </mat-card-title>
+        <mat-card-content class="ccs3-op-mat-card-content-no-padding running-sessions-card-content">
+          <table class="ccs3-op-no-alt-colors running-sessions-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th class="ccs3-op-align-text-end">{{t('Total sum')}}</th>
+                <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{t('Running devices')}}</td>
+                <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                    [value]="shiftStatus.runningSessionsTotal"></ccs3-op-money-formatter>
+                </td>
+                <td class="ccs3-op-align-text-end">{{shiftStatus.runningSessionsCount}}</td>
+              </tr>
+              <tr>
+                <td>{{t('Continuations')}}</td>
+                <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                    [value]="shiftStatus.continuationsTotal"></ccs3-op-money-formatter>
+                </td>
+                <td class="ccs3-op-align-text-end">{{shiftStatus.continuationsCount}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-divider></mat-divider>
+
+      <mat-card class="ccs3-op-flex-column completed-sessions-card">
+        <mat-card-title class="completed-sessions-card-title ccs3-op-success-color">
+          <section class="ccs3-op-flex-row ccs3-op-align-items-flex-end">
+            <span>{{t('Completed')}}</span>
+            <span>=</span>
+            <ccs3-op-money-formatter class="running-devices-total ccs3-op-font-size-double"
+              [value]="shiftStatus.completedSessionsTotal + shiftStatus.createdPrepaidTariffsTotal + shiftStatus.rechargedPrepaidTariffsTotal">
+            </ccs3-op-money-formatter>
+          </section>
+        </mat-card-title>
+        <mat-card-content class="ccs3-op-mat-card-content-no-padding completed-sessions-card-content">
+          <table class="ccs3-op-no-alt-colors completed-sessions-table">
+            <thead>
+              <th></th>
+              <th class="ccs3-op-align-text-end">{{t('Total sum')}}</th>
+              <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{t('Completed sessions')}}</td>
+                <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                    [value]="shiftStatus.completedSessionsTotal"></ccs3-op-money-formatter>
+                </td>
+                <td class="ccs3-op-align-text-end">{{shiftStatus.completedSessionsCount}}</td>
+              </tr>
+              <tr>
+                <td>{{t('Created prepaid tariffs')}}</td>
+                <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                    [value]="shiftStatus.createdPrepaidTariffsTotal"></ccs3-op-money-formatter>
+                </td>
+                <td class="ccs3-op-align-text-end">{{shiftStatus.createdPrepaidTariffsCount}}</td>
+              </tr>
+              <tr>
+                <td>{{t('Recharged prepaid tariffs')}}</td>
+                <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                    [value]="shiftStatus.rechargedPrepaidTariffsTotal"></ccs3-op-money-formatter>
+                </td>
+                <td class="ccs3-op-align-text-end">{{shiftStatus.rechargedPrepaidTariffsCount}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </mat-card-content>
+      </mat-card>
       }
     </section>
   </mat-card-content>
   <mat-card-actions>
-    <section class="ccs3-op-flex-column">
+    <section class="ccs3-op-flex-column ccs3-op-full-width">
       <button (click)="onRefreshCurrentShiftStatus()" mat-raised-button>{{t('Refresh shift status')}}</button>
       <mat-checkbox #allowShiftCompletionCheckbox [disabled]="!replyMessage">
         {{t('Allow shift completion')}}
       </mat-checkbox>
       <form [formGroup]="form">
-        <mat-form-field>
+        <mat-form-field class="ccs3-op-full-width">
+          <mat-label>{{t('Shift note')}}</mat-label>
           <textarea [formControl]="form.controls.shiftNote" matInput></textarea>
         </mat-form-field>
       </form>

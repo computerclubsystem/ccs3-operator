@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDividerModule } from '@angular/material/divider';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 import { GetCurrentShiftStatusReplyMessage } from '@ccs3-operator/messages';
@@ -16,7 +17,7 @@ import { ShiftCompletedEventArgs } from './declarations';
   templateUrl: 'shift-status.component.html',
   imports: [
     ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatCheckboxModule, TranslocoDirective, MoneyFormatterComponent
+    MatCheckboxModule, MatDividerModule, TranslocoDirective, MoneyFormatterComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

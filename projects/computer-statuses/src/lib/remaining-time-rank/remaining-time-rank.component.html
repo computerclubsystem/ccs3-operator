@@ -1,0 +1,25 @@
+<mat-card *transloco="let t;" class="ccs3-op-flex-column">
+  <mat-card-header>
+    <mat-card-title>
+      <span>{{t('Top 10 remaining time')}}</span>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <table>
+      <thead>
+        <tr>
+          <th class="ccs3-op-align-text-start">{{t('Name')}}</th>
+          <th class="ccs3-op-align-text-end">{{t('Remaining time')}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of signals.rankItems(); track item.deviceId) {
+        <tr>
+          <td class="ccs3-op-align-text-start">{{item.deviceName}}</td>
+          <td class="ccs3-op-align-text-end">{{item.remainingSeconds | secondsToTime}}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </mat-card-content>
+</mat-card>
