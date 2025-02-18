@@ -17,6 +17,8 @@ export class CustomStylesService {
       styleEl.setAttribute(this.stylElementAttributeName, '');
       this.doc.head.appendChild(styleEl);
     }
-    styleEl.innerText = css;
+    styleEl.innerText = '';
+    const textNode = this.doc.createTextNode(css);
+    styleEl.appendChild(textNode);
   }
 }
