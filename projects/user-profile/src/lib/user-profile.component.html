@@ -1,6 +1,7 @@
 <section *transloco="let t;">
-  <h2>{{t('User profile')}}</h2>
-  <section class="ccs3-op-flex-row">
+  @let profileReplyMessage = signals.profileReplyMessage();
+  <h2>{{t('User profile')}} {{profileReplyMessage?.body?.username}}</h2>
+  <section class="ccs3-op-flex-row ccs3-op-align-items-flex-start user-profile-sections">
     <section class="change-password-section">
       <mat-card class="ccs3-op-flex-column">
         <mat-card-header>
@@ -10,7 +11,7 @@
         </mat-card-header>
         <mat-card-content>
           <form [formGroup]="changePasswordForm" class="ccs3-op-flex-column">
-            @let passwordsAreDifferent = hasChangePasswordsNotEqualError();
+            @let passwordsAreDifferent = hasPasswordsNotEqualError();
             <mat-form-field>
               <mat-label>{{t('Current password')}}</mat-label>
               <input [formControl]="changePasswordForm.controls.currentPassword" matInput name="current-password"
@@ -38,6 +39,27 @@
             {{t('Change password')}}
           </button>
         </mat-card-content>
+      </mat-card>
+    </section>
+    <section class="custom-styles-section">
+      <mat-card class="ccs3-op-flex-column ccs3-op-width-large-text">
+        <mat-card-header>
+          <mat-card-title>
+            <span>{{t('Custom styles')}}</span>
+          </mat-card-title>
+          <mat-card-subtitle>{{signals.customStylesSetting()?.description}}</mat-card-subtitle>
+        </mat-card-header>
+        @if (profileReplyMessage) {
+        <mat-card-content>
+          <form [formGroup]="customStyleForm">
+            <mat-form-field class="ccs3-op-full-width">
+              <mat-label>{{t('Custom CSS')}}</mat-label>
+              <textarea [formControl]="customStyleForm.controls.customStyle" matInput rows="10"></textarea>
+            </mat-form-field>
+          </form>
+          <button (click)="onSaveCustomCss()" mat-flat-button>{{t('Save')}}</button>
+        </mat-card-content>
+        }
       </mat-card>
     </section>
   </section>

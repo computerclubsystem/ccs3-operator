@@ -13,8 +13,11 @@ import {
   SignOutReplyMessage, createSignOutRequestMessage, ReplyMessage,
   NotificationMessageType,
   NotificationMessage,
+  createGetProfileSettingsRequestMessage,
+  GetProfileSettingsReplyMessage,
+  UserProfileSettingName,
 } from '@ccs3-operator/messages';
-import { MessageSubjectsService, NotificationType, PermissionName, PermissionsService, RouteNavigationService } from '@ccs3-operator/shared';
+import { CustomStylesService, MessageSubjectsService, NotificationType, PermissionName, PermissionsService, RouteNavigationService } from '@ccs3-operator/shared';
 import { AccountMenuItem, AccountMenuItemId, IconName, MainMenuItem, MainMenuItemId, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';
 import { ToolbarComponent } from '@ccs3-operator/toolbar';
 import { MessageTransportService } from '@ccs3-operator/shared';
@@ -39,6 +42,7 @@ export class AppComponent implements OnInit {
   readonly notificationsSvc = inject(NotificationsService);
   readonly permissionsSvc = inject(PermissionsService);
   readonly notificationsHelperSvc = inject(NotificationsHelperService);
+  readonly stylesSvc = inject(CustomStylesService);
   readonly matIconRegistry = inject(MatIconRegistry);
   readonly translocoService = inject(TranslocoService);
   readonly document = inject(DOCUMENT);
@@ -157,7 +161,7 @@ export class AppComponent implements OnInit {
 
   processMainMenuSelected(mainMenuItem: MainMenuItem): void {
     switch (mainMenuItem.id) {
-      case MainMenuItemId.copmutersStatus:
+      case MainMenuItemId.computerStatuses:
         this.router.navigate([RouteName.computerStatuses]);
         break;
       case MainMenuItemId.notifications:
@@ -351,6 +355,7 @@ export class AppComponent implements OnInit {
       this.setSignedInAccountMenuItems();
       this.setUpRefreshTokenTimer(message.body.tokenExpiresAt!);
       this.redirectToDesiredUrl();
+      this.loadAndApplyProfileSettings();
     } else {
       this.removeStoredTokenData();
       this.setNotSignedInMainMenuItems();
@@ -358,6 +363,27 @@ export class AppComponent implements OnInit {
       this.removeStoredTokenData();
       this.navigateToSignInWithReturnUrl();
     }
+  }
+
+  private loadAndApplyProfileSettings(): void {
+    const reqMsg = createGetProfileSettingsRequestMessage();
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg)
+      .subscribe(replyMsg => this.processGetProfileSettingsReplyMessage(replyMsg as GetProfileSettingsReplyMessage));
+  }
+
+  private processGetProfileSettingsReplyMessage(replyMsg: GetProfileSettingsReplyMessage): void {
+    if (replyMsg.header.failure) {
+      return;
+    }
+    const customCssSetting = replyMsg.body.settings.find(x => x.name === UserProfileSettingName.customCss);
+    this.applyCustomCss(customCssSetting?.value);
+  }
+
+  private applyCustomCss(css?: string | null): void {
+    if (!css || !css.trim()) {
+      return;
+    }
+    this.stylesSvc.applyStyleText(css);
   }
 
   private redirectToDesiredUrl(): void {
@@ -377,7 +403,7 @@ export class AppComponent implements OnInit {
 
   private setSignedInMainMenuItems(): void {
     const signedInMainMenuItems: MainMenuItem[] = [
-      { id: MainMenuItemId.copmutersStatus, icon: IconName.dvr, translationKey: 'Computers' },
+      { id: MainMenuItemId.computerStatuses, icon: IconName.dvr, translationKey: 'Computers' },
       { id: MainMenuItemId.notifications, icon: IconName.notifications, translationKey: 'Notifications' },
       // TODO: Check for any of the required permission
       { id: MainMenuItemId.systemSettings, icon: IconName.settings, translationKey: 'System settings' },

@@ -177,8 +177,8 @@
             }
           </section>
           @if (item.isActionsExpanded) {
-          <section class="ccs3-op-flex-row ccs3-op-align-items-baseline">
-            <mat-form-field>
+          <section class="ccs3-op-flex-row ccs3-op-align-items-center">
+            <mat-form-field subscriptSizing="dynamic">
               <mat-label>{{tariffTranslation}}</mat-label>
               <mat-select (valueChange)="onTariffSelected($event, item)" [(value)]="item.selectedTariffItem">
                 @for (tariff of signals.allAvailableTariffs(); track tariff.id) {
@@ -213,7 +213,7 @@
             <section class="device-options-sections">
               @if (item.optionsVisibility.stop) {
               <section class="stop-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
-                <mat-form-field>
+                <mat-form-field subscriptSizing="dynamic">
                   <mat-label>{{t('Stop note')}}</mat-label>
                   <textarea (input)="onStopNoteChanged($event, item)" matInput class="stop-note-input"></textarea>
                 </mat-form-field>
@@ -227,7 +227,7 @@
               }
               @if (item.optionsVisibility.transfer) {
               <section class="transfer-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
-                <mat-form-field>
+                <mat-form-field subscriptSizing="dynamic">
                   <mat-label>{{t('Transfer to')}}</mat-label>
                   <mat-select (valueChange)="onTransferToChanged($event, item)"
                     [value]="item.selectedTransferToDeviceId">
@@ -256,7 +256,7 @@
                 </section>
                 }
                 <section class="continue-with-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
-                  <mat-form-field>
+                  <mat-form-field subscriptSizing="dynamic">
                     <mat-label>{{continueWithTranslation}}</mat-label>
                     <mat-select (valueChange)="onContinueWithChanged($event, item)"
                       [value]="item.selectedContinueWithTariffId">

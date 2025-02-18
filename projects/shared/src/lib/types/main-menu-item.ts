@@ -1,7 +1,7 @@
 import { MenuItem } from './menu-item';
 
 export enum MainMenuItemId {
-  copmutersStatus = 'copmutersStatus',
+  computerStatuses = 'computersStatuses',
   notifications = 'notifications',
   systemSettings = 'systemSettings',
   reports = 'reports',

@@ -1,4 +1,8 @@
 export const enum MessageType {
+  updateProfileSettingsRequest = 'update-profile-settings-request',
+  updateProfileSettingsReply = 'update-profile-settings-reply',
+  getProfileSettingsRequest = 'get-profile-settings-request',
+  getProfileSettingsReply = 'get-profile-settings-reply',
   changePasswordRequest = 'change-password-request',
   changePasswordReply = 'change-password-reply',
   updateSystemSettingsValuesRequest = 'update-system-settings-values-request',

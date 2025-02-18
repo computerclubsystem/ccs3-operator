@@ -83,6 +83,10 @@ export * from './lib/update-system-settings-values-request.message';
 export * from './lib/update-system-settings-values-reply.message';
 export * from './lib/change-password-request.message';
 export * from './lib/change-password-reply.message';
+export * from './lib/get-profile-settings-request.message';
+export * from './lib/get-profile-settings-reply.message';
+export * from './lib/update-profile-settings-request.message';
+export * from './lib/update-profile-settings-reply.message';
 
 export * from './lib/entities/device-connectivity-item';
 export * from './lib/entities/device';
@@ -98,3 +102,5 @@ export * from './lib/entities/shifts-summary';
 export * from './lib/entities/system-setting';
 export * from './lib/entities/system-setting-type';
 export * from './lib/entities/system-setting-name-with-value';
+export * from './lib/entities/user-profile-setting-name';
+export * from './lib/entities/user-profile-setting-with-value';
