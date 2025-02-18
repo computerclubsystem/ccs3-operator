@@ -380,10 +380,7 @@ export class AppComponent implements OnInit {
   }
 
   private applyCustomCss(css?: string | null): void {
-    if (!css || !css.trim()) {
-      return;
-    }
-    this.stylesSvc.applyStyleText(css);
+    this.stylesSvc.applyStyleText(css || '');
   }
 
   private redirectToDesiredUrl(): void {
