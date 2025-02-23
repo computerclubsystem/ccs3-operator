@@ -1,5 +1,8 @@
 export enum PermissionName {
   all = 'all',
+  deviceGroupsCreate = 'device-groups:create',
+  deviceGroupsUpdate = 'device-groups:update',
+  devicesCreate = 'devices:create',
   devicesStart = 'devices:start',
   devicesStop = 'devices:stop',
   devicesReadStatus = 'devices:read-status',
@@ -12,6 +15,7 @@ export enum PermissionName {
   rolesUpdate = 'roles:update',
   tariffsRead = 'tariffs:read',
   tariffsCreate = 'tariffs:create',
+  tariffsCreatePrepaid = 'tariffs:create-prepaid',
   tariffsUpdate = 'tariffs:update',
   tariffsRechargeDuration = 'tariffs:recharge-duration',
   usersRead = 'users:read',
@@ -19,4 +23,5 @@ export enum PermissionName {
   usersUpdate = 'users:update',
   usersForceSignOut = 'users:force-sign-out',
   reportsSignedInUsersRead = 'reports:signed-in-users-read',
+  reportsShifts = 'reports:shifts',
 }

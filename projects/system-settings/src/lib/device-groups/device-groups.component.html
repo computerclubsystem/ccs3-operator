@@ -1,0 +1,34 @@
+<section *transloco="let t;" class="ccs3-op-system-settings-device-groups">
+  @let deviceGroups = signals.deviceGroups();
+  @let editTranslated = t('Edit');
+  <table>
+    <thead>
+      <tr>
+        <th class="ccs3-op-align-text-start">{{editTranslated}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Name')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Description')}}</th>
+        <th class="ccs3-op-align-text-start">{{t('Restrict transfers')}}</th>
+        <th class="ccs3-op-align-text-start">Id</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (deviceGroup of deviceGroups; track deviceGroup.id) {
+      <tr>
+        <td class="ccs3-op-align-text-start">
+          <button mat-icon-button (click)="onEditDeviceGroup(deviceGroup)" title="{{editTranslated}}"
+            [attr.aria-label]="editTranslated">
+            <mat-icon>{{iconName.edit}}</mat-icon>
+          </button>
+        </td>
+        <td class="ccs3-op-align-text-start">{{deviceGroup.name}}</td>
+        <td class="ccs3-op-align-text-start">{{deviceGroup.description}}</td>
+        <td class="ccs3-op-align-text-start"><ccs3-op-boolean-indicator [value]="deviceGroup.restrictDeviceTransfers" /></td>
+        <td class="ccs3-op-align-text-start">{{deviceGroup.id}}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+  <section class="ccs3-op-flex-row">
+    <button (click)="onCreateNew()" mat-flat-button>{{t('Create')}}</button>
+  </section>
+</section>

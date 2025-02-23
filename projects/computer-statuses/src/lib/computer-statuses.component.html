@@ -121,7 +121,13 @@
       <mat-card-content class="ccs3-op-mat-card-content-no-padding">
         <mat-expansion-panel #detailsExpansionPanel class="ccs3-op-mat-expansion-panel-small-padding">
           <ng-template matExpansionPanelContent>
-            <section class="ccs3-op-two-col-grid ccs3-op-half-gap">
+            <section class="computer-status-details ccs3-op-two-col-grid ccs3-op-half-gap ccs3-op-align-items-center">
+              <span>{{totalTranslation}}</span>
+              <ccs3-op-money-formatter [value]="item.deviceStatus.totalSum" [title]="totalTranslation"
+                class="details-total-sum"></ccs3-op-money-formatter>
+              <span>{{remainingTimeTranslation}}</span>
+              <ccs3-op-seconds-formatter [value]="item.deviceStatus.remainingSeconds" [title]="remainingTimeTranslation"
+                class="details-remaining-time"></ccs3-op-seconds-formatter>
               <span>{{tariffTranslation}}</span>
               <span class="tariff-name">{{item.tariffName}}</span>
               <span>{{elapsedTimeTranslation}}</span>
@@ -181,7 +187,7 @@
             <mat-form-field subscriptSizing="dynamic">
               <mat-label>{{tariffTranslation}}</mat-label>
               <mat-select (valueChange)="onTariffSelected($event, item)" [(value)]="item.selectedTariffItem">
-                @for (tariff of signals.allAvailableTariffs(); track tariff.id) {
+                @for (tariff of item.allowedTariffs; track tariff.id) {
                 <mat-option [value]="tariff" [title]="tariff.name">{{tariff.name}}</mat-option>
                 }
               </mat-select>
@@ -231,10 +237,9 @@
                   <mat-label>{{t('Transfer to')}}</mat-label>
                   <mat-select (valueChange)="onTransferToChanged($event, item)"
                     [value]="item.selectedTransferToDeviceId">
-                    @for (notStartedItem of signals.transferrableDeviceStatusItems(); track
-                    notStartedItem.deviceStatus.deviceId) {
-                    <mat-option [value]="notStartedItem.deviceStatus.deviceId"
-                      [title]="notStartedItem.deviceName">{{notStartedItem.deviceName}}</mat-option>
+                    @for (allowedToTransfer of item.allowedTransferToDevices; track allowedToTransfer.id) {
+                    <mat-option [value]="allowedToTransfer.id"
+                      [title]="allowedToTransfer.name">{{allowedToTransfer.name}}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -260,7 +265,7 @@
                     <mat-label>{{continueWithTranslation}}</mat-label>
                     <mat-select (valueChange)="onContinueWithChanged($event, item)"
                       [value]="item.selectedContinueWithTariffId">
-                      @for (tariff of signals.allAvailableTariffs(); track tariff.id) {
+                      @for (tariff of item.allowedTariffs; track tariff.id) {
                       <mat-option [value]="tariff.id" [title]="tariff.name">{{tariff.name}}</mat-option>
                       }
                     </mat-select>

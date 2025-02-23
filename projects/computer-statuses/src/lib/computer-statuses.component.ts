@@ -1,7 +1,7 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, ElementRef, inject, OnInit, Signal, signal,
-  ViewChild, WritableSignal
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, ElementRef, inject, OnInit,
+  Signal, signal, ViewChild, WritableSignal
 } from '@angular/core';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -12,22 +12,21 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
-import { filter } from 'rxjs';
+import { filter, forkJoin, Observable } from 'rxjs';
 
 import {
   createCreateDeviceContinuationRequestMessage, createDeleteDeviceContinuationRequestMessage,
   CreateDeviceContinuationReplyMessage, createGetAllDevicesRequestMessage,
-  createGetAllTariffsRequestMessage, createGetCurrentShiftStatusRequestMessage, createGetDeviceStatusesRequestMessage,
-  createStartDeviceRequestMessage, createStopDeviceRequestMessage, createTransferDeviceRequestMessage,
-  DeleteDeviceContinuationReplyMessage, Device, DeviceConnectivityItem, DeviceStatus,
-  DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage, GetAllTariffsReplyMessage,
-  GetDeviceStatusesReplyMessage, NotificationMessageType,
-  OperatorDeviceConnectivitiesNotificationMessage, GetCurrentShiftStatusReplyMessage, StartDeviceReplyMessage,
-  StopDeviceReplyMessage, Tariff, TariffType, TransferDeviceReplyMessage,
-  createCompleteShiftRequestMessage,
-  CompleteShiftReplyMessage
+  createGetAllTariffsRequestMessage, createGetCurrentShiftStatusRequestMessage,
+  createGetDeviceStatusesRequestMessage, createStartDeviceRequestMessage, createStopDeviceRequestMessage,
+  createTransferDeviceRequestMessage, DeleteDeviceContinuationReplyMessage, Device, DeviceConnectivityItem,
+  DeviceStatus, DeviceStatusesNotificationMessage, GetAllDevicesReplyMessage, GetAllTariffsReplyMessage,
+  GetDeviceStatusesReplyMessage, NotificationMessageType, OperatorDeviceConnectivitiesNotificationMessage,
+  GetCurrentShiftStatusReplyMessage, StartDeviceReplyMessage, StopDeviceReplyMessage, Tariff, TariffType,
+  TransferDeviceReplyMessage, createCompleteShiftRequestMessage, CompleteShiftReplyMessage,
+  createGetAllAllowedDeviceObjectsRequestMessage, GetAllAllowedDeviceObjectsReplyMessage
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe } from '@ccs3-operator/shared';
+import { InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, SorterService } from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
 import { SecondsFormatterComponent } from '@ccs3-operator/seconds-formatter';
@@ -57,6 +56,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
   private readonly notificationsSvc = inject(NotificationsService);
+  private readonly sorterSvc = inject(SorterService);
   private readonly tariffSvc = inject(TariffService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
@@ -83,7 +83,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   init(): void {
     this.loadEntities();
     this.subscribeToSubjects();
-    this.requestDeviceStatuses();
+    // this.requestDeviceStatuses();
   }
 
   onCompleteShift(args: ShiftCompletedEventArgs): void {
@@ -124,12 +124,12 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     this.changeDetectorRef.markForCheck();
   }
 
-  requestDeviceStatuses(): void {
-    const getDeviceStatusesRequestMsg = createGetDeviceStatusesRequestMessage();
-    this.messageTransportSvc.sendAndAwaitForReply(getDeviceStatusesRequestMsg).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(getDeviceStatusesReplyMsg => this.processGetDeviceStatusesReplyMessage(getDeviceStatusesReplyMsg as GetDeviceStatusesReplyMessage));
-  }
+  // requestDeviceStatuses(): void {
+  //   const getDeviceStatusesRequestMsg = createGetDeviceStatusesRequestMessage();
+  //   this.messageTransportSvc.sendAndAwaitForReply(getDeviceStatusesRequestMsg).pipe(
+  //     takeUntilDestroyed(this.destroyRef)
+  //   ).subscribe(getDeviceStatusesReplyMsg => this.processGetDeviceStatusesReplyMessage(getDeviceStatusesReplyMsg as GetDeviceStatusesReplyMessage));
+  // }
 
   isCloseToEnd(item: DeviceStatusItem): boolean {
     if (item.deviceStatus.started && item.deviceStatus.remainingSeconds! < 180) {
@@ -185,17 +185,48 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       return;
     }
     this.refreshDeviceStatusItem(startDeviceReplyMsg.body.deviceStatus);
+    this.setDeviceStatusItemsTransferToDevices(this.signals.deviceStatusItems());
   }
 
   loadEntities(): void {
     const getAllDevicesRequestMsg = createGetAllDevicesRequestMessage();
-    this.messageTransportSvc.sendAndAwaitForReply(getAllDevicesRequestMsg).pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(allDevicesReplyMsg => this.processAllDevicesReplyMessage(allDevicesReplyMsg as GetAllDevicesReplyMessage));
     const getAllTariffsRequestMsg = createGetAllTariffsRequestMessage();
-    this.messageTransportSvc.sendAndAwaitForReply(getAllTariffsRequestMsg).pipe(
+    const getAllAllowedDeviceObjectsRequestMsg = createGetAllAllowedDeviceObjectsRequestMessage();
+    const getDeviceStatusesRequestMsg = createGetDeviceStatusesRequestMessage();
+    const observables: Observable<unknown>[] = [
+      this.messageTransportSvc.sendAndAwaitForReply(getAllDevicesRequestMsg),
+      this.messageTransportSvc.sendAndAwaitForReply(getAllTariffsRequestMsg),
+      this.messageTransportSvc.sendAndAwaitForReply(getAllAllowedDeviceObjectsRequestMsg),
+      this.messageTransportSvc.sendAndAwaitForReply(getDeviceStatusesRequestMsg),
+    ];
+    forkJoin(observables).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(allTariffsReplyMsg => this.processAllTariffsReplyMessage(allTariffsReplyMsg as GetAllTariffsReplyMessage));
+    ).subscribe(([getAllDevicesReplyMsg, getAllTariffsReplyMsg, getAllAllowedDeviceObjectsReplyMsg, getDeviceStatusesReplyMsg]) =>
+      this.processEntitiesReplyMessages(
+        getAllDevicesReplyMsg as GetAllDevicesReplyMessage,
+        getAllTariffsReplyMsg as GetAllTariffsReplyMessage,
+        getAllAllowedDeviceObjectsReplyMsg as GetAllAllowedDeviceObjectsReplyMessage,
+        getDeviceStatusesReplyMsg as GetDeviceStatusesReplyMessage,
+      )
+    );
+    // this.messageTransportSvc.sendAndAwaitForReply(getAllDevicesRequestMsg).pipe(
+    //   takeUntilDestroyed(this.destroyRef)
+    // ).subscribe(allDevicesReplyMsg => this.processAllDevicesReplyMessage(allDevicesReplyMsg as GetAllDevicesReplyMessage));
+    // this.messageTransportSvc.sendAndAwaitForReply(getAllTariffsRequestMsg).pipe(
+    //   takeUntilDestroyed(this.destroyRef)
+    // ).subscribe(allTariffsReplyMsg => this.processAllTariffsReplyMessage(allTariffsReplyMsg as GetAllTariffsReplyMessage));
+  }
+
+  processEntitiesReplyMessages(
+    getAllDevicesReplyMsg: GetAllDevicesReplyMessage,
+    getAllTariffsReplyMsg: GetAllTariffsReplyMessage,
+    getAllAllowedDeviceObjectsReplyMsg: GetAllAllowedDeviceObjectsReplyMessage,
+    getDeviceStatusesReplyMsg: GetDeviceStatusesReplyMessage,
+  ): void {
+    this.processGetAllAllowedDeviceObjectsReplyMessage(getAllAllowedDeviceObjectsReplyMsg);
+    this.processGetAllDevicesReplyMessage(getAllDevicesReplyMsg);
+    this.processGetAllTariffsReplyMessage(getAllTariffsReplyMsg);
+    this.processGetDeviceStatusesReplyMessage(getDeviceStatusesReplyMsg);
   }
 
   onTariffSelected(selectedTariff: Tariff, item: DeviceStatusItem): void {
@@ -205,12 +236,17 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     }
   }
 
-  processAllDevicesReplyMessage(allDevicesReplyMsg: GetAllDevicesReplyMessage): void {
-    if (allDevicesReplyMsg.header.failure || !allDevicesReplyMsg.body.devices) {
+  processGetAllAllowedDeviceObjectsReplyMessage(getAllAllowedDeviceObjectsReplyMsg: GetAllAllowedDeviceObjectsReplyMessage): void {
+    this.signals.getAllAllowedDeviceObjectsReplyMsg.set(getAllAllowedDeviceObjectsReplyMsg);
+  }
+
+
+  processGetAllDevicesReplyMessage(getAllDevicesReplyMsg: GetAllDevicesReplyMessage): void {
+    if (getAllDevicesReplyMsg.header.failure || !getAllDevicesReplyMsg.body.devices) {
       return;
     }
-    this.signals.allDevices.set(allDevicesReplyMsg.body.devices);
-    const mapItems: [number, Device][] = allDevicesReplyMsg.body.devices.map(device => ([device.id, device]));
+    this.signals.allDevices.set(getAllDevicesReplyMsg.body.devices);
+    const mapItems: [number, Device][] = getAllDevicesReplyMsg.body.devices.map(device => ([device.id, device]));
     this.signals.allDevicesMap.set(new Map<number, Device>(mapItems));
     // When all devices are available, we must refresh the signals.deviceStatusItems to show device names
     this.refreshDeviceStatusItemsWithLastNotificationMessage();
@@ -234,7 +270,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     }
   }
 
-  processAllTariffsReplyMessage(allTariffsReplyMsg: GetAllTariffsReplyMessage): void {
+  processGetAllTariffsReplyMessage(allTariffsReplyMsg: GetAllTariffsReplyMessage): void {
     if (!allTariffsReplyMsg.body.tariffs) {
       return;
     }
@@ -280,8 +316,6 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     // this selection is now invalid, because the target device is now started
     this.refreshTransferToDeviceSelections(deviceStatusItems);
     this.signals.deviceStatusItems.set(deviceStatusItems);
-    const notStartedAndAllowedForTransferDeviceStatusItems = deviceStatusItems.filter(x => !x.deviceStatus.started && !x.device?.disableTransfer);
-    this.signals.transferrableDeviceStatusItems.set(notStartedAndAllowedForTransferDeviceStatusItems);
     this.changeDetectorRef.markForCheck();
   }
 
@@ -302,11 +336,24 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       const deviceStatusItem = this.createDeviceStatusItem(deviceStatus);
       deviceStatusItems.push(deviceStatusItem);
     }
+    this.setDeviceStatusItemsTransferToDevices(deviceStatusItems);
     return deviceStatusItems;
   }
 
   createDeviceStatusItem(deviceStatus: DeviceStatus): DeviceStatusItem {
     const tariff = this.getTariff(deviceStatus.tariff);
+    const allowedObjectsItem = this.signals.getAllAllowedDeviceObjectsReplyMsg();
+    let allowedTariffs: Tariff[] = [];
+    if (allowedObjectsItem?.body.allowedDeviceObjects) {
+      const allowedDeviceObjects = allowedObjectsItem.body.allowedDeviceObjects.find(x => x.deviceId === deviceStatus.deviceId);
+      if (allowedDeviceObjects) {
+        const tariffs = allowedDeviceObjects.allowedTariffIds.map(x => this.getTariff(x));
+        // Only tariffs which are not prepaid type - they cannot be started by users, only by customers
+        // TODO: Remove prepaid tariffs filter if users are allowed to start devices on prepaid tariffs
+        allowedTariffs = tariffs.filter(x => !!x).filter(x => x.type !== TariffType.prepaid);
+      }
+    }
+
     const deviceStatusItem = {
       deviceName: this.getDeviceName(deviceStatus.deviceId),
       device: this.getDevice(deviceStatus.deviceId),
@@ -314,11 +361,42 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       tariffName: tariff?.name || '',
       tariffType: tariff?.type || '',
       tariffId: tariff?.id || 0,
+      allowedTariffs: allowedTariffs,
+      allowedTransferToDevices: [] as Device[],
     } as DeviceStatusItem;
     this.mergeCurrentDeviceStatusItemCustomProperties(deviceStatusItem);
     return deviceStatusItem;
   }
 
+  setDeviceStatusItemsTransferToDevices(deviceStatusItems: DeviceStatusItem[]): void {
+    // TODO: This needs to be refactored and simplified
+    const allowedObjectsItem = this.signals.getAllAllowedDeviceObjectsReplyMsg();
+    if (!allowedObjectsItem?.body.allowedDeviceObjects) {
+      return;
+    }
+    const startedDeviceStatusItems = deviceStatusItems.filter(x => x.deviceStatus.started);
+    for (const deviceStatusItem of startedDeviceStatusItems) {
+      const allowedTransferToDevices: Device[] = [];
+      const allowedDeviceObjects = allowedObjectsItem.body.allowedDeviceObjects.find(x => x.deviceId === deviceStatusItem.device.id);
+      if (allowedDeviceObjects) {
+        const allowedDevices = allowedDeviceObjects.allowedTransferTargetDeviceIds
+          .map(x => this.getDevice(x))
+          .filter(x => x.enabled && x.approved);
+        // Now find which of the allowed devices are stopped and add only them
+        for (const allowedDevice of allowedDevices) {
+          if (allowedDevice.id !== deviceStatusItem.device.id) {
+            const dsi = deviceStatusItems.find(x => x.device.id === allowedDevice.id);
+            if (dsi && !dsi.deviceStatus.started) {
+              // Device status for the allowed device is stopped - we can add it to transfer targets
+              allowedTransferToDevices.push(allowedDevice);
+            }
+          }
+        }
+      }
+      this.sorterSvc.sortBy(allowedTransferToDevices, x => x.name);
+      deviceStatusItem.allowedTransferToDevices = allowedTransferToDevices;
+    }
+  }
 
   mergeCurrentDeviceStatusItemCustomProperties(deviceStatusItem: DeviceStatusItem): void {
     const deviceStatus = deviceStatusItem.deviceStatus;
@@ -351,7 +429,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   }
 
   getDeviceName(deviceId: number): string {
-    return this.signals.allDevicesMap().get(deviceId)?.name || ''
+    return this.signals.allDevicesMap().get(deviceId)?.name || '';
   }
 
   getDevice(deviceId: number): Device {
@@ -483,6 +561,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     // Refresh the two devices
     this.refreshDeviceStatusItem(replyMsg.body.sourceDeviceStatus);
     this.refreshDeviceStatusItem(replyMsg.body.targetDeviceStatus);
+    this.setDeviceStatusItemsTransferToDevices(this.signals.deviceStatusItems());
   }
 
   processStopDeviceReplyMessage(stopDeviceReplyMsg: StopDeviceReplyMessage): void {
@@ -497,6 +576,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       deviceStatusItems.splice(currentDeviceStatusItemIndex, 1, newDeviceStatusItem);
       this.setDeviceStatusItems(deviceStatusItems);
     }
+    this.setDeviceStatusItemsTransferToDevices(this.signals.deviceStatusItems());
   }
 
   createSignals(): Signals {
@@ -509,9 +589,10 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       allTariffs: signal([]),
       allTariffsMap: signal(new Map<number, Tariff>()),
       allAvailableTariffs: signal([]),
-      transferrableDeviceStatusItems: signal([]),
+      // transferrableDeviceStatusItems: signal([]),
       layoutRowsCount: signal(5),
       currentShiftReply: signal(null),
+      getAllAllowedDeviceObjectsReplyMsg: signal(null),
     };
     signals.allAvailableTariffs = computed(() => {
       const allTariffs = Array.from(this.signals.allTariffsMap().values());
@@ -540,9 +621,10 @@ interface Signals {
   allTariffs: Signal<Tariff[]>;
   allTariffsMap: WritableSignal<Map<number, Tariff>>;
   allAvailableTariffs: Signal<Tariff[]>;
-  transferrableDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;
+  // transferrableDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;
   layoutRowsCount: WritableSignal<number>;
   currentShiftReply: WritableSignal<GetCurrentShiftStatusReplyMessage | null>;
+  getAllAllowedDeviceObjectsReplyMsg: WritableSignal<GetAllAllowedDeviceObjectsReplyMessage | null>;
 }
 
 interface OptionsVisibility {
@@ -566,4 +648,6 @@ interface DeviceStatusItem {
   selectedContinueWithTariffId?: number | null;
   deviceConnectivity?: DeviceConnectivityItem | null;
   optionsVisibility: OptionsVisibility;
+  allowedTariffs?: Tariff[] | null;
+  allowedTransferToDevices?: Device[] | null;
 }

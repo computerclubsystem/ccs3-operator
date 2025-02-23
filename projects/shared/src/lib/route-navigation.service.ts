@@ -12,6 +12,24 @@ export class RouteNavigationService {
   private readonly navigateToCreateNewRoleRequestedSubject = new Subject<void>();
   private readonly navigateToEditRoleRequestedSubject = new Subject<number>();
   private readonly navigateToSignInRequestedSubject = new Subject<void>();
+  private readonly navigateToCreateDeviceGroupRequestedSubject = new Subject<void>();
+  private readonly navigateToEditDeviceGroupRequestedSubject = new Subject<number>();
+
+  navigateToEditDeviceGroupRequested(deviceGroupId: number): void {
+    this.navigateToEditDeviceGroupRequestedSubject.next(deviceGroupId);
+  }
+
+  getNavigateToEditDeviceGroupRequested(): Observable<number> {
+    return this.navigateToEditDeviceGroupRequestedSubject.asObservable();
+  }
+
+  navigateToCreateDeviceGroupRequested(): void {
+    this.navigateToCreateDeviceGroupRequestedSubject.next();
+  }
+
+  getNavigateToCreateDeviceGroupRequested(): Observable<void> {
+    return this.navigateToCreateDeviceGroupRequestedSubject.asObservable();
+  }
 
   navigateToSignInRequested(): void {
     this.navigateToSignInRequestedSubject.next();

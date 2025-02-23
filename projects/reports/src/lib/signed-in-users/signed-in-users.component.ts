@@ -97,7 +97,7 @@ export class SignedInUsersComponent implements OnInit {
   sortSignedInUsersGroupsByUsername(groups: SignedInUserGroup[]): void {
     groups.sort((left, right) => {
       const leftUsername = left.items[0].username;
-      const rightUsername = right.items[0].username
+      const rightUsername = right.items[0].username;
       return leftUsername.localeCompare(rightUsername);
     });
   }

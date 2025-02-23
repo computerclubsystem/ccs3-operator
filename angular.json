@@ -489,8 +489,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/money-formatter/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
           }
         },
         "lint": {
@@ -530,8 +529,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/seconds-formatter/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
           }
         },
         "lint": {
@@ -571,8 +569,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/expand-button/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
           }
         },
         "lint": {
@@ -612,8 +609,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/boolean-indicator/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
           }
         },
         "lint": {
@@ -653,8 +649,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/reports/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
           }
         },
         "lint": {
@@ -694,8 +689,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/signed-out-by-administrator/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
           }
         },
         "lint": {
@@ -735,8 +729,17 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/user-profile/tsconfig.spec.json",
-            "polyfills": [
-            ]
+            "polyfills": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/user-profile/**/*.ts",
+              "projects/user-profile/**/*.html"
+            ],
+            "eslintConfig": "projects/user-profile/eslint.config.js"
           }
         }
       }

@@ -12,7 +12,7 @@ export class CreatePrepaidTariffService {
   private readonly formBuilder = inject(FormBuilder);
 
   modifyDurationGroupValidators(durationControls: DurationFormControls): void {
-    const validators: ValidatorFn[] = [Validators.required, this.validatorsSvc.durationValidator]
+    const validators: ValidatorFn[] = [Validators.required, this.validatorsSvc.durationValidator];
     durationControls.duration.setValidators(validators);
     durationControls.duration.updateValueAndValidity();
   }

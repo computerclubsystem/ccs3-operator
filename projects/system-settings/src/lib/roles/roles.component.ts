@@ -4,9 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoDirective } from '@jsverse/transloco';
 
-import { InternalSubjectsService, MessageTransportService, RouteNavigationService } from '@ccs3-operator/shared';
+import { InternalSubjectsService, MessageTransportService, RouteNavigationService, SorterService } from '@ccs3-operator/shared';
 import { createGetAllRolesRequestMessage, GetAllRolesReplyMessage, Role } from '@ccs3-operator/messages';
-import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
 import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 
@@ -23,7 +22,7 @@ export class RolesComponent implements OnInit {
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly routeNavigationSvc = inject(RouteNavigationService);
-  private readonly notificationsSvc = inject(NotificationsService);
+  private readonly sorterSvc = inject(SorterService);
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
@@ -53,10 +52,12 @@ export class RolesComponent implements OnInit {
   }
 
   processGetAllRolesReplyMessage(getAllRolesReplyMsg: GetAllRolesReplyMessage): void {
+    this.signals.isLoading.set(false);
     if (getAllRolesReplyMsg.header.failure) {
       return;
     }
-    this.signals.isLoading.set(false);
+
+    this.sorterSvc.sortBy(getAllRolesReplyMsg.body.roles, x => x.name);
     this.signals.roles.set(getAllRolesReplyMsg.body.roles);
   }
 

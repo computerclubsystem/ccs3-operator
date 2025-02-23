@@ -10,6 +10,7 @@ export enum RouteName {
   computerStatuses = 'computer-statuses',
   signedOutSessionStats = 'signed-out-session-stats',
   systemSettings = 'system-settings',
+  systemSettingsDeviceGroups = 'device-groups',
   systemSettingsDevices = 'devices',
   systemSettingsTariffs = 'tariffs',
   systemSettingsPrepaidTariffs = 'prepaid-tariffs',
@@ -55,6 +56,18 @@ export const routes: Routes = [
     path: RouteName.systemSettings,
     loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.SystemSettingsComponent),
     children: [
+      {
+        path: RouteName.systemSettingsDeviceGroups,
+        loadComponent: () => import('@ccs3-operator/system-settings/device-groups').then(x => x.DeviceGroupsComponent),
+      },
+      {
+        path: `${RouteName.systemSettingsDeviceGroups}/${RouteName.sharedRouteCreate}`,
+        loadComponent: () => import('@ccs3-operator/system-settings/device-groups/create').then(x => x.CreateDeviceGroupComponent),
+      },
+      {
+        path: `${RouteName.systemSettingsDeviceGroups}/:deviceGroupId/${RouteName.sharedRouteEdit}`,
+        loadComponent: () => import('@ccs3-operator/system-settings/device-groups/create').then(x => x.CreateDeviceGroupComponent),
+      },
       {
         path: RouteName.systemSettingsDevices,
         loadComponent: () => import('@ccs3-operator/system-settings/devices').then(x => x.DevicesComponent),

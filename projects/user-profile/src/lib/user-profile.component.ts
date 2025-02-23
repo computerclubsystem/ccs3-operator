@@ -21,7 +21,7 @@ import { translate, TranslocoDirective } from '@jsverse/transloco';
 })
 export class UserProfileComponent implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
-  private readonly hashSvc = inject(HashService)
+  private readonly hashSvc = inject(HashService);
   private readonly internalsSubjectSvc = inject(InternalSubjectsService);
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly notificationsSvc = inject(NotificationsService);

@@ -14,6 +14,8 @@ module.exports = tseslint.config(
     ],
     processor: angular.processInlineTemplates,
     rules: {
+      "semi": ["error"],
+      "no-unreachable": ["error"],
       "@angular-eslint/directive-selector": [
         "error",
         {

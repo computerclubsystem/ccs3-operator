@@ -221,7 +221,7 @@ export class CreateUserComponent implements OnInit {
       requestMsg.body.passwordHash = await this.hashSvc.getSha512(formValue.password!);
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(replyMsg => this.processCreateUserWithRolesReplyMessage(replyMsg as CreateUserWithRolesReplyMessage))
+      ).subscribe(replyMsg => this.processCreateUserWithRolesReplyMessage(replyMsg as CreateUserWithRolesReplyMessage));
     } else {
       const requestMsg = createUpdateUserWithRolesRequestMessage();
       requestMsg.body.roleIds = this.signals.userRoles().map(x => x.id);
@@ -236,7 +236,7 @@ export class CreateUserComponent implements OnInit {
       }
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
-      ).subscribe(replyMsg => this.processUpdateUserWithRolesReplyMessage(replyMsg as UpdateUserWithRolesReplyMessage))
+      ).subscribe(replyMsg => this.processUpdateUserWithRolesReplyMessage(replyMsg as UpdateUserWithRolesReplyMessage));
     }
   }
 

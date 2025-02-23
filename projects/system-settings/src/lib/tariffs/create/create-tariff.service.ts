@@ -17,7 +17,7 @@ export class CreateTariffService {
 
   modifyDurationGroupValidators(durationControls: DurationFormControls, tariffType: TariffType): void {
     const isDuration = tariffType === this.tariffTypeDurationItem.id;
-    const validators: ValidatorFn[] = [Validators.required, this.validatorsSvc.durationValidator]
+    const validators: ValidatorFn[] = [Validators.required, this.validatorsSvc.durationValidator];
     if (isDuration) {
       durationControls.duration.setValidators(validators);
       if (durationControls.restrictStart.value) {

@@ -37,6 +37,17 @@
         <mat-label>{{t('IP address')}}</mat-label>
         <input matInput type="text" [formControl]="form.controls.ipAddress" />
       </mat-form-field>
+      <mat-form-field>
+        <mat-label>{{t('Group')}}</mat-label>
+        <mat-select [formControl]="form.controls.deviceGroupId">
+          <mat-option [value]="null" class="not-in-a-group-option">
+            <span class="not-in-a-group-option-text">{{t('Not in a group')}}</span>
+          </mat-option>
+          @for (deviceGroup of signals.allDeviceGroups(); track deviceGroup.id) {
+          <mat-option [value]="deviceGroup.id">{{deviceGroup.name}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
       <mat-checkbox [formControl]="form.controls.transferAllowed">{{t('Transfer allowed')}}</mat-checkbox>
     </form>
   </mat-card-content>

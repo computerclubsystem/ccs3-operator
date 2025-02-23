@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, WritableSignal
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,8 +12,7 @@ import {
 } from '@ccs3-operator/messages';
 import {
   InternalSubjectsService, MessageTransportService, FullDatePipe, MinutesToTimePipe, TariffTypeToNamePipe,
-  RouteNavigationService,
-  MoneyFormatPipe
+  RouteNavigationService, MoneyFormatPipe, SorterService
 } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
 import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
@@ -33,6 +34,7 @@ export class TariffsComponent implements OnInit {
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly routeNavigationSvc = inject(RouteNavigationService);
+  private readonly sorterSvc = inject(SorterService);
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
@@ -49,6 +51,10 @@ export class TariffsComponent implements OnInit {
   }
 
   processGetAllTariffsReplyMessage(getAllTariffsReplyMsg: GetAllTariffsReplyMessage): void {
+    if (getAllTariffsReplyMsg.header.failure) {
+      return;
+    }
+
     const displayTariffItem: TariffDisplayItem[] = [];
     for (const tariff of getAllTariffsReplyMsg.body.tariffs) {
       displayTariffItem.push({
@@ -56,6 +62,7 @@ export class TariffsComponent implements OnInit {
         tariffTypeName: tariff.type.toString(),
       });
     }
+    this.sorterSvc.sortBy(displayTariffItem, x => x.tariff.name);
     this.signals.tariffDisplayItems.set(displayTariffItem);
   }
 

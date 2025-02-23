@@ -11,7 +11,8 @@ import {
   TariffType
 } from '@ccs3-operator/messages';
 import {
-  FullDatePipe, InternalSubjectsService, MessageTransportService, MinutesToTimePipe, MoneyFormatPipe, RouteNavigationService, SecondsToTimePipe,
+  FullDatePipe, InternalSubjectsService, MessageTransportService, MinutesToTimePipe, MoneyFormatPipe,
+  RouteNavigationService, SecondsToTimePipe, SorterService,
 } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
 import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
@@ -29,10 +30,11 @@ export class PrepaidTariffsComponent implements OnInit {
   signals = this.createSignals();
   iconName = IconName;
 
-  private internalSubjectsSvc = inject(InternalSubjectsService);
-  private messageTransportSvc = inject(MessageTransportService);
-  private routeNavigationSvc = inject(RouteNavigationService);
-  private destroyRef = inject(DestroyRef);
+  private readonly internalSubjectsSvc = inject(InternalSubjectsService);
+  private readonly messageTransportSvc = inject(MessageTransportService);
+  private readonly routeNavigationSvc = inject(RouteNavigationService);
+  private readonly sorterSvc = inject(SorterService);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.internalSubjectsSvc.whenSignedIn().pipe(
@@ -56,12 +58,17 @@ export class PrepaidTariffsComponent implements OnInit {
   }
 
   processGetAllTariffsReplyMessage(getAllTariffsReplyMsg: GetAllTariffsReplyMessage): void {
+    if (getAllTariffsReplyMsg.header.failure) {
+      return;
+    }
+
     const displayTariffItem: TariffDisplayItem[] = [];
     for (const tariff of getAllTariffsReplyMsg.body.tariffs) {
       displayTariffItem.push({
         tariff: tariff,
       });
     }
+    this.sorterSvc.sortBy(displayTariffItem, x => x.tariff.name);
     this.signals.tariffDisplayItems.set(displayTariffItem);
   }
 

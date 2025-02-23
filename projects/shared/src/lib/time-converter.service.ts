@@ -30,8 +30,8 @@ export class TimeConverterService {
       return null;
     }
 
-    const hours = Math.floor(value / 60)
-    const minutes = value % 60
+    const hours = Math.floor(value / 60);
+    const minutes = value % 60;
 
     const padValue = (value: number): string => value.toString().padStart(2, '0');
     const zeroPaddedMinutes = padValue(minutes);

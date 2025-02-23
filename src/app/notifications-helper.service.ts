@@ -36,7 +36,7 @@ export class NotificationsHelperService {
   }
 
   showSignedIn(): void {
-    this.ntfSvc.show(NotificationType.success, translate('Signed in'), null, IconName.check)
+    this.ntfSvc.show(NotificationType.success, translate('Signed in'), null, IconName.check);
   }
 
   showAuthenticationErrorCantRefreshTheToken(): void {

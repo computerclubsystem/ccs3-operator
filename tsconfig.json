@@ -35,6 +35,12 @@
       "@ccs3-operator/system-settings": [
         "projects/system-settings/src/public-api.ts"
       ],
+      "@ccs3-operator/system-settings/device-groups": [
+        "projects/system-settings/src/lib/device-groups/public-api.ts"
+      ],
+      "@ccs3-operator/system-settings/device-groups/create": [
+        "projects/system-settings/src/lib/device-groups/create/public-api.ts"
+      ],
       "@ccs3-operator/system-settings/devices": [
         "projects/system-settings/src/lib/devices/public-api.ts"
       ],

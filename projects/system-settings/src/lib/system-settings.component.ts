@@ -14,6 +14,7 @@ export class SystemSettingsComponent {
   createSignals(): Signals {
     const links: Link[] = [
       { routerLink: 'devices', translationKey: 'Devices' },
+      { routerLink: 'device-groups', translationKey: 'Device groups' },
       { routerLink: 'tariffs', translationKey: 'Tariffs' },
       { routerLink: 'prepaid-tariffs', translationKey: 'Prepaid tariffs' },
       { routerLink: 'users', translationKey: 'Users' },

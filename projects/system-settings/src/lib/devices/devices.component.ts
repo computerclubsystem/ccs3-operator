@@ -8,7 +8,9 @@ import { filter, first } from 'rxjs';
 import {
   createGetAllDevicesRequestMessage, Device, GetAllDevicesReplyMessage, GetAllDevicesRequestMessageBody
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, FullDatePipe, RouteNavigationService } from '@ccs3-operator/shared';
+import {
+  InternalSubjectsService, MessageTransportService, FullDatePipe, RouteNavigationService, SorterService
+} from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
 import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 
@@ -22,6 +24,7 @@ export class DevicesComponent implements OnInit {
   readonly messageTransportSvc = inject(MessageTransportService);
   readonly internalSubjectsSvc = inject(InternalSubjectsService);
   readonly routeNavigationSvc = inject(RouteNavigationService);
+  readonly sorterSvc = inject(SorterService);
   readonly signals = this.createSignals();
   readonly iconName = IconName;
 
@@ -50,8 +53,8 @@ export class DevicesComponent implements OnInit {
   }
 
   processGetAllDevicesReplyMessage(getAllDevicesReplyMsg: GetAllDevicesReplyMessage): void {
-    const sortedDevices = getAllDevicesReplyMsg.body.devices.sort((left, right) => left.name ? left.name.localeCompare(right.name!) : -1);
-    this.signals.allDevices.set(sortedDevices);
+    this.sorterSvc.sortBy(getAllDevicesReplyMsg.body.devices, x => x.name);
+    this.signals.allDevices.set(getAllDevicesReplyMsg.body.devices);
   }
 
   createSignals(): Signals {

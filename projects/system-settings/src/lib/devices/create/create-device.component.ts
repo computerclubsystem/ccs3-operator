@@ -7,11 +7,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
+import { forkJoin } from 'rxjs';
 
 import {
   CreateDeviceReplyMessage,
-  Device, GetDeviceByIdReplyMessage, UpdateDeviceReplyMessage, createCreateDeviceRequestMessage, createGetDeviceByIdRequestMessage, createUpdateDeviceRequestMessage,
+  Device, DeviceGroup, GetAllDeviceGroupsReplyMessage, GetDeviceByIdReplyMessage, UpdateDeviceReplyMessage, createCreateDeviceRequestMessage, createGetAllDeviceGroupsRequestMessage, createGetDeviceByIdRequestMessage, createUpdateDeviceRequestMessage,
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NotificationType } from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
@@ -22,7 +24,7 @@ import { IconName } from '@ccs3-operator/shared/types';
   templateUrl: 'create-device.component.html',
   imports: [
     ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatCheckboxModule,
-    TranslocoDirective, MatButtonModule
+    TranslocoDirective, MatButtonModule, MatSelectModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -50,24 +52,57 @@ export class CreateDeviceComponent implements OnInit {
   init(): void {
     this.signals.isCreate.set(!this.deviceId);
     if (this.deviceId) {
-      this.loadDevice(this.deviceId);
+      this.loadDeviceData(this.deviceId);
+    } else {
+      this.loadDeviceGroups();
     }
   }
 
-  loadDevice(deviceId: number): void {
+  loadDeviceGroups(): void {
     this.signals.isLoading.set(true);
-    const msg = createGetDeviceByIdRequestMessage();
-    msg.body.deviceId = deviceId;
-    this.messageTransportSvc.sendAndAwaitForReply(msg)
-      .subscribe(getAllDevicesReplyMsg => this.processGetDeviceByIdReplyMessage(getAllDevicesReplyMsg as GetDeviceByIdReplyMessage));
+    const reqMsg = createGetAllDeviceGroupsRequestMessage();
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processGetAllDeviceGroupsReplyMessage(replyMsg as GetAllDeviceGroupsReplyMessage));
   }
 
-  processGetDeviceByIdReplyMessage(replyMsg: GetDeviceByIdReplyMessage): void {
-    this.signals.isLoading.set(false);
+  processGetAllDeviceGroupsReplyMessage(replyMsg: GetAllDeviceGroupsReplyMessage): void {
     if (replyMsg.header.failure) {
       return;
     }
-    const device = replyMsg.body.device;
+    this.signals.isLoading.set(false);
+    this.signals.allDeviceGroups.set(replyMsg.body.deviceGroups);
+  }
+
+  loadDeviceData(deviceId: number): void {
+    this.signals.isLoading.set(true);
+    const getDeviceByIdReqMsg = createGetDeviceByIdRequestMessage();
+    getDeviceByIdReqMsg.body.deviceId = deviceId;
+    const getDeviceById$ = this.messageTransportSvc.sendAndAwaitForReply(getDeviceByIdReqMsg);
+    const getAllDeviceGroupsReqMsg = createGetAllDeviceGroupsRequestMessage();
+    const getAllDeviceGroups$ = this.messageTransportSvc.sendAndAwaitForReply(getAllDeviceGroupsReqMsg);
+    forkJoin([getDeviceById$, getAllDeviceGroups$]).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(([getDeviceByIdReplyMsg, getAllDeviceGroupsReplyMsg]) =>
+      this.processLoadedDataReplies(
+        getDeviceByIdReplyMsg as GetDeviceByIdReplyMessage,
+        getAllDeviceGroupsReplyMsg as GetAllDeviceGroupsReplyMessage,
+      )
+    );
+  }
+
+  processLoadedDataReplies(
+    getDeviceByIdReplyMsg: GetDeviceByIdReplyMessage,
+    getAllDeviceGroupsReplyMsg: GetAllDeviceGroupsReplyMessage,
+  ): void {
+    this.signals.isLoading.set(false);
+    if (getDeviceByIdReplyMsg.header.failure
+      || getAllDeviceGroupsReplyMsg.header.failure
+    ) {
+      return;
+    }
+    this.processGetAllDeviceGroupsReplyMessage(getAllDeviceGroupsReplyMsg);
+    const device = getDeviceByIdReplyMsg.body.device;
     this.form.patchValue({
       approved: device.approved,
       certificateThumbprint: device.certificateThumbprint,
@@ -76,8 +111,9 @@ export class CreateDeviceComponent implements OnInit {
       id: device.id,
       ipAddress: device.ipAddress,
       name: device.name,
+      deviceGroupId: device.deviceGroupId,
       transferAllowed: !device.disableTransfer,
-    })
+    });
     this.signals.device.set(device);
   }
 
@@ -96,6 +132,7 @@ export class CreateDeviceComponent implements OnInit {
         description: formRawValue.description!,
         name: formRawValue.name!,
         disableTransfer: !formRawValue.transferAllowed,
+        deviceGroupId: formRawValue.deviceGroupId,
       } as Device;
       this.messageTransportSvc.sendAndAwaitForReply(msg)
         .subscribe(updateDeviceReplyMsg => this.processUpdateDeviceReplyMessage(updateDeviceReplyMsg as UpdateDeviceReplyMessage));
@@ -144,6 +181,7 @@ export class CreateDeviceComponent implements OnInit {
       ipAddress: formValue.ipAddress,
       description: formValue.description,
       name: formValue.name,
+      deviceGroupId: formValue.deviceGroupId,
       disableTransfer: !formValue.transferAllowed,
     } as Device;
     return device;
@@ -158,6 +196,7 @@ export class CreateDeviceComponent implements OnInit {
       transferAllowed: new FormControl(true),
       description: new FormControl(''),
       certificateThumbprint: new FormControl(''),
+      deviceGroupId: new FormControl(null),
       ipAddress: new FormControl('', { validators: [Validators.required] }),
     };
     formControls.id.disable();
@@ -168,6 +207,7 @@ export class CreateDeviceComponent implements OnInit {
   createSignals(): Signals {
     const signals: Signals = {
       device: signal(null),
+      allDeviceGroups: signal([]),
       createdDevice: signal(null),
       isCreate: signal(false),
       isLoading: signal(false),
@@ -178,6 +218,7 @@ export class CreateDeviceComponent implements OnInit {
 
 interface Signals {
   device: WritableSignal<Device | null>;
+  allDeviceGroups: WritableSignal<DeviceGroup[]>;
   createdDevice: WritableSignal<Device | null>;
   isCreate: WritableSignal<boolean>;
   isLoading: WritableSignal<boolean>;
@@ -191,5 +232,6 @@ interface FormControls {
   transferAllowed: FormControl<boolean | null>;
   description: FormControl<string | null>;
   certificateThumbprint: FormControl<string | null>;
+  deviceGroupId: FormControl<number | null>;
   ipAddress: FormControl<string | null>;
 }

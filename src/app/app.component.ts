@@ -56,7 +56,7 @@ export class AppComponent implements OnInit {
     this.subscribeToMessageTransportService();
     this.subscribeToConnectorService();
     this.subscribeToInternalSubjects();
-    this.subscribeToRouteNavigationSubjects()
+    this.subscribeToRouteNavigationSubjects();
     this.setNotSignedInMainMenuItems();
     this.setNotSignedInAccountMenuItems();
     this.startConnectorService();
@@ -97,6 +97,8 @@ export class AppComponent implements OnInit {
     this.routeNavigationSvc.getNavigateToEditRoleRequested().subscribe(roleId => this.processNavigateToEditRoleRequested(roleId));
     this.routeNavigationSvc.getNavigateToEditDeviceRequested().subscribe(deviceId => this.processNavigateToEditDeviceRequested(deviceId));
     this.routeNavigationSvc.getNavigateToCreateDeviceRequested().subscribe(() => this.processNavigateToCreateDeviceRequested());
+    this.routeNavigationSvc.getNavigateToCreateDeviceGroupRequested().subscribe(() => this.processNavigateToCreateDeviceGroupRequested());
+    this.routeNavigationSvc.getNavigateToEditDeviceGroupRequested().subscribe(deviceGroupId => this.processNavigateToEditDeviceGroupRequested(deviceGroupId));
   }
 
   processNavigateToSignInRequested(): void {
@@ -142,6 +144,14 @@ export class AppComponent implements OnInit {
 
   processNavigateToCreateDeviceRequested(): void {
     this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsDevices, RouteName.sharedRouteCreate]);
+  }
+
+  processNavigateToEditDeviceGroupRequested(deviceGroupId: number): void {
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsDeviceGroups, deviceGroupId, RouteName.sharedRouteEdit]);
+  }
+
+  processNavigateToCreateDeviceGroupRequested(): void {
+    this.router.navigate([RouteName.systemSettings, RouteName.systemSettingsDeviceGroups, RouteName.sharedRouteCreate]);
   }
 
   processMessageTimedOutErrorData(messageTimedOutErrorData: MessageTimedOutErrorData): void {

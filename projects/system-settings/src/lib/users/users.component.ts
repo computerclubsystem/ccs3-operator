@@ -9,7 +9,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
 
 import { createGetAllUsersRequestMessage, GetAllUsersReplyMessage, User } from '@ccs3-operator/messages';
 import { IconName } from '@ccs3-operator/shared/types';
-import { FullDatePipe, InternalSubjectsService, MessageTransportService } from '@ccs3-operator/shared';
+import { FullDatePipe, InternalSubjectsService, MessageTransportService, SorterService } from '@ccs3-operator/shared';
 import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 
 @Component({
@@ -19,11 +19,12 @@ import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersComponent implements OnInit {
-  signals = this.createSignals();
-  iconName = IconName;
+  readonly signals = this.createSignals();
+  readonly iconName = IconName;
 
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
   private readonly messageTransportSvc = inject(MessageTransportService);
+  private readonly sorterSvc = inject(SorterService);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
@@ -50,6 +51,7 @@ export class UsersComponent implements OnInit {
     if (getAllUsersReplyMsg.header.failure) {
       return;
     }
+    this.sorterSvc.sortBy(getAllUsersReplyMsg.body.users, x => x.username);
     this.signals.users.set(getAllUsersReplyMsg.body.users);
     this.signals.isLoading.set(false);
   }
