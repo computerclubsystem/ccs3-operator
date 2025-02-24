@@ -101,6 +101,7 @@ export class CreateDeviceGroupComponent implements OnInit {
     ) {
       return;
     }
+    this.sorterSvc.sortBy(tariffsReplyMsg.body.tariffs, x => x.name);
     if (allDevicesReplyMsg && getDeviceGroupDataReplyMsg?.body.deviceGroupData) {
       // This is existing device group
       const groupData = getDeviceGroupDataReplyMsg.body.deviceGroupData;
@@ -119,7 +120,6 @@ export class CreateDeviceGroupComponent implements OnInit {
       this.sorterSvc.sortBy(deviceGroupTariffs, x => x.name);
       this.signals.deviceGroupTariffs.set(deviceGroupTariffs);
       const availableDeviceGroupTariffs = tariffsReplyMsg.body.tariffs.filter(x => x.enabled && !deviceGroupTariffIds.has(x.id));
-      this.sorterSvc.sortBy(availableDeviceGroupTariffs, x => x.name);
       this.signals.availableTariffs.set(availableDeviceGroupTariffs);
     } else {
       // This is new device group
