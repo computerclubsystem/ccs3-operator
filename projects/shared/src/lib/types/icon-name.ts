@@ -26,4 +26,5 @@ export enum IconName {
   fast_forward = 'fast_forward',
   stop_circle = 'stop_circle',
   query_stats = 'query_stats',
+  save = 'save',
 }

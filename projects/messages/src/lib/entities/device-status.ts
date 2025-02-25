@@ -6,6 +6,7 @@ export interface DeviceStatus  {
   totalTime: number | null;
   startedAt: number | null;
   stoppedAt: number | null;
+  note?: string | null;
   expectedEndAt: number | null;
   remainingSeconds: number | null;
   enabled: boolean;

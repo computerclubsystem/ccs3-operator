@@ -1,4 +1,6 @@
 export const enum MessageType {
+  setDeviceStatusNoteRequest = 'set-device-status-note-request',
+  setDeviceStatusNoteReply = 'set-device-status-note-reply',
   getAllAllowedDeviceObjectsRequest = 'get-all-allowed-device-objects-request',
   getAllAllowedDeviceObjectsReply = 'get-all-allowed-device-objects-reply',
   updateDeviceGroupRequest = 'update-device-group-request',

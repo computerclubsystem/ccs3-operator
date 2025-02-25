@@ -24,7 +24,9 @@ import {
   GetDeviceStatusesReplyMessage, NotificationMessageType, OperatorDeviceConnectivitiesNotificationMessage,
   GetCurrentShiftStatusReplyMessage, StartDeviceReplyMessage, StopDeviceReplyMessage, Tariff, TariffType,
   TransferDeviceReplyMessage, createCompleteShiftRequestMessage, CompleteShiftReplyMessage,
-  createGetAllAllowedDeviceObjectsRequestMessage, GetAllAllowedDeviceObjectsReplyMessage
+  createGetAllAllowedDeviceObjectsRequestMessage, GetAllAllowedDeviceObjectsReplyMessage,
+  createSetDeviceStatusNoteRequestMessage,
+  SetDeviceStatusNoteReplyMessage
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, SorterService } from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
@@ -159,7 +161,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   onStart(item: DeviceStatusItem): void {
     const startDeviceRequestMsg = createStartDeviceRequestMessage();
     startDeviceRequestMsg.body.deviceId = item.deviceStatus.deviceId;
-    startDeviceRequestMsg.body.tariffId = item.selectedTariffItem.id;
+    startDeviceRequestMsg.body.tariffId = item.selectedTariffItem!.id;
     this.messageTransportSvc.sendAndAwaitForReply(startDeviceRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(startDeviceReplyMsg => this.processStartDeviceReplyMessage(startDeviceReplyMsg as StartDeviceReplyMessage));
@@ -363,6 +365,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       tariffId: tariff?.id || 0,
       allowedTariffs: allowedTariffs,
       allowedTransferToDevices: [] as Device[],
+      deviceNote: deviceStatus.note || '',
     } as DeviceStatusItem;
     this.mergeCurrentDeviceStatusItemCustomProperties(deviceStatusItem);
     return deviceStatusItem;
@@ -404,8 +407,9 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     const currentStatusItem = currentStatusItems.find(x => x.deviceStatus.deviceId === deviceStatus.deviceId);
     deviceStatusItem.isActionsExpanded = deviceStatus.started ? false : !!currentStatusItem?.isActionsExpanded;
     deviceStatusItem.isOptionsExpanded = !deviceStatus.started ? false : !!currentStatusItem?.isOptionsExpanded;
-    deviceStatusItem.selectedTariffItem = currentStatusItem?.selectedTariffItem || this.signals.allAvailableTariffs()[0];
+    deviceStatusItem.selectedTariffItem = currentStatusItem?.selectedTariffItem; // || this.signals.allAvailableTariffs()[0];
     deviceStatusItem.stopNote = currentStatusItem?.stopNote;
+    deviceStatusItem.newDeviceNote = currentStatusItem?.newDeviceNote;
     deviceStatusItem.selectedTransferToDeviceId = currentStatusItem?.selectedTransferToDeviceId;
     deviceStatusItem.selectedContinueWithTariffId = currentStatusItem?.selectedContinueWithTariffId;
     deviceStatusItem.deviceConnectivity = currentStatusItem?.deviceConnectivity;
@@ -484,6 +488,27 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     }
     const msg = translate(`Continuation data removed`);
     this.notificationsSvc.show(NotificationType.success, msg, null, IconName.check, replyMsg);
+  }
+
+  onDeviceNoteChanged(ev: Event, item: DeviceStatusItem): void {
+    const text = (ev.target as HTMLInputElement).value;
+    item.newDeviceNote = text;
+  }
+
+  onSetDeviceNote(item: DeviceStatusItem): void {
+    const reqMsg = createSetDeviceStatusNoteRequestMessage();
+    reqMsg.body.deviceId = item.device.id;
+    reqMsg.body.note = item.newDeviceNote || null;
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processSetDeviceStatusNoteReplyMessage(replyMsg as SetDeviceStatusNoteReplyMessage));
+  }
+
+  processSetDeviceStatusNoteReplyMessage(replyMsg: SetDeviceStatusNoteReplyMessage): void {
+    if (replyMsg.header.failure) {
+      return;
+    }
+    this.notificationsSvc.show(NotificationType.success, translate('Computer note was set'), null, IconName.check, replyMsg);
   }
 
   onStopNoteChanged(ev: Event, item: DeviceStatusItem): void {
@@ -642,8 +667,10 @@ interface DeviceStatusItem {
   tariffId: number;
   isActionsExpanded: boolean;
   isOptionsExpanded: boolean;
-  selectedTariffItem: Tariff;
+  selectedTariffItem?: Tariff | null;
   stopNote?: string | null;
+  deviceNote?: string | null;
+  newDeviceNote?: string | null;
   selectedTransferToDeviceId?: number | null;
   selectedContinueWithTariffId?: number | null;
   deviceConnectivity?: DeviceConnectivityItem | null;

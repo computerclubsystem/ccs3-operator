@@ -115,6 +115,22 @@
               [title]="t('Will continue with tariff {{tariffName}}', {tariffName: getTariffName(item.deviceStatus.continuationTariffId)})"
               class="has-continuation-icon ccs3-op-warn-container">{{iconName.fast_forward}}</mat-icon>
             }
+            @if (!item.deviceStatus.started) {
+            <ccs3-op-expand-button (click)="toggleActionsExpanded(item)" [isExpanded]="item.isActionsExpanded"
+              [type]="expandButtonType.matFlatButton" [title]="actionsTranslation"
+              class="stopped-computer-actions-button"></ccs3-op-expand-button>
+            <!-- <ccs3-op-expand-button (click)="toggleActionsExpanded(item)" [isExpanded]="item.isActionsExpanded"
+              [type]="expandButtonType.matButton"
+              buttonElementClass="mat-tonal-button" class="stopped-computer-actions-button"></ccs3-op-expand-button> -->
+            } @else {
+            <ccs3-op-expand-button (click)="toggleOptionsExpanded(item)" [type]="expandButtonType.matStrokedButton"
+              [isExpanded]="item.isOptionsExpanded" [title]="optionsTranslation"
+              class="started-computer-options-button"></ccs3-op-expand-button>
+            }
+            @if (item.deviceStatus.note) {
+            <span
+              class="computer-note ccs3-op-max-width-medium-text ccs3-op-font-size-small">{{item.deviceStatus.note}}</span>
+            }
           </section>
         </mat-card-title>
       </mat-card-header>
@@ -162,29 +178,31 @@
                 </section>
               </section>
               }
+              @if (item.deviceNote) {
+              <span>{{t('Note')}}</span>
+              <span>{{item.deviceNote}}</span>
+              }
+              <span>{{t('Set note')}}</span>
+              <section
+                class="device-details-note-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
+                <mat-form-field subscriptSizing="dynamic" class="device-note">
+                  <mat-label>{{t('Note')}}</mat-label>
+                  <input (input)="onDeviceNoteChanged($event, item)" matInput class="device-note-input" />
+                </mat-form-field>
+                <button (click)="onSetDeviceNote(item)" mat-icon-button class="set-note-button">
+                  <mat-icon>{{iconName.save}}</mat-icon>
+                </button>
+              </section>
             </section>
           </ng-template>
         </mat-expansion-panel>
       </mat-card-content>
+      @if (item.isActionsExpanded || item.isOptionsExpanded) {
       <mat-card-actions>
         <section class="ccs3-op-flex-column">
-          <section class="ccs3-op-flex-row">
-            @if (item.deviceStatus.started) {
-            <ccs3-op-expand-button [type]="expandButtonType.matButton"
-              class="ccs3-op-visibility-hidden">{{actionsTranslation}}</ccs3-op-expand-button>
-            <ccs3-op-expand-button (click)="toggleOptionsExpanded(item)" [type]="expandButtonType.matStrokedButton"
-              [isExpanded]="item.isOptionsExpanded">{{optionsTranslation}}</ccs3-op-expand-button>
-            } @else {
-            <ccs3-op-expand-button (click)="toggleActionsExpanded(item)" [isExpanded]="item.isActionsExpanded"
-              [type]="expandButtonType.matButton"
-              buttonElementClass="mat-tonal-button">{{actionsTranslation}}</ccs3-op-expand-button>
-            <ccs3-op-expand-button [type]="expandButtonType.matStrokedButton"
-              class="ccs3-op-visibility-hidden">{{optionsTranslation}}</ccs3-op-expand-button>
-            }
-          </section>
           @if (item.isActionsExpanded) {
-          <section class="ccs3-op-flex-row ccs3-op-align-items-center">
-            <mat-form-field subscriptSizing="dynamic">
+          <section class="device-actions-section ccs3-op-flex-row ccs3-op-align-items-center">
+            <mat-form-field subscriptSizing="dynamic" class="start-tariff">
               <mat-label>{{tariffTranslation}}</mat-label>
               <mat-select (valueChange)="onTariffSelected($event, item)" [(value)]="item.selectedTariffItem">
                 @for (tariff of item.allowedTariffs; track tariff.id) {
@@ -192,7 +210,8 @@
                 }
               </mat-select>
             </mat-form-field>
-            <button (click)="onStart(item)" mat-flat-button>{{t('Start')}}</button>
+            <button (click)="onStart(item)" [disabled]="!item.selectedTariffItem" mat-flat-button
+              class="start-button">{{t('Start')}}</button>
           </section>
           }
           @if (item.isOptionsExpanded) {
@@ -219,11 +238,11 @@
             <section class="device-options-sections">
               @if (item.optionsVisibility.stop) {
               <section class="stop-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
-                <mat-form-field subscriptSizing="dynamic">
+                <mat-form-field subscriptSizing="dynamic" class="stop-note">
                   <mat-label>{{t('Stop note')}}</mat-label>
                   <textarea (input)="onStopNoteChanged($event, item)" matInput class="stop-note-input"></textarea>
                 </mat-form-field>
-                <button (click)="onStopDevice(item)" mat-flat-button>
+                <button (click)="onStopDevice(item)" mat-flat-button class="stop-button">
                   <span class="ccs3-op-flex-row">
                     <mat-icon>{{iconName.stop_circle}}</mat-icon>
                     <span>{{stopTranslation}}</span>
@@ -233,7 +252,7 @@
               }
               @if (item.optionsVisibility.transfer) {
               <section class="transfer-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
-                <mat-form-field subscriptSizing="dynamic">
+                <mat-form-field subscriptSizing="dynamic" class="transfer-to">
                   <mat-label>{{t('Transfer to')}}</mat-label>
                   <mat-select (valueChange)="onTransferToChanged($event, item)"
                     [value]="item.selectedTransferToDeviceId">
@@ -244,7 +263,7 @@
                   </mat-select>
                 </mat-form-field>
                 <button (click)="onTransferToAnotherDevice(item)" mat-stroked-button
-                  [disabled]="!item.selectedTransferToDeviceId">
+                  [disabled]="!item.selectedTransferToDeviceId" class="transfer-button">
                   <span class="ccs3-op-flex-row">
                     <mat-icon>{{iconName.swap_horiz}}</mat-icon>
                     <span>{{transferTranslation}}</span>
@@ -261,7 +280,7 @@
                 </section>
                 }
                 <section class="continue-with-section ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-baseline">
-                  <mat-form-field subscriptSizing="dynamic">
+                  <mat-form-field subscriptSizing="dynamic" class="continue-with-tariff">
                     <mat-label>{{continueWithTranslation}}</mat-label>
                     <mat-select (valueChange)="onContinueWithChanged($event, item)"
                       [value]="item.selectedContinueWithTariffId">
@@ -272,13 +291,14 @@
                   </mat-form-field>
                   <section class="continuation-actions ccs3-op-flex-row">
                     <button (click)="onSetContinuation(item)" mat-flat-button
-                      [disabled]="!item.selectedContinueWithTariffId">
+                      [disabled]="!item.selectedContinueWithTariffId" class="set-continuation-button">
                       <span class="ccs3-op-flex-row">
                         <mat-icon>{{iconName.fast_forward}}</mat-icon>
                         <span>{{t('Set')}}</span>
                       </span>
                     </button>
-                    <button (click)="onCancelContinuation(item)" mat-icon-button [title]="t('Cancel continuation')">
+                    <button (click)="onCancelContinuation(item)" mat-icon-button [title]="t('Cancel continuation')"
+                      class="cancel-continuation-button">
                       <mat-icon class="ccs3-op-error-color">{{iconName.remove}}</mat-icon>
                     </button>
                   </section>
@@ -290,7 +310,7 @@
           }
         </section>
       </mat-card-actions>
-      <mat-card-footer></mat-card-footer>
+      }
     </mat-card>
   </ng-template>
 </section>

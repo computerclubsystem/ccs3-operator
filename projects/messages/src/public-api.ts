@@ -54,6 +54,7 @@ export * from './lib/get-device-group-data-request.message';
 export * from './lib/create-device-group.messages';
 export * from './lib/update-device-group.messages';
 export * from './lib/get-all-allowed-device-objects.messages';
+export * from './lib/set-device-status-note.messages';
 
 export * from './lib/entities/device-connectivity-item';
 export * from './lib/entities/device';
