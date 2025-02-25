@@ -146,6 +146,7 @@
       <mat-card-content class="ccs3-op-mat-card-content-no-padding">
         <mat-expansion-panel #detailsExpansionPanel class="ccs3-op-mat-expansion-panel-small-padding">
           <ng-template matExpansionPanelContent>
+            @if (detailsExpansionPanel.expanded) {
             <section class="computer-status-details ccs3-op-two-col-grid ccs3-op-half-gap ccs3-op-align-items-center">
               <span>{{totalTranslation}}</span>
               <ccs3-op-money-formatter [value]="item.deviceStatus.totalSum" [title]="totalTranslation"
@@ -203,6 +204,7 @@
                 </button>
               </section>
             </section>
+            }
           </ng-template>
         </mat-expansion-panel>
       </mat-card-content>
