@@ -6,8 +6,10 @@
         <section class="ccs3-op-flex-row">
           <span>{{t('Tools')}}</span>
           @if(signInNotificationMsgBody) {
-          <span>{{t('Last shift completed at')}}</span>
-          <span>{{signInNotificationMsgBody.lastShiftCompletedAt | noYearDate}}</span>
+          <section class="last-shift-completed-at-section ccs3-op-flex-row ccs3-op-half-gap">
+            <span>{{t('Last shift completed at')}}</span>
+            <span>{{signInNotificationMsgBody.lastShiftCompletedAt | noYearDate}}</span>
+          </section>
           }
         </section>
       </mat-expansion-panel-header>
