@@ -39,7 +39,7 @@ export class ValidatorsService {
     if (isNaN(valueAsNumber)) {
       return { notNumber: true } as ValidationErrors;
     }
-    if (valueAsNumber <= 0) {
+    if (valueAsNumber < 0) {
       return { notPositive: true } as ValidationErrors;
     }
     const parts = valueAsNumber.toString().split('.');
