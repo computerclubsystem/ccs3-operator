@@ -81,9 +81,18 @@
     @let item = deviceStatusItemIdentity(templateContext);
     <mat-card appearance="outlined" class="computer-status-container" [ngClass]="{
         'started': item.deviceStatus.started,
+        'stopped': !item.deviceStatus.started,
         'not-started': !item.deviceStatus.started,
         'will-stop-soon': item.deviceStatus.started && isCloseToEnd(item),
-      }" [attr.tariff-type]="item.tariffType" [attr.tariff-id]="item.tariffId">
+        'has-note': item.deviceNote,
+        'has-continuation': item.deviceStatus.continuationTariffId,
+        'connection-status-unknown': !item.deviceConnectivity,
+        'connection-status-connected': item.deviceConnectivity?.isConnected,
+        'connection-status-disconnected': item.deviceConnectivity && !item.deviceConnectivity.isConnected,
+      }" [attr.tariff-type]="item.tariffType" [attr.ccs3-op-tariff-type]="item.tariffType"
+      [attr.tariff-id]="item.tariffId" [attr.ccs3-op-tariff-id]="item.tariffId"
+      [attr.ccs3-op-tariff-name]="item.tariffName" [attr.ccs3-op-tariff-price]="item.tariff?.price"
+      [attr.ccs3-op-device-name]="item.deviceName" [attr.ccs3-op-device-id]="item.device.id">
       <mat-card-header>
         <mat-card-title>
           <section class="device-title-info ccs3-op-flex-row ccs3-op-align-items-center ccs3-op-line-height-normal">

@@ -134,7 +134,10 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   // }
 
   isCloseToEnd(item: DeviceStatusItem): boolean {
-    if (item.deviceStatus.started && item.deviceStatus.remainingSeconds! < 180) {
+    // TODO: Add this as profile configuration
+    // TODO: Set this as a flag in the DeviceStatusItem
+    const seconds = 180;
+    if (item.deviceStatus.started && item.deviceStatus.remainingSeconds! < seconds) {
       return true;
     }
     return false;
@@ -363,6 +366,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       tariffName: tariff?.name || '',
       tariffType: tariff?.type || '',
       tariffId: tariff?.id || 0,
+      tariff: tariff,
       allowedTariffs: allowedTariffs,
       allowedTransferToDevices: [] as Device[],
       deviceNote: deviceStatus.note || '',
@@ -662,6 +666,7 @@ interface DeviceStatusItem {
   deviceStatus: DeviceStatus;
   deviceName: string;
   device: Device;
+  tariff?: Tariff;
   tariffName: string;
   tariffType: TariffType;
   tariffId: number;
