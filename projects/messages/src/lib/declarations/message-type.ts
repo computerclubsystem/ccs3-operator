@@ -97,6 +97,7 @@ export const enum ReplyMessageType {
 }
 
 export const enum NotificationMessageType {
+  signInInformationNotification = 'sign-in-information-notification',
   deviceStatusesNotification = 'device-statuses-notification',
   deviceConnectivitiesNotification = 'device-connectivities-notification',
   signedOutNotification = 'signed-out-notification',

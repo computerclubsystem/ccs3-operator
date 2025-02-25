@@ -1,8 +1,15 @@
 <section *transloco="let t;" class="ccs3-op-computer-statuses-component-content-container">
+  @let signInNotificationMsgBody = signals.signInInformationNotificationMsgBody();
   <section class="ccs3-op-computer-statuses-toolbar">
     <mat-expansion-panel #toolsExpansionPanel togglePosition="before">
       <mat-expansion-panel-header>
-        <span>{{t('Tools')}}</span>
+        <section class="ccs3-op-flex-row">
+          <span>{{t('Tools')}}</span>
+          @if(signInNotificationMsgBody) {
+          <span>{{t('Last shift completed at')}}</span>
+          <span>{{signInNotificationMsgBody.lastShiftCompletedAt | noYearDate}}</span>
+          }
+        </section>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         @if (toolsExpansionPanel.expanded) {
@@ -10,6 +17,7 @@
           <section class="ccs3-op-flex-row ccs3-op-align-items-flex-start computer-statuses-tools-section">
             <section class="ccs3-op-computer-statuses-current-shift-status ccs3-op-max-width-medium-text">
               <ccs3-op-shift-status [currentShiftReply]="signals.currentShiftReply()"
+                [lastShiftCompletedAt]="signInNotificationMsgBody?.lastShiftCompletedAt"
                 (refreshed)="onRefreshCurrentShiftStatus()"
                 (shiftCompleted)="onCompleteShift($event)"></ccs3-op-shift-status>
             </section>

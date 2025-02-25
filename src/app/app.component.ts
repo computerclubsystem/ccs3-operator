@@ -13,6 +13,7 @@ import {
   SignOutReplyMessage, createSignOutRequestMessage, ReplyMessage, NotificationMessageType,
   NotificationMessage, createGetProfileSettingsRequestMessage, GetProfileSettingsReplyMessage,
   UserProfileSettingName,
+  SignInInformationNotificationMessage,
 } from '@ccs3-operator/messages';
 import {
   CustomStylesService, MessageSubjectsService, NotificationType, PermissionName, PermissionsService,
@@ -307,6 +308,9 @@ export class AppComponent implements OnInit {
   private processAppMessageReceived<TBody>(message: Message<TBody> | NotificationMessage<TBody> | ReplyMessage<TBody>): void {
     const type = message.header.type;
     switch (type) {
+      case NotificationMessageType.signInInformationNotification:
+        this.internalSubjectsSvc.setSignInInformationNotificationMessage(message as SignInInformationNotificationMessage);
+        break;
       case NotificationMessageType.signedOutNotification:
         this.processSignedOutNotificationMessage();
         break;

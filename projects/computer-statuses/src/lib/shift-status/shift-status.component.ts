@@ -11,18 +11,20 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { GetCurrentShiftStatusReplyMessage } from '@ccs3-operator/messages';
 import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { ShiftCompletedEventArgs } from './declarations';
+import { NoYearDatePipe } from '@ccs3-operator/shared';
 
 @Component({
   selector: 'ccs3-op-shift-status',
   templateUrl: 'shift-status.component.html',
   imports: [
     ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule,
-    MatCheckboxModule, MatDividerModule, TranslocoDirective, MoneyFormatterComponent
+    MatCheckboxModule, MatDividerModule, TranslocoDirective, MoneyFormatterComponent, NoYearDatePipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShiftStatusComponent {
   currentShiftReply = input<GetCurrentShiftStatusReplyMessage | null>(null);
+  lastShiftCompletedAt = input<string | null>();
   readonly refreshed = output();
   readonly shiftCompleted = output<ShiftCompletedEventArgs>();
 

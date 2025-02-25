@@ -1,5 +1,6 @@
 <mat-card *transloco="let t;" class="ccs3-op-flex-column">
   @let replyMessage = currentShiftReply();
+  @let lastShiftCompletedAtValue = lastShiftCompletedAt();
   <mat-card-header>
     <mat-card-title>
       <span>{{t('Shift status')}}</span>
@@ -110,6 +111,10 @@
           <textarea [formControl]="form.controls.shiftNote" matInput></textarea>
         </mat-form-field>
       </form>
+      <section class="last-shift-completed-at-section ccs3-op-flex-row">
+        <span>{{t('Last shift completed at')}}</span>
+        <span>{{lastShiftCompletedAtValue | noYearDate}}</span>
+      </section>
       <button (click)="allowShiftCompletionCheckbox.checked = false; onCompleteShift()"
         [disabled]="!allowShiftCompletionCheckbox.checked || !replyMessage" mat-flat-button>
         {{t('Complete shift')}}

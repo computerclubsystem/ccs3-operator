@@ -26,7 +26,9 @@ import {
   TransferDeviceReplyMessage, createCompleteShiftRequestMessage, CompleteShiftReplyMessage,
   createGetAllAllowedDeviceObjectsRequestMessage, GetAllAllowedDeviceObjectsReplyMessage,
   createSetDeviceStatusNoteRequestMessage,
-  SetDeviceStatusNoteReplyMessage
+  SetDeviceStatusNoteReplyMessage,
+  SignInInformationNotificationMessage,
+  SignInInformationNotificationMessageBody
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, SorterService } from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
@@ -294,6 +296,13 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       filter(msg => (msg.header.type as unknown as NotificationMessageType) === NotificationMessageType.deviceConnectivitiesNotification),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(deviceConnectivitiesMsg => this.processDeviceConnectivitiesNotificationMessage(deviceConnectivitiesMsg as unknown as OperatorDeviceConnectivitiesNotificationMessage));
+    this.internalSubjectsSvc.getSignInInformationNotificationMessage().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(notificationMsg => this.processSignInInformationNotificationMessage(notificationMsg as SignInInformationNotificationMessage));
+  }
+
+  processSignInInformationNotificationMessage(notificationMsg: SignInInformationNotificationMessage): void {
+    this.signals.signInInformationNotificationMsgBody.set(notificationMsg.body);
   }
 
   processDeviceConnectivitiesNotificationMessage(msg: OperatorDeviceConnectivitiesNotificationMessage): void {
@@ -622,6 +631,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       layoutRowsCount: signal(5),
       currentShiftReply: signal(null),
       getAllAllowedDeviceObjectsReplyMsg: signal(null),
+      signInInformationNotificationMsgBody: signal(null),
     };
     signals.allAvailableTariffs = computed(() => {
       const allTariffs = Array.from(this.signals.allTariffsMap().values());
@@ -654,6 +664,7 @@ interface Signals {
   layoutRowsCount: WritableSignal<number>;
   currentShiftReply: WritableSignal<GetCurrentShiftStatusReplyMessage | null>;
   getAllAllowedDeviceObjectsReplyMsg: WritableSignal<GetAllAllowedDeviceObjectsReplyMessage | null>;
+  signInInformationNotificationMsgBody: WritableSignal<SignInInformationNotificationMessageBody | null>;
 }
 
 interface OptionsVisibility {
