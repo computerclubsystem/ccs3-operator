@@ -128,8 +128,8 @@
               class="started-computer-options-button"></ccs3-op-expand-button>
             }
             @if (item.deviceStatus.note) {
-            <span
-              class="computer-note ccs3-op-max-width-medium-text ccs3-op-font-size-small">{{item.deviceStatus.note}}</span>
+            <span class="computer-note ccs3-op-max-width-medium-text ccs3-op-font-size-small"
+              [title]="item.deviceStatus.note">{{item.deviceStatus.note}}</span>
             }
           </section>
         </mat-card-title>
