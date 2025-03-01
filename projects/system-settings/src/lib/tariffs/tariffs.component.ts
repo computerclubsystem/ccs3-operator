@@ -5,10 +5,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { forkJoin, Observable } from 'rxjs';
 
 import {
-  createGetAllTariffsRequestMessage, GetAllTariffsReplyMessage, GetAllTariffsRequestMessageBody, Tariff,
-  TariffType
+  createGetAllTariffsRequestMessage, createGetAllUsersRequestMessage, GetAllTariffsReplyMessage,
+  GetAllTariffsRequestMessageBody, GetAllUsersReplyMessage, GetAllUsersRequestMessageBody, Message,
+  ReplyMessage, Tariff, TariffType, User
 } from '@ccs3-operator/messages';
 import {
   InternalSubjectsService, MessageTransportService, FullDatePipe, MinutesToTimePipe, TariffTypeToNamePipe,
@@ -40,26 +42,38 @@ export class TariffsComponent implements OnInit {
   ngOnInit(): void {
     this.internalSubjectsSvc.whenSignedIn().pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadAllTariffs());
+    ).subscribe(() => this.loadData());
   }
 
-  loadAllTariffs(): void {
-    const msg = createGetAllTariffsRequestMessage();
-    msg.body.types = [TariffType.duration, TariffType.fromTo];
-    this.messageTransportSvc.sendAndAwaitForReply<GetAllTariffsRequestMessageBody>(msg)
-      .subscribe(getAllTariffsReplyMsg => this.processGetAllTariffsReplyMessage(getAllTariffsReplyMsg as GetAllTariffsReplyMessage));
+  loadData(): void {
+    const getAllTariffsReqMsg = createGetAllTariffsRequestMessage();
+    getAllTariffsReqMsg.body.types = [TariffType.duration, TariffType.fromTo];
+    const getAllUsersReqMsg = createGetAllUsersRequestMessage();
+    const forkJoinObservablesObject: LoadDataForkJoinObservables = {
+      tariffs: this.messageTransportSvc.sendAndAwaitForReply<GetAllTariffsRequestMessageBody>(getAllTariffsReqMsg),
+      users: this.messageTransportSvc.sendAndAwaitForReply<GetAllUsersRequestMessageBody>(getAllUsersReqMsg),
+    };
+    forkJoin(forkJoinObservablesObject).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(loadDataReplyMessages => this.processLoadDataReplyMessagesloadDataReplyMessagess(loadDataReplyMessages as LoadDataMessages));
+    // this.messageTransportSvc.sendAndAwaitForReply<GetAllTcAllTariffsReplyMessage(getAllTariffsReplyMsg as GetAllTariffsReplyMessage));
   }
 
-  processGetAllTariffsReplyMessage(getAllTariffsReplyMsg: GetAllTariffsReplyMessage): void {
-    if (getAllTariffsReplyMsg.header.failure) {
+  processLoadDataReplyMessagesloadDataReplyMessagess(loadDataReplyMessages: LoadDataMessages): void {
+    if (loadDataReplyMessages.tariffs.header.failure
+      || loadDataReplyMessages.users.header.failure
+    ) {
       return;
     }
 
+    const allUsersMap = new Map<number, User>(loadDataReplyMessages.users.body.users.map(x => ([x.id, x])));
     const displayTariffItem: TariffDisplayItem[] = [];
-    for (const tariff of getAllTariffsReplyMsg.body.tariffs) {
+    for (const tariff of loadDataReplyMessages.tariffs.body.tariffs) {
       displayTariffItem.push({
         tariff: tariff,
         tariffTypeName: tariff.type.toString(),
+        updatedByUsername: allUsersMap.get(tariff.updatedByUserId!)?.username,
+        createdByUsername: allUsersMap.get(tariff.createdByUserId!)?.username,
       });
     }
     this.sorterSvc.sortBy(displayTariffItem, x => x.tariff.name);
@@ -89,4 +103,16 @@ interface Signals {
 interface TariffDisplayItem {
   tariffTypeName: string;
   tariff: Tariff;
+  createdByUsername?: string;
+  updatedByUsername?: string;
+}
+
+interface LoadDataForkJoinObservables extends Record<string, Observable<Message<unknown>>> {
+  users: Observable<Message<unknown>>;
+  tariffs: Observable<Message<unknown>>;
+}
+
+interface LoadDataMessages extends Record<string, ReplyMessage<unknown>> {
+  users: GetAllUsersReplyMessage;
+  tariffs: GetAllTariffsReplyMessage;
 }

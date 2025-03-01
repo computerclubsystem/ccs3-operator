@@ -5,10 +5,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { forkJoin, Observable } from 'rxjs';
 
 import {
-  createGetAllTariffsRequestMessage, GetAllTariffsReplyMessage, GetAllTariffsRequestMessageBody, Tariff,
-  TariffType
+  createGetAllTariffsRequestMessage, createGetAllUsersRequestMessage, GetAllTariffsReplyMessage,
+  GetAllTariffsRequestMessageBody, GetAllUsersReplyMessage, GetAllUsersRequestMessageBody,
+  Message, ReplyMessage, Tariff, TariffType, User,
 } from '@ccs3-operator/messages';
 import {
   FullDatePipe, InternalSubjectsService, MessageTransportService, MinutesToTimePipe, MoneyFormatPipe,
@@ -39,7 +41,7 @@ export class PrepaidTariffsComponent implements OnInit {
   ngOnInit(): void {
     this.internalSubjectsSvc.whenSignedIn().pipe(
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadPrepaidTariffs());
+    ).subscribe(() => this.loadData());
   }
 
   onEditTariff(tariff: Tariff): void {
@@ -50,11 +52,35 @@ export class PrepaidTariffsComponent implements OnInit {
     this.routeNavigationSvc.navigateToCreateNewPrepaidTariffRequested();
   }
 
-  loadPrepaidTariffs(): void {
-    const msg = createGetAllTariffsRequestMessage();
-    msg.body.types = [TariffType.prepaid];
-    this.messageTransportSvc.sendAndAwaitForReply<GetAllTariffsRequestMessageBody>(msg)
-      .subscribe(getAllTariffsReplyMsg => this.processGetAllTariffsReplyMessage(getAllTariffsReplyMsg as GetAllTariffsReplyMessage));
+  loadData(): void {
+    const getAllTariffsReqMsg = createGetAllTariffsRequestMessage();
+    getAllTariffsReqMsg.body.types = [TariffType.prepaid];
+    const getAllUsersReqMsg = createGetAllUsersRequestMessage();
+    const forkJoinObservables: LoadDataForkJoinObservables = {
+      users: this.messageTransportSvc.sendAndAwaitForReply<GetAllUsersRequestMessageBody>(getAllUsersReqMsg),
+      tariffs: this.messageTransportSvc.sendAndAwaitForReply<GetAllTariffsRequestMessageBody>(getAllTariffsReqMsg),
+    };
+    forkJoin(forkJoinObservables).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(loadDataReplyMessages => this.processLoadDataReplyMessagesloadDataReplyMessagess(loadDataReplyMessages as LoadDataMessages));
+  }
+
+  processLoadDataReplyMessagesloadDataReplyMessagess(loadDataReplyMessages: LoadDataMessages): void {
+    if (loadDataReplyMessages.tariffs.header.failure
+      || loadDataReplyMessages.users.header.failure) {
+      return;
+    }
+    const allUsersMap = new Map<number, User>(loadDataReplyMessages.users.body.users.map(x => ([x.id, x])));
+    const displayTariffItem: TariffDisplayItem[] = [];
+    for (const tariff of loadDataReplyMessages.tariffs.body.tariffs) {
+      displayTariffItem.push({
+        tariff: tariff,
+        updatedByUsername: allUsersMap.get(tariff.updatedByUserId!)?.username,
+        createdByUsername: allUsersMap.get(tariff.createdByUserId!)?.username,
+      });
+    }
+    this.sorterSvc.sortBy(displayTariffItem, x => x.tariff.name);
+    this.signals.tariffDisplayItems.set(displayTariffItem);
   }
 
   processGetAllTariffsReplyMessage(getAllTariffsReplyMsg: GetAllTariffsReplyMessage): void {
@@ -87,4 +113,17 @@ interface Signals {
 interface TariffDisplayItem {
   tariffDurationText?: string;
   tariff: Tariff;
+  createdByUsername?: string;
+  updatedByUsername?: string;
 }
+
+interface LoadDataForkJoinObservables extends Record<string, Observable<Message<unknown>>> {
+  users: Observable<Message<unknown>>;
+  tariffs: Observable<Message<unknown>>;
+}
+
+interface LoadDataMessages extends Record<string, ReplyMessage<unknown>> {
+  users: GetAllUsersReplyMessage;
+  tariffs: GetAllTariffsReplyMessage;
+}
+

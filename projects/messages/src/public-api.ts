@@ -75,3 +75,4 @@ export * from './lib/entities/user-profile-setting-name';
 export * from './lib/entities/user-profile-setting-with-value';
 export * from './lib/entities/device-group';
 export * from './lib/entities/allowed-device-objects';
+export * from './lib/entities/user-with-total-and-count';
