@@ -1,4 +1,5 @@
 <section *transloco="let t;" class="ccs3-op-computer-statuses-component-content-container">
+  @if (signals.isLoaded()) {
   @let signInNotificationMsgBody = signals.signInInformationNotificationMsgBody();
   <section class="ccs3-op-computer-statuses-toolbar">
     <mat-expansion-panel #toolsExpansionPanel togglePosition="before">
@@ -55,12 +56,15 @@
       </ng-template>
     </mat-expansion-panel>
   </section>
+  }
   <section class="computer-statuses-container">
     <section #computersContainer class="computers-container">
+      @if (signals.isLoaded()) {
       @let items = signals.deviceStatusItems();
       @for (item of items; track item.deviceStatus.deviceId) {
       <ng-container [ngTemplateOutlet]="standardCardTemplate"
         [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
+      }
       }
     </section>
   </section>

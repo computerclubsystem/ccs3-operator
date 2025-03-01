@@ -199,6 +199,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   }
 
   loadEntities(): void {
+    this.signals.isLoaded.set(false);
     const getAllDevicesRequestMsg = createGetAllDevicesRequestMessage();
     const getAllTariffsRequestMsg = createGetAllTariffsRequestMessage();
     const getAllAllowedDeviceObjectsRequestMsg = createGetAllAllowedDeviceObjectsRequestMessage();
@@ -243,6 +244,8 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     getDeviceStatusesReplyMsg: GetDeviceStatusesReplyMessage,
     getAllDeviceGroupsReplyMsg: GetAllDeviceGroupsReplyMessage,
   ): void {
+    // TODO: Check for any error before setting isLoaded signal and processing
+    this.signals.isLoaded.set(true);
     this.processGetAllDeviceGroupsReplyMessage(getAllDeviceGroupsReplyMsg);
     this.processGetAllAllowedDeviceObjectsReplyMessage(getAllAllowedDeviceObjectsReplyMsg);
     this.processGetAllDevicesReplyMessage(getAllDevicesReplyMsg);
@@ -643,6 +646,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
 
   createSignals(): Signals {
     const signals: Signals = {
+      isLoaded: signal(false),
       deviceStatusItems: signal([]),
       deviceStatuses: signal([]),
       lastDeviceStatusesNotificationMessage: signal(null),
@@ -678,6 +682,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
 }
 
 interface Signals {
+  isLoaded: WritableSignal<boolean>;
   deviceStatusItems: WritableSignal<DeviceStatusItem[]>;
   deviceStatuses: Signal<DeviceStatus[]>;
   lastDeviceStatusesNotificationMessage: WritableSignal<DeviceStatusesNotificationMessage | null>;
