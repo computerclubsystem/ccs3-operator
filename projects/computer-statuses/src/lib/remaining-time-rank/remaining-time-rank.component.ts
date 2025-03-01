@@ -1,30 +1,36 @@
-import { ChangeDetectionStrategy, Component, computed, input, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, Signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
 import { TranslocoDirective } from '@jsverse/transloco';
 
-import { Device, DeviceStatus, Tariff, TariffType } from '@ccs3-operator/messages';
-import { SecondsToTimePipe } from '@ccs3-operator/shared';
+import { Device, DeviceGroup, DeviceStatus, Tariff, TariffType } from '@ccs3-operator/messages';
+import { GroupingService, ItemsGroup, SecondsToTimePipe, SorterService } from '@ccs3-operator/shared';
 
 @Component({
   selector: 'ccs3-op-remaining-time-rank',
   templateUrl: 'remaining-time-rank.component.html',
-  imports: [MatCardModule, TranslocoDirective, SecondsToTimePipe],
+  imports: [MatCardModule, MatDividerModule, TranslocoDirective, SecondsToTimePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RemainingTimeRankComponent {
   allDevicesMap = input<Map<number, Device>>();
   allTariffsMap = input<Map<number, Tariff>>();
+  allDeviceGroupsMap = input<Map<number, DeviceGroup>>();
   deviceStatuses = input<DeviceStatus[]>();
 
   readonly signals = this.createSignals();
 
+  private readonly groupingSvc = inject(GroupingService);
+  private readonly sorterSvc = inject(SorterService);
+
   createSignals(): Signals {
     const signals: Signals = {
-      rankItems: computed(() => {
+      rankItemGroups: computed(() => {
         const allDevicesMap = this.allDevicesMap();
         const allTariffs = this.allTariffsMap();
+        const allDevicesGroupsMap = this.allDeviceGroupsMap();
         const deviceStatuses = this.deviceStatuses();
-        const rankItems = this.createRankItems(allDevicesMap, allTariffs, deviceStatuses);
+        const rankItems = this.createRankItems(allDevicesMap, allTariffs, allDevicesGroupsMap, deviceStatuses);
         return rankItems;
       }),
     };
@@ -34,9 +40,10 @@ export class RemainingTimeRankComponent {
   createRankItems(
     devicesMap: Map<number, Device> | undefined,
     tariffsMap: Map<number, Tariff> | undefined,
+    allDeviceGroupsMap: Map<number, DeviceGroup> | undefined,
     deviceStatuses: DeviceStatus[] | undefined,
-  ): RemainingTimeRankItem[] {
-    let rankItems: RemainingTimeRankItem[] = [];
+  ): ItemsGroup<string, RemainingTimeRankItem>[] {
+    const rankItems: RemainingTimeRankItem[] = [];
     if (devicesMap && tariffsMap && deviceStatuses) {
       const startedDeviceStatuses = deviceStatuses.filter(x => x.started);
       for (const deviceStatus of startedDeviceStatuses) {
@@ -46,16 +53,19 @@ export class RemainingTimeRankComponent {
           rankItems.push({
             deviceId: deviceStatus.deviceId,
             deviceName: device.name!,
+            deviceGroupName: allDeviceGroupsMap?.get(device.deviceGroupId!)?.name || '',
             remainingSeconds: this.getRemainingSeconds(deviceStatus.remainingSeconds!, tariffsMap, deviceStatus.continuationTariffId),
             continuationTarifId: deviceStatus.continuationTariffId,
             tariff: tariff,
           });
         }
       }
-      rankItems.sort((left, right) => left.remainingSeconds - right.remainingSeconds);
-      rankItems = rankItems.slice(0, 10);
+      this.sorterSvc.sortBy(rankItems, x => x.remainingSeconds);
+      // rankItems.sort((left, right) => left.remainingSeconds - right.remainingSeconds);
     }
-    return rankItems;
+    const grouped = this.groupingSvc.groupBy(rankItems, x => x.deviceGroupName);
+    this.sorterSvc.sortBy(grouped, x => x.key);
+    return grouped;
   }
 
   getRemainingSeconds(currentRemainingSeconds: number, tariffsMap: Map<number, Tariff>, continuationTariffId?: number | null): number {
@@ -72,12 +82,13 @@ export class RemainingTimeRankComponent {
 }
 
 interface Signals {
-  rankItems: Signal<RemainingTimeRankItem[]>;
+  rankItemGroups: Signal<ItemsGroup<string, RemainingTimeRankItem>[]>;
 }
 
 interface RemainingTimeRankItem {
   deviceId: number;
   deviceName: string;
+  deviceGroupName: string;
   remainingSeconds: number;
   continuationTarifId?: number | null;
   tariff: Tariff;

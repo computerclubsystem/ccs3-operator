@@ -28,7 +28,10 @@ import {
   createSetDeviceStatusNoteRequestMessage,
   SetDeviceStatusNoteReplyMessage,
   SignInInformationNotificationMessage,
-  SignInInformationNotificationMessageBody
+  SignInInformationNotificationMessageBody,
+  createGetAllDeviceGroupsRequestMessage,
+  GetAllDeviceGroupsReplyMessage,
+  DeviceGroup
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, SorterService } from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
@@ -200,20 +203,29 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     const getAllTariffsRequestMsg = createGetAllTariffsRequestMessage();
     const getAllAllowedDeviceObjectsRequestMsg = createGetAllAllowedDeviceObjectsRequestMessage();
     const getDeviceStatusesRequestMsg = createGetDeviceStatusesRequestMessage();
+    const getAllDeviceGroupsRequestMsg = createGetAllDeviceGroupsRequestMessage();
     const observables: Observable<unknown>[] = [
       this.messageTransportSvc.sendAndAwaitForReply(getAllDevicesRequestMsg),
       this.messageTransportSvc.sendAndAwaitForReply(getAllTariffsRequestMsg),
       this.messageTransportSvc.sendAndAwaitForReply(getAllAllowedDeviceObjectsRequestMsg),
       this.messageTransportSvc.sendAndAwaitForReply(getDeviceStatusesRequestMsg),
+      this.messageTransportSvc.sendAndAwaitForReply(getAllDeviceGroupsRequestMsg),
     ];
     forkJoin(observables).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(([getAllDevicesReplyMsg, getAllTariffsReplyMsg, getAllAllowedDeviceObjectsReplyMsg, getDeviceStatusesReplyMsg]) =>
+    ).subscribe(([
+      getAllDevicesReplyMsg,
+      getAllTariffsReplyMsg,
+      getAllAllowedDeviceObjectsReplyMsg,
+      getDeviceStatusesReplyMsg,
+      getAllDeviceGroupsReplyMsg,
+    ]) =>
       this.processEntitiesReplyMessages(
         getAllDevicesReplyMsg as GetAllDevicesReplyMessage,
         getAllTariffsReplyMsg as GetAllTariffsReplyMessage,
         getAllAllowedDeviceObjectsReplyMsg as GetAllAllowedDeviceObjectsReplyMessage,
         getDeviceStatusesReplyMsg as GetDeviceStatusesReplyMessage,
+        getAllDeviceGroupsReplyMsg as GetAllDeviceGroupsReplyMessage,
       )
     );
     // this.messageTransportSvc.sendAndAwaitForReply(getAllDevicesRequestMsg).pipe(
@@ -229,7 +241,9 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     getAllTariffsReplyMsg: GetAllTariffsReplyMessage,
     getAllAllowedDeviceObjectsReplyMsg: GetAllAllowedDeviceObjectsReplyMessage,
     getDeviceStatusesReplyMsg: GetDeviceStatusesReplyMessage,
+    getAllDeviceGroupsReplyMsg: GetAllDeviceGroupsReplyMessage,
   ): void {
+    this.processGetAllDeviceGroupsReplyMessage(getAllDeviceGroupsReplyMsg);
     this.processGetAllAllowedDeviceObjectsReplyMessage(getAllAllowedDeviceObjectsReplyMsg);
     this.processGetAllDevicesReplyMessage(getAllDevicesReplyMsg);
     this.processGetAllTariffsReplyMessage(getAllTariffsReplyMsg);
@@ -241,6 +255,16 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     if (!canUseTariff.canUse) {
       this.notificationsSvc.show(NotificationType.warn, translate(`The tariff '{{tariffName}}' can't be used right now`, { tariffName: selectedTariff.name }), `Current time is not in the tariff's From-To period`, IconName.priority_high, item);
     }
+  }
+
+  processGetAllDeviceGroupsReplyMessage(getAllDeviceGroupsReplyMsg: GetAllDeviceGroupsReplyMessage): void {
+    if (getAllDeviceGroupsReplyMsg.header.failure) {
+      return;
+    }
+    this.signals.getAllDeviceGroupsReplyMsg.set(getAllDeviceGroupsReplyMsg);
+    const allDeviceGroups = getAllDeviceGroupsReplyMsg.body.deviceGroups;
+    const allDeviceGroupsMap = new Map<number, DeviceGroup>(allDeviceGroups.map(x => ([x.id, x])));
+    this.signals.allDeviceGroupsMap.set(allDeviceGroupsMap);
   }
 
   processGetAllAllowedDeviceObjectsReplyMessage(getAllAllowedDeviceObjectsReplyMsg: GetAllAllowedDeviceObjectsReplyMessage): void {
@@ -632,6 +656,8 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       currentShiftReply: signal(null),
       getAllAllowedDeviceObjectsReplyMsg: signal(null),
       signInInformationNotificationMsgBody: signal(null),
+      getAllDeviceGroupsReplyMsg: signal(null),
+      allDeviceGroupsMap: signal(new Map<number, DeviceGroup>()),
     };
     signals.allAvailableTariffs = computed(() => {
       const allTariffs = Array.from(this.signals.allTariffsMap().values());
@@ -665,6 +691,8 @@ interface Signals {
   currentShiftReply: WritableSignal<GetCurrentShiftStatusReplyMessage | null>;
   getAllAllowedDeviceObjectsReplyMsg: WritableSignal<GetAllAllowedDeviceObjectsReplyMessage | null>;
   signInInformationNotificationMsgBody: WritableSignal<SignInInformationNotificationMessageBody | null>;
+  getAllDeviceGroupsReplyMsg: WritableSignal<GetAllDeviceGroupsReplyMessage | null>;
+  allDeviceGroupsMap: WritableSignal<Map<number, DeviceGroup>>;
 }
 
 interface OptionsVisibility {

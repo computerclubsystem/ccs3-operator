@@ -1,11 +1,11 @@
 <mat-card *transloco="let t;" class="ccs3-op-flex-column">
   <mat-card-header>
     <mat-card-title>
-      <span>{{t('Top 10 remaining time')}}</span>
+      <span>{{t('Remaining time')}}</span>
     </mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <table>
+    <table class="remaining-time-rank-table ccs3-op-no-alt-colors">
       <thead>
         <tr>
           <th class="ccs3-op-align-text-start">{{t('Name')}}</th>
@@ -13,10 +13,25 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of signals.rankItems(); track item.deviceId) {
+        @for (group of signals.rankItemGroups(); track group.key) {
         <tr>
-          <td class="ccs3-op-align-text-start">{{item.deviceName}}</td>
-          <td class="ccs3-op-align-text-end">{{item.remainingSeconds | secondsToTime}}</td>
+          <td colspan="2">
+            <mat-divider></mat-divider>
+          </td>
+        </tr>
+        <tr class="group-header-row ccs3-op-success-color">
+          <td colspan="2" class="group-header-item">{{group.key}}</td>
+        </tr>
+        @for (item of group.items; track item.deviceId) {
+        <tr class="group-item-row">
+          <td class="group-item ccs3-op-align-text-start">{{item.deviceName}}</td>
+          <td class="group-item ccs3-op-align-text-end">{{item.remainingSeconds | secondsToTime}}</td>
+        </tr>
+        }
+        <tr>
+          <td colspan="2">
+            <mat-divider></mat-divider>
+          </td>
         </tr>
         }
       </tbody>
