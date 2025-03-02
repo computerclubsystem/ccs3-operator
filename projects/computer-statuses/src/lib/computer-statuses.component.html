@@ -112,7 +112,7 @@
         <mat-card-title>
           <section class="device-title-info ccs3-op-flex-row ccs3-op-align-items-center ccs3-op-line-height-normal">
             <section class="ccs3-op-flex-row ccs3-op-half-gap ccs3-op-align-items-center">
-              <ccs3-op-expand-button (click)="detailsExpansionPanel.expanded = !detailsExpansionPanel.expanded"
+              <ccs3-op-expand-button (click)="detailsExpansionPanel.expanded = !detailsExpansionPanel.expanded; item.newDeviceNote = '';"
                 [isExpanded]="detailsExpansionPanel.expanded" [type]="expandButtonType.matIconButton">
               </ccs3-op-expand-button>
               @if (item.deviceConnectivity) {
