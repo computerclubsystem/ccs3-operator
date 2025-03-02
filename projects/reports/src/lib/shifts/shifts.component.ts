@@ -23,7 +23,7 @@ import {
 import { NotificationsService } from '@ccs3-operator/notifications';
 
 @Component({
-  selector: 'ccs3-op-shifts',
+  selector: 'ccs3-op-shifts-report',
   templateUrl: 'shifts.component.html',
   imports: [
     ReactiveFormsModule, NgClass, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule,

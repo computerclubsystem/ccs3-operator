@@ -22,6 +22,7 @@ export enum RouteName {
   reports = 'reports',
   reportsSignedInUsers = 'signed-in-users',
   reportsShifts = 'shifts',
+  reportsDeviceSessions = 'device-sessions',
   signedOutByAdministrator = 'signed-out-by-administrator',
   profileSettings = 'user-profile',
 }
@@ -145,6 +146,10 @@ export const routes: Routes = [
       {
         path: RouteName.reportsShifts,
         loadComponent: () => import('@ccs3-operator/reports/shifts').then(x => x.ShiftsComponent),
+      },
+      {
+        path: RouteName.reportsDeviceSessions,
+        loadComponent: () => import('@ccs3-operator/reports/device-sessions').then(x => x.DeviceSessionsComponent),
       },
     ],
   }

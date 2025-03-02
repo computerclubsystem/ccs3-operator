@@ -15,6 +15,7 @@ export class ReportsComponent {
   createSignals(): Signals {
     const links: Link[] = [
       { routerLink: 'shifts', translationKey: 'Shifts' },
+      { routerLink: 'device-sessions', translationKey: 'Device sessions' },
       { routerLink: 'signed-in-users', translationKey: 'Signed in users' },
     ];
     const signals: Signals = {

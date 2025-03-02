@@ -17,7 +17,7 @@ import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
 
 @Component({
-  selector: 'ccs3-op-signed-in-users',
+  selector: 'ccs3-op-signed-in-users-report',
   templateUrl: 'signed-in-users.component.html',
   imports: [MatExpansionModule, MatDividerModule, MatButtonModule, TranslocoDirective, NoYearDatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,

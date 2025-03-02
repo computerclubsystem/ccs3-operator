@@ -1,4 +1,6 @@
 export const enum MessageType {
+  getDeviceCompletedSessionsRequest = 'get-device-completed-sessions-request',
+  getDeviceCompletedSessionsReply = 'get-device-completed-sessions-reply',
   setDeviceStatusNoteRequest = 'set-device-status-note-request',
   setDeviceStatusNoteReply = 'set-device-status-note-reply',
   getAllAllowedDeviceObjectsRequest = 'get-all-allowed-device-objects-request',
