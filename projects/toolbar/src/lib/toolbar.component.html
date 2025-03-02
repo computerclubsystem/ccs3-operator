@@ -1,24 +1,35 @@
 <mat-toolbar class="ccs3-op-flex-justify-space-between">
   @let isConnected = signals.isConnected();
   <div class="ccs3-op-flex-row ccs3-op-no-gap">
-    <button mat-stroked-button [matMenuTriggerFor]="mainMenu" title="{{'Main menu' | transloco}}" aria-label="Main menu">
+    <button mat-stroked-button [matMenuTriggerFor]="mainMenu" title="{{'Main menu' | transloco}}"
+      aria-label="Main menu">
       <mat-icon>{{iconName.menu}}</mat-icon>
       <span>CCS3</span>
     </button>
   </div>
-  <div class="ccs3-op-flex-row ccs3-op-no-gap">
+  <div class="ccs3-op-flex-row ccs3-op-half-gap">
     @if(isConnected) {
-      @let connectedText = 'Connected' | transloco;
-      <mat-icon title="{{connectedText}}" class="connected-icon ccs3-op-success-color" [attr.aria-label]="connectedText">{{iconName.wifi}}</mat-icon>
+    @let connectedText = 'Connected' | transloco;
+    <mat-icon title="{{connectedText}}" class="connected-icon ccs3-op-success-color"
+      [attr.aria-label]="connectedText">{{iconName.wifi}}</mat-icon>
     } @else {
-      @let disconnectedText = 'Disconnected' | transloco;
-      <mat-icon title="{{disconnectedText}}" class="disconnected-icon ccs3-op-error-container" [attr.aria-label]="disconnectedText">{{iconName.wifi_off}}</mat-icon>
+    @let disconnectedText = 'Disconnected' | transloco;
+    <mat-icon title="{{disconnectedText}}" class="disconnected-icon ccs3-op-error-container"
+      [attr.aria-label]="disconnectedText">{{iconName.wifi_off}}</mat-icon>
     }
     <button mat-icon-button [matMenuTriggerFor]="languageMenu" title="{{'Language' | transloco}}" aria-label="Language">
       <mat-icon>{{iconName.language}}</mat-icon>
     </button>
-    <button mat-icon-button [matMenuTriggerFor]="accountMenu" title="{{'Account menu' | transloco}}" aria-label="Account menu">
-      <mat-icon>{{iconName.account_circle}}</mat-icon>
+    @let username = signals.username();
+    <button mat-stroked-button [matMenuTriggerFor]="accountMenu" title="{{'Account menu' | transloco}} {{username}}"
+      aria-label="Account menu">
+      <section class="account-button-section ccs3-op-flex-row">
+        <mat-icon>{{iconName.account_circle}}</mat-icon>
+        @if (username) {
+        <span
+          class="signed-in-username ccs3-op-max-width-small-text ccs3-op-overflow-ellipsis">{{signals.username()}}</span>
+        }
+      </section>
     </button>
   </div>
 </mat-toolbar>
@@ -26,41 +37,41 @@
 <mat-menu #mainMenu="matMenu">
   @let mainMenuItems = signals.mainMenuItems();
   @if (mainMenuItems?.length) {
-    @for (item of mainMenuItems; track item.id) {
-      @let itemText = item.text || (item.translationKey | transloco);
-      <button (click)="onMainMenuItemClick(item)" mat-menu-item [attr.aria-label]="itemText">
-        @if (item.icon) {
-          <mat-icon>{{item.icon}}</mat-icon>
-        }
-        <span>{{itemText}}</span>
-      </button>
+  @for (item of mainMenuItems; track item.id) {
+  @let itemText = item.text || (item.translationKey | transloco);
+  <button (click)="onMainMenuItemClick(item)" mat-menu-item [attr.aria-label]="itemText">
+    @if (item.icon) {
+    <mat-icon>{{item.icon}}</mat-icon>
     }
+    <span>{{itemText}}</span>
+  </button>
+  }
   }
 </mat-menu>
 
 <mat-menu #accountMenu="matMenu">
   @let accountMenuItems = signals.accountMenuItems();
   @if (accountMenuItems?.length) {
-    @for (item of accountMenuItems; track item.id) {
-      @let itemText = item.text || (item.translationKey | transloco);
-      <button (click)="onAccountMenuItemClick(item)" mat-menu-item [attr.aria-label]="itemText">
-        @if (item.icon) {
-          <mat-icon>{{item.icon}}</mat-icon>
-        }
-        <span>{{itemText}}</span>
-      </button>
+  @for (item of accountMenuItems; track item.id) {
+  @let itemText = item.text || (item.translationKey | transloco);
+  <button (click)="onAccountMenuItemClick(item)" mat-menu-item [attr.aria-label]="itemText">
+    @if (item.icon) {
+    <mat-icon>{{item.icon}}</mat-icon>
     }
+    <span>{{itemText}}</span>
+  </button>
+  }
   }
 </mat-menu>
 
 <mat-menu #languageMenu="matMenu">
   @for (item of languageMenuItems; track item.id) {
-    @let itemText = item.text || (item.translationKey | transloco);
-    <button (click)="onLanguageMenuItemClick(item)" mat-menu-item [attr.aria-label]="itemText">
-      @if (item.icon) {
-        <mat-icon>{{item.icon}}</mat-icon>
-      }
-      <span>{{itemText}}</span>
-    </button>
+  @let itemText = item.text || (item.translationKey | transloco);
+  <button (click)="onLanguageMenuItemClick(item)" mat-menu-item [attr.aria-label]="itemText">
+    @if (item.icon) {
+    <mat-icon>{{item.icon}}</mat-icon>
+    }
+    <span>{{itemText}}</span>
+  </button>
   }
 </mat-menu>

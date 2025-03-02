@@ -249,6 +249,7 @@ export class AppComponent implements OnInit {
     this.setNotSignedInAccountMenuItems();
     this.setNotSignedInMainMenuItems();
     this.internalSubjectsSvc.setSignedIn(false);
+    this.internalSubjectsSvc.setProfileSettingsReplyMessage(null);
     if (signOutReplyMessage) {
       this.internalSubjectsSvc.setSignOutReplyMessage(signOutReplyMessage);
       this.notificationsHelperSvc.showSignedOut(signOutReplyMessage);
@@ -278,6 +279,7 @@ export class AppComponent implements OnInit {
           .subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg as AuthReplyMessage));
       } else {
         this.internalSubjectsSvc.setSignedIn(false);
+        this.internalSubjectsSvc.setProfileSettingsReplyMessage(null);
         // TODO: Find routes that should not be redirected like "You have been signed out by administrator" route
         //       should not navigate to sign-in url because the user needs to see the information.
         //       Same for "Signed out session stats"
@@ -394,6 +396,7 @@ export class AppComponent implements OnInit {
     }
     const customCssSetting = replyMsg.body.settings.find(x => x.name === UserProfileSettingName.customCss);
     this.applyCustomCss(customCssSetting?.value);
+    this.internalSubjectsSvc.setProfileSettingsReplyMessage(replyMsg);
   }
 
   private applyCustomCss(css?: string | null): void {

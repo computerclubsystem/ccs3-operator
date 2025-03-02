@@ -346,6 +346,11 @@ ccs3-op-computer-statuses .computer-note {
   font-size: var(--ccs3-op-font-size-half);
 }
 
+.ccs3-op-overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Material */
 button[mat-button].mat-tonal-button {
   background-color: var(--mat-sys-secondary-container);

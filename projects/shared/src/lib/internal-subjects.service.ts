@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { filter, first, Observable, ReplaySubject, Subject } from 'rxjs';
 
-import { AuthRequestMessage, ConfigurationMessage, ReplyMessage, SignInInformationNotificationMessage, SignOutReplyMessage } from '@ccs3-operator/messages';
+import { AuthRequestMessage, ConfigurationMessage, GetProfileSettingsReplyMessage, ReplyMessage, SignInInformationNotificationMessage, SignOutReplyMessage } from '@ccs3-operator/messages';
 import { AccountMenuItem, MainMenuItem, MessageTimedOutErrorData } from './types';
 import { NotificationItem } from '@ccs3-operator/shared';
 
@@ -22,6 +22,15 @@ export class InternalSubjectsService {
   private readonly messageTimedOutSubject = new Subject<MessageTimedOutErrorData>();
   private readonly setFailureReplyMessageReceivedSubject = new Subject<ReplyMessage<unknown>>();
   private readonly signInInformationNotificationMessageSubject = new ReplaySubject<SignInInformationNotificationMessage | null>(1);
+  private readonly profileSettingsReplyMessageSubject = new ReplaySubject<GetProfileSettingsReplyMessage | null>(1);
+
+  setProfileSettingsReplyMessage(replyMsg: GetProfileSettingsReplyMessage | null): void {
+    this.profileSettingsReplyMessageSubject.next(replyMsg);
+  }
+
+  getProfileSettingsReplyMessage(): Observable<GetProfileSettingsReplyMessage | null> {
+    return this.profileSettingsReplyMessageSubject.asObservable();
+  }
 
   setSignInInformationNotificationMessage(msg: SignInInformationNotificationMessage | null): void {
     this.signInInformationNotificationMessageSubject.next(msg);
