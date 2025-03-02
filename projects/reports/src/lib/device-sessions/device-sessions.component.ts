@@ -25,7 +25,7 @@ import { BooleanIndicatorComponent } from "../../../../boolean-indicator/src/lib
   imports: [
     ReactiveFormsModule, NgClass, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     TranslocoDirective, MoneyFormatPipe, FullDatePipe, BooleanIndicatorComponent
-],
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeviceSessionsComponent implements OnInit {
@@ -85,8 +85,8 @@ export class DeviceSessionsComponent implements OnInit {
   onLoadDeviceSessions(): void {
     const formValue = this.form.value;
     const reqMsg = createGetDeviceCompletedSessionsRequestMessage();
-    reqMsg.body.fromDate = formValue.fromDate!;
-    reqMsg.body.toDate = formValue.toDate!;
+    reqMsg.body.fromDate = new Date(formValue.fromDate!).toISOString();
+    reqMsg.body.toDate = new Date(formValue.toDate!).toISOString();
     reqMsg.body.userId = formValue.userId;
     reqMsg.body.deviceId = formValue.deviceId;
     reqMsg.body.tariffId = formValue.tariffId;
