@@ -123,6 +123,13 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     if (replyMsg.header.failure) {
       return;
     }
+    // Sort items in summary by user
+    this.sorterSvc.sortBy(replyMsg.body.shiftStatus.completedSummaryByUser, x => x.username);
+    this.sorterSvc.sortBy(replyMsg.body.shiftStatus.runningSummaryByUser, x => x.username);
+    // Empty usernames are no-user sessions (prepaid cards started by customers)
+    const prepaidText = `~${translate('Customer')}~`;
+    replyMsg.body.shiftStatus.completedSummaryByUser.forEach(x => x.username ||= prepaidText);
+    replyMsg.body.shiftStatus.runningSummaryByUser.forEach(x => x.username ||= prepaidText);
     this.setShiftStatusReplyMessage(replyMsg);
   }
 
