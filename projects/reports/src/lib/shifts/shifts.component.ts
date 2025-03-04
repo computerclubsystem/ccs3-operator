@@ -114,12 +114,17 @@ export class ShiftsComponent implements OnInit {
       const shiftItem: ShiftItem = {
         shift: x,
         username: '',
+        completedTotal: this.roundAmount(x.completedSessionsTotal + x.createdPrepaidTariffsTotal + x.rechargedPrepaidTariffsTotal),
       };
       return shiftItem;
     });
     this.signals.shiftItems.set(shiftItems);
     this.signals.shiftsSummary.set(replyMsg.body.shiftsSummary);
     this.refreshLoadedShiftItems();
+  }
+
+  roundAmount(amount: number): number {
+    return Math.round(amount * 100) / 100;
   }
 
   createForm(): FormGroup<FormControls> {
@@ -159,4 +164,5 @@ interface FormControls {
 interface ShiftItem {
   shift: Shift;
   username: string;
+  completedTotal: number;
 }
