@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 
 import {
   createGetAllTariffsRequestMessage, createGetAllUsersRequestMessage, GetAllTariffsReplyMessage,
@@ -14,7 +14,7 @@ import {
 } from '@ccs3-operator/messages';
 import {
   FullDatePipe, InternalSubjectsService, MessageTransportService, MinutesToTimePipe, MoneyFormatPipe,
-  RouteNavigationService, SecondsToTimePipe, SorterService,
+  PermissionName, PermissionsService, RouteNavigationService, SecondsToTimePipe, SorterService,
 } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
 import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
@@ -35,6 +35,7 @@ export class PrepaidTariffsComponent implements OnInit {
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly routeNavigationSvc = inject(RouteNavigationService);
+  private readonly permissionsSvc = inject(PermissionsService);
   private readonly sorterSvc = inject(SorterService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -55,9 +56,17 @@ export class PrepaidTariffsComponent implements OnInit {
   loadData(): void {
     const getAllTariffsReqMsg = createGetAllTariffsRequestMessage();
     getAllTariffsReqMsg.body.types = [TariffType.prepaid];
-    const getAllUsersReqMsg = createGetAllUsersRequestMessage();
+    let getAllUsersObservable: Observable<Message<unknown>>;
+    const hasUsersReadPermissions = this.permissionsSvc.hasPermission(PermissionName.usersRead);
+    if (hasUsersReadPermissions) {
+      const getAllUsersReqMsg = createGetAllUsersRequestMessage();
+      getAllUsersObservable = this.messageTransportSvc.sendAndAwaitForReply<GetAllUsersRequestMessageBody>(getAllUsersReqMsg);
+    } else {
+      const replyMsg = { body: { users: [] as User[] }, header: {} } as GetAllUsersReplyMessage;
+      getAllUsersObservable = of(replyMsg);
+    }
     const forkJoinObservables: LoadDataForkJoinObservables = {
-      users: this.messageTransportSvc.sendAndAwaitForReply<GetAllUsersRequestMessageBody>(getAllUsersReqMsg),
+      users: getAllUsersObservable,
       tariffs: this.messageTransportSvc.sendAndAwaitForReply<GetAllTariffsRequestMessageBody>(getAllTariffsReqMsg),
     };
     forkJoin(forkJoinObservables).pipe(
@@ -75,12 +84,20 @@ export class PrepaidTariffsComponent implements OnInit {
     for (const tariff of loadDataReplyMessages.tariffs.body.tariffs) {
       displayTariffItem.push({
         tariff: tariff,
-        updatedByUsername: allUsersMap.get(tariff.updatedByUserId!)?.username,
-        createdByUsername: allUsersMap.get(tariff.createdByUserId!)?.username,
+        updatedByUsername: this.getUsername(allUsersMap, tariff.updatedByUserId),
+        createdByUsername: this.getUsername(allUsersMap, tariff.createdByUserId),
       });
     }
     this.sorterSvc.sortBy(displayTariffItem, x => x.tariff.name);
     this.signals.tariffDisplayItems.set(displayTariffItem);
+  }
+
+  getUsername(allUsersMap: Map<number, User>, userId?: number | null): string {
+    if (!userId) {
+      return '';
+    }
+    const username = allUsersMap.get(userId)?.username || '' + userId || '';
+    return username;
   }
 
   processGetAllTariffsReplyMessage(getAllTariffsReplyMsg: GetAllTariffsReplyMessage): void {
