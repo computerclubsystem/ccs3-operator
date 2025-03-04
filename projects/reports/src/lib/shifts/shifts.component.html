@@ -21,11 +21,15 @@
             }
           </mat-select>
         </mat-form-field>
+        <mat-checkbox [formControl]="form.controls.showCounts">
+          <span>{{t('Show counts')}}</span>
+        </mat-checkbox>
         <button (click)="onLoadShifts()" [disabled]="form.invalid" mat-flat-button>{{t('Load')}}</button>
       </section>
     </form>
   </section>
   <section class="shifts">
+    @let showCounts = form.value.showCounts;
     @let shiftItems = signals.shiftItems();
     <table>
       <thead>
@@ -35,15 +39,25 @@
           <th class="ccs3-op-align-text-end">{{t('Completed at')}}</th>
           <th class="ccs3-op-align-text-start">{{t('User (Id)')}}</th>
           <th class="ccs3-op-align-text-end">{{t('Completed sessions total amount')}}</th>
+          @if (showCounts) {
           <th class="ccs3-op-align-text-end">{{t('Completed sessions count')}}</th>
+          }
           <th class="ccs3-op-align-text-end">{{t('Created prepaid tariffs total amount')}}</th>
+          @if (showCounts) {
           <th class="ccs3-op-align-text-end">{{t('Created prepaid tariffs count')}}</th>
+          }
           <th class="ccs3-op-align-text-end">{{t('Recharged prepaid tariffs total amount')}}</th>
+          @if (showCounts) {
           <th class="ccs3-op-align-text-end">{{t('Recharged prepaid tariffs count')}}</th>
+          }
           <th class="ccs3-op-align-text-end">{{t('Running sessions total amount')}}</th>
+          @if (showCounts) {
           <th class="ccs3-op-align-text-end">{{t('Running sessions count')}}</th>
+          }
           <th class="ccs3-op-align-text-end">{{t('Continuations total amount')}}</th>
+          @if (showCounts) {
           <th class="ccs3-op-align-text-end">{{t('Continuations count')}}</th>
+          }
           <th class="ccs3-op-align-text-start">{{t('Note')}}</th>
           <th class="ccs3-op-align-text-end">Id</th>
         </tr>
@@ -63,38 +77,48 @@
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.completedSessionsTotal}">
             {{shift.completedSessionsTotal | moneyFormat}}
           </td>
+          @if(showCounts) {
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.completedSessionsCount}">
             {{shift.completedSessionsCount}}
           </td>
+          }
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.createdPrepaidTariffsTotal}">
             {{shift.createdPrepaidTariffsTotal | moneyFormat}}
           </td>
+          @if (showCounts) {
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.createdPrepaidTariffsCount}">
             {{shift.createdPrepaidTariffsCount}}
           </td>
+          }
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.rechargedPrepaidTariffsTotal}">
             {{shift.rechargedPrepaidTariffsTotal | moneyFormat}}
           </td>
+          @if (showCounts) {
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.rechargedPrepaidTariffsCount}">
             {{shift.rechargedPrepaidTariffsCount}}
           </td>
+          }
           <td class="ccs3-op-align-text-end" [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.runningSessionsTotal}">
             {{shift.runningSessionsTotal | moneyFormat}}
           </td>
+          @if (showCounts) {
           <td class="ccs3-op-align-text-end" [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.runningSessionsCount}">
             {{shift.runningSessionsCount}}
           </td>
+          }
           <td class="ccs3-op-align-text-end" [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.continuationsTotal}">
             {{shift.continuationsTotal | moneyFormat}}
           </td>
+          @if (showCounts) {
           <td class="ccs3-op-align-text-end" [ngClass]="{'ccs3-op-zero-value-table-cell': !shift.continuationsCount}">
             {{shift.continuationsCount}}
           </td>
+          }
           <td class="ccs3-op-align-text-start">
             {{shift.note}}
           </td>
@@ -112,8 +136,8 @@
         <tr class="shifts-summary-table-row">
           <td class="ccs3-op-align-text-end">{{t('Summary')}}</td>
           <td class="ccs3-op-align-text-end ccs3-op-important-table-cell"
-            [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.totalAmount}">
-            {{shiftsSummary.totalAmount | moneyFormat}}
+            [ngClass]="{'ccs3-op-zero-value-table-cell': !signals.completedGrandTotal()}">
+            {{signals.completedGrandTotal() | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-end"></td>
           <td class="ccs3-op-align-text-start"></td>
@@ -121,42 +145,52 @@
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.completedSessionsTotal}">
             {{shiftsSummary.completedSessionsTotal | moneyFormat}}
           </td>
+          @if (showCounts) {
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.completedSessionsCount}">
             {{shiftsSummary.completedSessionsCount}}
           </td>
+          }
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.createdPrepaidTariffsTotal}">
             {{shiftsSummary.createdPrepaidTariffsTotal | moneyFormat}}
           </td>
+          @if (showCounts) {
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.createdPrepaidTariffsCount}">
             {{shiftsSummary.createdPrepaidTariffsCount}}
           </td>
+          }
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.rechargedPrepaidTariffsTotal}">
             {{shiftsSummary.rechargedPrepaidTariffsTotal | moneyFormat}}
           </td>
+          @if (showCounts) {
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.rechargedPrepaidTariffsCount}">
             {{shiftsSummary.rechargedPrepaidTariffsCount}}
           </td>
+          }
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.runningSessionsTotal}">
             {{shiftsSummary.runningSessionsTotal | moneyFormat}}
           </td>
+          @if (showCounts) {
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.runningSessionsCount}">
             {{shiftsSummary.runningSessionsCount}}
           </td>
+          }
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.continuationsTotal}">
             {{shiftsSummary.continuationsTotal | moneyFormat}}
           </td>
+          @if (showCounts) {
           <td class="ccs3-op-align-text-end"
             [ngClass]="{'ccs3-op-zero-value-table-cell': !shiftsSummary.continuationsCount}">
             {{shiftsSummary.continuationsCount}}
           </td>
+          }
           <td class="ccs3-op-align-text-start"></td>
           <td class="ccs3-op-align-text-end"></td>
         </tr>

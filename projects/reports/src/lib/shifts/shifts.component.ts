@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
 
 import {
@@ -27,7 +28,7 @@ import { NotificationsService } from '@ccs3-operator/notifications';
   templateUrl: 'shifts.component.html',
   imports: [
     ReactiveFormsModule, NgClass, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-    TranslocoDirective, MoneyFormatPipe, FullDatePipe
+    MatCheckboxModule, TranslocoDirective, MoneyFormatPipe, FullDatePipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -119,6 +120,9 @@ export class ShiftsComponent implements OnInit {
       return shiftItem;
     });
     this.signals.shiftItems.set(shiftItems);
+    // Calculate only completed totals
+    const completedGrandTotal = shiftItems.reduce((acc, curr) => this.roundAmount(acc + curr.completedTotal), 0);
+    this.signals.completedGrandTotal.set(completedGrandTotal);
     this.signals.shiftsSummary.set(replyMsg.body.shiftsSummary);
     this.refreshLoadedShiftItems();
   }
@@ -132,6 +136,7 @@ export class ShiftsComponent implements OnInit {
       fromDate: new FormControl(null, { validators: [Validators.required] }),
       toDate: new FormControl(null, { validators: [Validators.required] }),
       userId: new FormControl(null),
+      showCounts: new FormControl(false),
     };
     const form = this.formBuilder.group<FormControls>(controls);
     return form;
@@ -141,6 +146,7 @@ export class ShiftsComponent implements OnInit {
     const signals: Signals = {
       shiftItems: signal([]),
       shiftsSummary: signal(null),
+      completedGrandTotal: signal(0),
       users: signal([]),
       isReady: signal(false),
     };
@@ -151,6 +157,7 @@ export class ShiftsComponent implements OnInit {
 interface Signals {
   shiftItems: WritableSignal<ShiftItem[]>;
   shiftsSummary: WritableSignal<ShiftsSummary | null>;
+  completedGrandTotal: WritableSignal<number>;
   users: WritableSignal<User[]>;
   isReady: WritableSignal<boolean>;
 }
@@ -159,6 +166,7 @@ interface FormControls {
   fromDate: FormControl<string | null>;
   toDate: FormControl<string | null>;
   userId: FormControl<number | null>;
+  showCounts: FormControl<boolean | null>;
 }
 
 interface ShiftItem {
