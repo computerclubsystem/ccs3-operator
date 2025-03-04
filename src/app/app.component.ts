@@ -12,8 +12,7 @@ import {
   RefreshTokenReplyMessage, NotAuthenticatedMessage, AuthRequestMessage,
   SignOutReplyMessage, createSignOutRequestMessage, ReplyMessage, NotificationMessageType,
   NotificationMessage, createGetProfileSettingsRequestMessage, GetProfileSettingsReplyMessage,
-  UserProfileSettingName,
-  SignInInformationNotificationMessage,
+  UserProfileSettingName, SignInInformationNotificationMessage,
 } from '@ccs3-operator/messages';
 import {
   CustomStylesService, MessageSubjectsService, NotificationType, PermissionName, PermissionsService,

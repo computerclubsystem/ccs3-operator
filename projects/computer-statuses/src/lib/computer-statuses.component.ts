@@ -25,13 +25,10 @@ import {
   GetCurrentShiftStatusReplyMessage, StartDeviceReplyMessage, StopDeviceReplyMessage, Tariff, TariffType,
   TransferDeviceReplyMessage, createCompleteShiftRequestMessage, CompleteShiftReplyMessage,
   createGetAllAllowedDeviceObjectsRequestMessage, GetAllAllowedDeviceObjectsReplyMessage,
-  createSetDeviceStatusNoteRequestMessage,
-  SetDeviceStatusNoteReplyMessage,
-  SignInInformationNotificationMessage,
-  SignInInformationNotificationMessageBody,
-  createGetAllDeviceGroupsRequestMessage,
-  GetAllDeviceGroupsReplyMessage,
-  DeviceGroup
+  createSetDeviceStatusNoteRequestMessage, SetDeviceStatusNoteReplyMessage,
+  SignInInformationNotificationMessage, SignInInformationNotificationMessageBody,
+  createGetAllDeviceGroupsRequestMessage, GetAllDeviceGroupsReplyMessage, DeviceGroup,
+  GetProfileSettingsReplyMessage, UserProfileSettingName, createUpdateProfileSettingsRequestMessage
 } from '@ccs3-operator/messages';
 import { InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, SorterService } from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
@@ -80,11 +77,17 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const currentLayoutRowsValue = parseInt(
-      getComputedStyle(this.computersContainerEl.nativeElement)
-        .getPropertyValue(this.layoutGridRowsCssPropName)
-    );
-    this.signals.layoutRowsCount.set(currentLayoutRowsValue);
+    const layoutRowsCount = this.signals.layoutRowsCount();
+    if (!layoutRowsCount) {
+      const currentLayoutRowsValue = parseInt(
+        getComputedStyle(this.computersContainerEl.nativeElement)
+          .getPropertyValue(this.layoutGridRowsCssPropName)
+      );
+      this.signals.layoutRowsCount.set(currentLayoutRowsValue);
+      this.setLayoutRowsCount(currentLayoutRowsValue);
+    } else {
+      this.setLayoutRowsCount(layoutRowsCount);
+    }
   }
 
   init(): void {
@@ -104,7 +107,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   }
 
   processCompleteShiftReplyMessage(replyMsg: CompleteShiftReplyMessage): void {
-    if (replyMsg.header.failure) {
+    if (!replyMsg?.header || replyMsg.header.failure) {
       return;
     }
     const msg = translate('The current shift has been completed');
@@ -164,13 +167,21 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   }
 
   changeLayoutRows(changeValue: number): void {
-    const currentValue = parseInt(getComputedStyle(this.computersContainerEl.nativeElement).getPropertyValue(this.layoutGridRowsCssPropName));
+    // const currentValue = parseInt(getComputedStyle(this.computersContainerEl.nativeElement).getPropertyValue(this.layoutGridRowsCssPropName));
+    const currentValue = this.signals.layoutRowsCount() || 10;
     let newValue = currentValue + changeValue;
     if (newValue < 1) {
       newValue = 1;
     }
-    this.computersContainerEl.nativeElement.style.setProperty(this.layoutGridRowsCssPropName, newValue.toString());
-    this.signals.layoutRowsCount.set(newValue);
+    this.setLayoutRowsCount(newValue);
+    const reqMsg = createUpdateProfileSettingsRequestMessage();
+    reqMsg.body.profileSettings = [{
+      name: UserProfileSettingName.computerStatusesLayoutRowsCount,
+      value: newValue.toString(),
+    }];
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe();
   }
 
   onStart(item: DeviceStatusItem): void {
@@ -333,6 +344,29 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     this.internalSubjectsSvc.getSignInInformationNotificationMessage().pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(notificationMsg => this.processSignInInformationNotificationMessage(notificationMsg as SignInInformationNotificationMessage));
+    this.internalSubjectsSvc.getProfileSettingsReplyMessage().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processGetProfileSettingsReplyMessage(replyMsg as GetProfileSettingsReplyMessage));
+  }
+
+  processGetProfileSettingsReplyMessage(replyMsg: GetProfileSettingsReplyMessage): void {
+    if (!replyMsg?.header || replyMsg.header.failure) {
+      return;
+    }
+    const layoutRowsSetting = replyMsg.body.settings.find(x => x.name === UserProfileSettingName.computerStatusesLayoutRowsCount);
+    if (layoutRowsSetting) {
+      const rowsCount = +layoutRowsSetting.value!;
+      if ((typeof rowsCount) === 'number' && rowsCount > 0) {
+        this.setLayoutRowsCount(rowsCount);
+      }
+    }
+  }
+
+  setLayoutRowsCount(value: number): void {
+    if (this.computersContainerEl) {
+      this.computersContainerEl.nativeElement.style.setProperty(this.layoutGridRowsCssPropName, value.toString());
+    }
+    this.signals.layoutRowsCount.set(value);
   }
 
   processSignInInformationNotificationMessage(notificationMsg: SignInInformationNotificationMessage): void {
@@ -663,7 +697,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       allTariffsMap: signal(new Map<number, Tariff>()),
       allAvailableTariffs: signal([]),
       // transferrableDeviceStatusItems: signal([]),
-      layoutRowsCount: signal(5),
+      layoutRowsCount: signal(null),
       currentShiftReply: signal(null),
       getAllAllowedDeviceObjectsReplyMsg: signal(null),
       signInInformationNotificationMsgBody: signal(null),
@@ -699,7 +733,7 @@ interface Signals {
   allTariffsMap: WritableSignal<Map<number, Tariff>>;
   allAvailableTariffs: Signal<Tariff[]>;
   // transferrableDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;
-  layoutRowsCount: WritableSignal<number>;
+  layoutRowsCount: WritableSignal<number | null>;
   currentShiftReply: WritableSignal<GetCurrentShiftStatusReplyMessage | null>;
   getAllAllowedDeviceObjectsReplyMsg: WritableSignal<GetAllAllowedDeviceObjectsReplyMessage | null>;
   signInInformationNotificationMsgBody: WritableSignal<SignInInformationNotificationMessageBody | null>;
