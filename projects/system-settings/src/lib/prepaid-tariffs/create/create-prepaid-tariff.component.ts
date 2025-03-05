@@ -194,7 +194,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
       tariff!.remainingSeconds = replyMsg.body.remainingSeconds;
       this.signals.tariff.set(tariff);
       const remainingSecondsComputedValue = this.secondsFormatterSvc.getComputedValue(replyMsg.body.remainingSeconds);
-      const remainingTimeString = this.secondsFormatterSvc.computedValueResultToSring(remainingSecondsComputedValue);
+      const remainingTimeString = this.secondsFormatterSvc.computedValueResultToString(remainingSecondsComputedValue);
       this.notificationsSvc.show(
         NotificationType.success,
         translate('Tariff recharged'),

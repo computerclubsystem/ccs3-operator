@@ -5,7 +5,7 @@ import { ComputedValueResult } from './declarations';
 
 @Injectable({ providedIn: 'root' })
 export class SecondsFormatterService {
-  computedValueResultToSring(computedValueResult: ComputedValueResult): string {
+  computedValueResultToString(computedValueResult: ComputedValueResult): string {
     return `${computedValueResult.hoursText || ''}${computedValueResult.minutesText || ''}${computedValueResult.secondsText || ''}`;
   }
 

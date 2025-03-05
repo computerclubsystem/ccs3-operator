@@ -8,7 +8,7 @@ export class SecondsFormatterPipe implements PipeTransform {
 
   transform(value: number | null | undefined, ...args: [boolean | null]): string {
     const computedResult = this.secondsFormatterSvc.getComputedValue(value, args[0]);
-    return this.secondsFormatterSvc.computedValueResultToSring(computedResult);
+    return this.secondsFormatterSvc.computedValueResultToString(computedResult);
   }
 }
 

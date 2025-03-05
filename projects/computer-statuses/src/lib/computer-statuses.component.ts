@@ -28,18 +28,24 @@ import {
   createSetDeviceStatusNoteRequestMessage, SetDeviceStatusNoteReplyMessage,
   SignInInformationNotificationMessage, SignInInformationNotificationMessageBody,
   createGetAllDeviceGroupsRequestMessage, GetAllDeviceGroupsReplyMessage, DeviceGroup,
-  GetProfileSettingsReplyMessage, UserProfileSettingName, createUpdateProfileSettingsRequestMessage
+  GetProfileSettingsReplyMessage, UserProfileSettingName, createUpdateProfileSettingsRequestMessage,
+  createRechargeTariffDurationRequestMessage,
+  RechargeTariffDurationReplyMessage
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, SorterService } from '@ccs3-operator/shared';
+import {
+  InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, PermissionName,
+  PermissionsService, SorterService
+} from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
-import { SecondsFormatterComponent } from '@ccs3-operator/seconds-formatter';
+import { SecondsFormatterComponent, SecondsFormatterService } from '@ccs3-operator/seconds-formatter';
 import { ExpandButtonComponent, ExpandButtonType } from '@ccs3-operator/expand-button';
 import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { TariffService } from './tariff.service';
 import { ShiftStatusComponent } from './shift-status/shift-status.component';
 import { ShiftCompletedEventArgs } from './shift-status/declarations';
 import { RemainingTimeRankComponent } from './remaining-time-rank/remaining-time-rank.component';
+import { RechargePrepaidTariffComponent } from './recharge-prepaid-tariff/recharge-prepaid-tariff.component';
 
 @Component({
   selector: 'ccs3-op-computer-statuses',
@@ -49,6 +55,7 @@ import { RemainingTimeRankComponent } from './remaining-time-rank/remaining-time
     NgClass, MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
     TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
     SecondsFormatterComponent, ExpandButtonComponent, ShiftStatusComponent, RemainingTimeRankComponent,
+    RechargePrepaidTariffComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -60,6 +67,8 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
   private readonly notificationsSvc = inject(NotificationsService);
+  private readonly permissionsSvc = inject(PermissionsService);
+  private readonly secondsFormatterSvc = inject(SecondsFormatterService);
   private readonly sorterSvc = inject(SorterService);
   private readonly tariffSvc = inject(TariffService);
   private readonly destroyRef = inject(DestroyRef);
@@ -93,7 +102,13 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   init(): void {
     this.loadEntities();
     this.subscribeToSubjects();
+    this.applyPermissions();
     // this.requestDeviceStatuses();
+  }
+
+  applyPermissions(): void {
+    const canRechargePrepaidTariffs = this.permissionsSvc.hasPermission(PermissionName.tariffsRechargeDuration);
+    this.signals.canRechargePrepaidTariffs.set(canRechargePrepaidTariffs);
   }
 
   onCompleteShift(args: ShiftCompletedEventArgs): void {
@@ -269,6 +284,36 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     this.processGetAllDevicesReplyMessage(getAllDevicesReplyMsg);
     this.processGetAllTariffsReplyMessage(getAllTariffsReplyMsg);
     this.processGetDeviceStatusesReplyMessage(getDeviceStatusesReplyMsg);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  onRechargePrepaidTariffSelectedTariffChanged(tariff: Tariff): void {
+    this.signals.rechargeTariffResultDescription.set(null);
+  }
+
+  onRechargePrepaidTariff(tariff: Tariff): void {
+    const reqMsg = createRechargeTariffDurationRequestMessage();
+    reqMsg.body.tariffId = tariff.id;
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processRechargeTariffDurationReplyMessage(replyMsg as RechargeTariffDurationReplyMessage));
+  }
+
+  processRechargeTariffDurationReplyMessage(replyMsg: RechargeTariffDurationReplyMessage): void {
+    if (replyMsg.header.failure) {
+      return;
+    }
+    const remainingSecondsComputedValue = this.secondsFormatterSvc.getComputedValue(replyMsg.body.remainingSeconds);
+    const remainingTimeString = this.secondsFormatterSvc.computedValueResultToString(remainingSecondsComputedValue);
+    const description = translate('New remaining time {{remainingTime}}', { remainingTime: remainingTimeString });
+    this.notificationsSvc.show(
+      NotificationType.success,
+      translate('Tariff recharged'),
+      description,
+      IconName.check,
+      replyMsg
+    );
+    this.signals.rechargeTariffResultDescription.set(description);
   }
 
   onTariffSelected(selectedTariff: Tariff, item: DeviceStatusItem): void {
@@ -696,14 +741,23 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       allTariffs: signal([]),
       allTariffsMap: signal(new Map<number, Tariff>()),
       allAvailableTariffs: signal([]),
-      // transferrableDeviceStatusItems: signal([]),
+      allAvailablePrepaidTariffs: signal([]),
       layoutRowsCount: signal(null),
       currentShiftReply: signal(null),
       getAllAllowedDeviceObjectsReplyMsg: signal(null),
       signInInformationNotificationMsgBody: signal(null),
       getAllDeviceGroupsReplyMsg: signal(null),
       allDeviceGroupsMap: signal(new Map<number, DeviceGroup>()),
+      canRechargePrepaidTariffs: signal(false),
+      rechargeTariffResultDescription: signal(null),
     };
+    signals.allAvailablePrepaidTariffs = computed(() => {
+      const allTariffs = Array.from(this.signals.allTariffsMap().values());
+      const allAvailablePrepaidTariffs = allTariffs.filter(x => x.enabled && x.type === TariffType.prepaid);
+      const sortedTariffs = [...allAvailablePrepaidTariffs];
+      this.sorterSvc.sortBy(sortedTariffs, x => x.name);
+      return sortedTariffs;
+    });
     signals.allAvailableTariffs = computed(() => {
       const allTariffs = Array.from(this.signals.allTariffsMap().values());
       const allAvailableTariffs = allTariffs.filter(x => x.enabled && x.type !== TariffType.prepaid);
@@ -732,6 +786,7 @@ interface Signals {
   allTariffs: Signal<Tariff[]>;
   allTariffsMap: WritableSignal<Map<number, Tariff>>;
   allAvailableTariffs: Signal<Tariff[]>;
+  allAvailablePrepaidTariffs: Signal<Tariff[]>;
   // transferrableDeviceStatusItems: WritableSignal<DeviceStatusItem[]>;
   layoutRowsCount: WritableSignal<number | null>;
   currentShiftReply: WritableSignal<GetCurrentShiftStatusReplyMessage | null>;
@@ -739,6 +794,8 @@ interface Signals {
   signInInformationNotificationMsgBody: WritableSignal<SignInInformationNotificationMessageBody | null>;
   getAllDeviceGroupsReplyMsg: WritableSignal<GetAllDeviceGroupsReplyMessage | null>;
   allDeviceGroupsMap: WritableSignal<Map<number, DeviceGroup>>;
+  canRechargePrepaidTariffs: WritableSignal<boolean>;
+  rechargeTariffResultDescription: WritableSignal<string | null>;
 }
 
 interface OptionsVisibility {
