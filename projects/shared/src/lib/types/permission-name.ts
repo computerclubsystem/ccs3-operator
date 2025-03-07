@@ -24,4 +24,6 @@ export enum PermissionName {
   usersForceSignOut = 'users:force-sign-out',
   reportsSignedInUsersRead = 'reports:signed-in-users-read',
   reportsShifts = 'reports:shifts',
+  reportsDeviceSessions = 'reports:device-sessions',
+  diagnosticsFilterServerLogs = 'diagnostics:filter-server-logs',
 }

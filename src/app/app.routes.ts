@@ -5,6 +5,8 @@ export enum QueryParamName {
 }
 
 export enum RouteName {
+  diagnostics = 'diagnostics',
+  diagnosticsFilterServerLogs = 'filter-server-logs',
   signIn = 'sign-in',
   notifications = 'notifications',
   computerStatuses = 'computer-statuses',
@@ -52,6 +54,16 @@ export const routes: Routes = [
   {
     path: RouteName.signedOutSessionStats,
     loadComponent: () => import('@ccs3-operator/signed-out-session-stats').then(x => x.SignedOutSessionStatsComponent),
+  },
+  {
+    path: RouteName.diagnostics,
+    loadComponent: () => import('@ccs3-operator/diagnostics').then(x => x.DiagnosticsComponent),
+    children: [
+      {
+        path: RouteName.diagnosticsFilterServerLogs,
+        loadComponent: () => import('@ccs3-operator/diagnostics/filter-server-logs').then(x => x.FilterServerLogsComponent),
+      },
+    ],
   },
   {
     path: RouteName.systemSettings,

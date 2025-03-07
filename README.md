@@ -12,7 +12,7 @@ npm run watch
 ## Lint
 To add eslint to project:
 ```bash
-npm run ng - generate angular-eslint:add-eslint-to-project {the project name as specified in angular.json}
+npm run ng -- generate angular-eslint:add-eslint-to-project {the project name as specified in angular.json}
 ```
 Sample for the `projects/boolean-indicator`:
 ```bash 

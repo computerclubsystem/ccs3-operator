@@ -743,6 +743,46 @@
           }
         }
       }
+    },
+    "diagnostics": {
+      "projectType": "library",
+      "root": "projects/diagnostics",
+      "sourceRoot": "projects/diagnostics/src",
+      "prefix": "ccs3-op",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/diagnostics/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/diagnostics/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/diagnostics/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/diagnostics/tsconfig.spec.json",
+            "polyfills": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/diagnostics/**/*.ts",
+              "projects/diagnostics/**/*.html"
+            ],
+            "eslintConfig": "projects/diagnostics/eslint.config.js"
+          }
+        }
+      }
     }
   },
   "cli": {

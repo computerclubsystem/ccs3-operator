@@ -5,6 +5,7 @@ export enum MainMenuItemId {
   notifications = 'notifications',
   systemSettings = 'systemSettings',
   reports = 'reports',
+  diagnostics = 'diagnostics',
 }
 
 export type MainMenuItem = MenuItem<MainMenuItemId>;

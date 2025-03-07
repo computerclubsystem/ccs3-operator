@@ -57,6 +57,7 @@ export * from './lib/get-all-allowed-device-objects.messages';
 export * from './lib/set-device-status-note.messages';
 export * from './lib/sign-in-information-notification.message';
 export * from './lib/get-device-completed-sessions.messages';
+export * from './lib/filter-server-logs.messages';
 
 export * from './lib/entities/device-connectivity-item';
 export * from './lib/entities/device';
@@ -78,3 +79,4 @@ export * from './lib/entities/device-group';
 export * from './lib/entities/allowed-device-objects';
 export * from './lib/entities/user-with-total-and-count';
 export * from './lib/entities/device-session';
+export * from './lib/entities/filter-server-logs-item';

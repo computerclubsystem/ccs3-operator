@@ -185,6 +185,9 @@ export class AppComponent implements OnInit {
       case MainMenuItemId.reports:
         this.router.navigate([RouteName.reports]);
         break;
+        case MainMenuItemId.diagnostics:
+          this.router.navigate([RouteName.diagnostics]);
+          break;
     }
   }
 
@@ -425,6 +428,7 @@ export class AppComponent implements OnInit {
       { id: MainMenuItemId.systemSettings, icon: IconName.settings, translationKey: 'System settings' },
       // TODO: Check for any of the required permission
       { id: MainMenuItemId.reports, icon: IconName.query_stats, translationKey: 'Reports' },
+      { id: MainMenuItemId.diagnostics, icon: IconName.troubleshoot, translationKey: 'Diagnostics' },
     ];
     this.internalSubjectsSvc.setMainMenuItems(signedInMainMenuItems);
   }

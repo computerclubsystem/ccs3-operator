@@ -27,4 +27,5 @@ export enum IconName {
   stop_circle = 'stop_circle',
   query_stats = 'query_stats',
   save = 'save',
+  troubleshoot = 'troubleshoot',
 }
