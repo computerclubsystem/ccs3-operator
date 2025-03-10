@@ -8,8 +8,11 @@
           <span>{{t('Tools')}}</span>
           @if(signInNotificationMsgBody) {
           <section class="last-shift-completed-at-section ccs3-op-flex-row ccs3-op-half-gap">
-            <span>{{t('Last shift completed at')}}</span>
-            <span>{{signInNotificationMsgBody.lastShiftCompletedAt | noYearDate}}</span>
+            @let lastShiftTranslationParams = {
+            date: signInNotificationMsgBody.lastShiftCompletedAt | noYearDate,
+            username: signInNotificationMsgBody.lastShiftCompletedByUsername
+            };
+            <span>{{t('Last shift completed at {{date}} by {{username}}', lastShiftTranslationParams)}}</span>
           </section>
           }
         </section>
@@ -21,6 +24,7 @@
             <section class="ccs3-op-computer-statuses-current-shift-status ccs3-op-max-width-medium-text">
               <ccs3-op-shift-status [currentShiftReply]="signals.currentShiftReply()"
                 [lastShiftCompletedAt]="signInNotificationMsgBody?.lastShiftCompletedAt"
+                [lastShiftCompletedBy]="signInNotificationMsgBody?.lastShiftCompletedByUsername"
                 (refreshed)="onRefreshCurrentShiftStatus()"
                 (shiftCompleted)="onCompleteShift($event)"></ccs3-op-shift-status>
             </section>

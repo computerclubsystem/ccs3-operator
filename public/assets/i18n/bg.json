@@ -39,5 +39,6 @@
   "User {{username}} signed out": "Юзърът {{username}} беше логаутнат",
   "You have been signed out by administrator": "Вашата сесия беше прекратена от администратор",
   "Sign in again": "Логване отново",
-  "Session stats": "Статистика за сесията"
+  "Session stats": "Статистика за сесията",
+  "Last shift completed at {{date}} by {{username}}": "Последната смяна е приключена на {{date}} от {{username}}"
 }

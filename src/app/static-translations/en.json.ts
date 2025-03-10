@@ -40,5 +40,6 @@ export const en = {
   "User {{username}} signed out": "User {{username}} signed out",
   "You have been signed out by administrator": "You have been signed out by administrator",
   "Sign in again": "Sign in again",
-  "Session stats": "Session stats"
+  "Session stats": "Session stats",
+  "Last shift completed at {{date}} by {{username}}": "Last shift completed at {{date}} by {{username}}"
 };

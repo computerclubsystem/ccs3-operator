@@ -25,6 +25,7 @@ import { NoYearDatePipe } from '@ccs3-operator/shared';
 export class ShiftStatusComponent {
   currentShiftReply = input<GetCurrentShiftStatusReplyMessage | null>(null);
   lastShiftCompletedAt = input<string | null>();
+  lastShiftCompletedBy = input<string | null>();
   readonly refreshed = output();
   readonly shiftCompleted = output<ShiftCompletedEventArgs>();
 
