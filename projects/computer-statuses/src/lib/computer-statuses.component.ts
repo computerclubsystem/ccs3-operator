@@ -29,8 +29,7 @@ import {
   SignInInformationNotificationMessage, SignInInformationNotificationMessageBody,
   createGetAllDeviceGroupsRequestMessage, GetAllDeviceGroupsReplyMessage, DeviceGroup,
   GetProfileSettingsReplyMessage, UserProfileSettingName, createUpdateProfileSettingsRequestMessage,
-  createRechargeTariffDurationRequestMessage,
-  RechargeTariffDurationReplyMessage
+  createRechargeTariffDurationRequestMessage, RechargeTariffDurationReplyMessage
 } from '@ccs3-operator/messages';
 import {
   InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, PermissionName,
@@ -46,6 +45,8 @@ import { ShiftStatusComponent } from './shift-status/shift-status.component';
 import { ShiftCompletedEventArgs } from './shift-status/declarations';
 import { RemainingTimeRankComponent } from './remaining-time-rank/remaining-time-rank.component';
 import { RechargePrepaidTariffComponent } from './recharge-prepaid-tariff/recharge-prepaid-tariff.component';
+import { BulkActionsComponent } from './bulk-actions/bulk-actions.component';
+import { BulkActionData, BulkActionId, BulkActionSetNoteData } from './bulk-actions/declarations';
 
 @Component({
   selector: 'ccs3-op-computer-statuses',
@@ -55,7 +56,7 @@ import { RechargePrepaidTariffComponent } from './recharge-prepaid-tariff/rechar
     NgClass, MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
     TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
     SecondsFormatterComponent, ExpandButtonComponent, ShiftStatusComponent, RemainingTimeRankComponent,
-    RechargePrepaidTariffComponent,
+    RechargePrepaidTariffComponent, BulkActionsComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -109,6 +110,31 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   applyPermissions(): void {
     const canRechargePrepaidTariffs = this.permissionsSvc.hasPermission(PermissionName.tariffsRechargeDuration);
     this.signals.canRechargePrepaidTariffs.set(canRechargePrepaidTariffs);
+  }
+
+  onExecuteBulkAction(bulkActionData: BulkActionData): void {
+    const actionId = bulkActionData.actionId;
+    switch (actionId) {
+      case BulkActionId.setNote:
+        this.executeSetNoteBulkAction(bulkActionData);
+        break;
+    }
+  }
+
+  executeSetNoteBulkAction(bulkActionData: BulkActionData): void {
+    const setNoteData = bulkActionData.data as BulkActionSetNoteData;
+    const reqMsg = createSetDeviceStatusNoteRequestMessage();
+    reqMsg.body.deviceIds = bulkActionData.deviceIds;
+    reqMsg.body.note = setNoteData.note;
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => {
+      const msg = replyMsg as SetDeviceStatusNoteReplyMessage;
+      if (msg.header.failure) {
+        return;
+      }
+      this.notificationsSvc.show(NotificationType.success, translate('Note has been set'), null, IconName.check, replyMsg);
+    });
   }
 
   onCompleteShift(args: ShiftCompletedEventArgs): void {
@@ -623,7 +649,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
 
   onSetDeviceNote(item: DeviceStatusItem): void {
     const reqMsg = createSetDeviceStatusNoteRequestMessage();
-    reqMsg.body.deviceId = item.device.id;
+    reqMsg.body.deviceIds = [item.device.id];
     reqMsg.body.note = item.newDeviceNote || null;
     this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
       takeUntilDestroyed(this.destroyRef)

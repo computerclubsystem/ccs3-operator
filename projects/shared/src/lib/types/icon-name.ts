@@ -28,4 +28,6 @@ export enum IconName {
   query_stats = 'query_stats',
   save = 'save',
   troubleshoot = 'troubleshoot',
+  schedule = 'schedule',
+  stop = 'stop',
 }

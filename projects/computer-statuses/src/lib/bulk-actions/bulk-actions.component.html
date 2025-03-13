@@ -1,0 +1,61 @@
+<mat-expansion-panel *transloco="let t;" togglePosition="before" class="ccs3-op-bulk-actions">
+  <mat-expansion-panel-header>
+    <span>{{t('Bulk actions')}}</span>
+  </mat-expansion-panel-header>
+  <ng-template matExpansionPanelContent>
+    <section class="ccs3-op-bulk-actions ccs3-op-flex-column">
+      <!-- <section class="global-actions ccs3-op-flex-column">
+
+    </section> -->
+      <section class="groups ccs3-op-flex-column">
+        @for (deviceGroupItem of signals.groupsWithDevices(); track deviceGroupItem.deviceGroup.id) {
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <span>{{deviceGroupItem.deviceGroup.name}}</span>
+          </mat-expansion-panel-header>
+          <section class="ccs3-op-flex-column group-items">
+            <section class="group-devices ccs3-op-max-height-small-text ccs3-op-overflow-auto">
+              <mat-selection-list (selectionChange)="onDevicesSelectionChanged(deviceGroupItem, $event)">
+                @for (deviceItem of deviceGroupItem.devicesWithStatuses; track deviceItem.device.id) {
+                <mat-list-option [value]="deviceItem.device.id">
+                  <section class="ccs3-op-flex-row">
+                    @if (deviceItem.deviceStatus.started) {
+                    <mat-icon [title]="t('Started')">{{iconName.schedule}}</mat-icon>
+                    } @else {
+                    <mat-icon [title]="t('Stopped')">{{iconName.stop_circle}}</mat-icon>
+                    }
+                    <span>{{deviceItem.device.name}}</span>
+                  </section>
+                </mat-list-option>
+                }
+              </mat-selection-list>
+            </section>
+            <section class="ccs3-op-flex-column">
+              <mat-form-field subscriptSizing="dynamic">
+                <mat-label>{{t('Action')}}</mat-label>
+                <mat-select (valueChange)="onGroupActionChanged(deviceGroupItem, $event)">
+                  @for (actionItem of bulkActions; track actionItem.id) {
+                  <mat-option [value]="actionItem.id">{{actionItem.name}}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <section class="action-options">
+                @let actionVisibility = getActionOptionsVisibility(deviceGroupItem.deviceGroup.id);
+                @if (actionVisibility.setNote) {
+                <mat-form-field subscriptSizing="dynamic" class="ccs3-op-full-width">
+                  <mat-label>{{t('Note')}}</mat-label>
+                  <input (input)="onNoteChanged(deviceGroupItem, $event)" matInput />
+                </mat-form-field>
+                } @else if (actionVisibility.start) {
+
+                }
+              </section>
+              <button (click)="onExecute(deviceGroupItem)" mat-flat-button>{{t('Execute')}}</button>
+            </section>
+          </section>
+        </mat-expansion-panel>
+        }
+      </section>
+    </section>
+  </ng-template>
+</mat-expansion-panel>

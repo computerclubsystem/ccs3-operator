@@ -1,7 +1,7 @@
 import { Message, MessageType, ReplyMessage } from '@ccs3-operator/messages';
 
 export interface SetDeviceStatusNoteRequestMessageBody {
-  deviceId: number;
+  deviceIds: number[];
   note: string | null;
 }
 

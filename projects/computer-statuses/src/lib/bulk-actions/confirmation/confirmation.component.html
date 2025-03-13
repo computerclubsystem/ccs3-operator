@@ -1,0 +1,10 @@
+<ng-container *transloco="let t;">
+  <h2 mat-dialog-title>{{data.title}}</h2>
+  <mat-dialog-content>
+    <p>{{data.message}}</p>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-stroked-button (click)="onCancel()">{{t('Cancel')}}</button>
+    <button mat-flat-button (click)="onOk()" cdkFocusInitial>{{t('OK')}}</button>
+  </mat-dialog-actions>
+</ng-container>

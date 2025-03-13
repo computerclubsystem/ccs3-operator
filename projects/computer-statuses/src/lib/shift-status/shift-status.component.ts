@@ -6,6 +6,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 import { GetCurrentShiftStatusReplyMessage } from '@ccs3-operator/messages';
@@ -17,7 +18,7 @@ import { NoYearDatePipe } from '@ccs3-operator/shared';
   selector: 'ccs3-op-shift-status',
   templateUrl: 'shift-status.component.html',
   imports: [
-    ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule,
+    ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatExpansionModule,
     MatCheckboxModule, MatDividerModule, TranslocoDirective, MoneyFormatterComponent, NoYearDatePipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

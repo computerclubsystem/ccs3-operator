@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, Signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 import { Device, DeviceGroup, DeviceStatus, Tariff, TariffType } from '@ccs3-operator/messages';
@@ -9,7 +10,7 @@ import { GroupingService, ItemsGroup, SecondsToTimePipe, SorterService } from '@
 @Component({
   selector: 'ccs3-op-remaining-time-rank',
   templateUrl: 'remaining-time-rank.component.html',
-  imports: [MatCardModule, MatDividerModule, TranslocoDirective, SecondsToTimePipe],
+  imports: [MatCardModule, MatDividerModule, MatExpansionModule, TranslocoDirective, SecondsToTimePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RemainingTimeRankComponent {

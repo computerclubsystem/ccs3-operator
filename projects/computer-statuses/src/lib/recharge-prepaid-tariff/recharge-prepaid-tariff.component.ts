@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { TranslocoDirective } from '@jsverse/transloco';
 
 import { Tariff } from '@ccs3-operator/messages';
@@ -16,7 +17,7 @@ import { TimeConverterService } from '@ccs3-operator/shared';
   selector: 'ccs3-op-recharge-prepaid-tariff',
   templateUrl: 'recharge-prepaid-tariff.component.html',
   imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatCheckboxModule, MatButtonModule, TranslocoDirective
+    MatCheckboxModule, MatButtonModule, MatExpansionModule, TranslocoDirective
   ],
 })
 export class RechargePrepaidTariffComponent implements OnInit {

@@ -41,5 +41,7 @@ export const en = {
   "You have been signed out by administrator": "You have been signed out by administrator",
   "Sign in again": "Sign in again",
   "Session stats": "Session stats",
-  "Last shift completed at {{date}} by {{username}}": "Last shift completed at {{date}} by {{username}}"
+  "Last shift completed at {{date}} by {{username}}": "Last shift completed at {{date}} by {{username}}",
+  "Bulk action '{{action}}'": "Bulk action '{{action}}'",
+  "Do you want to execute action '{{action}}' on devices {{names}}": "Do you want to execute action '{{action}}' on devices {{names}}"
 };
