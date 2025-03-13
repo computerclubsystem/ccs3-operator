@@ -1,12 +1,48 @@
-<mat-expansion-panel *transloco="let t;" togglePosition="before" class="ccs3-op-bulk-actions">
+<mat-expansion-panel *transloco="let t;" togglePosition="before" class="ccs3-op-bulk-actions ccs3-op-primary-border">
   <mat-expansion-panel-header>
     <span>{{t('Bulk actions')}}</span>
   </mat-expansion-panel-header>
   <ng-template matExpansionPanelContent>
     <section class="ccs3-op-bulk-actions ccs3-op-flex-column">
-      <!-- <section class="global-actions ccs3-op-flex-column">
-
-    </section> -->
+      <section class="global-actions ccs3-op-flex-column">
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>{{t('Global action')}}</mat-label>
+          <mat-select (valueChange)="onGlobalActionChanged($event)">
+            <mat-select-trigger>
+              @if(selectedGlobalActionItem) {
+              <section class="ccs3-op-flex-row">
+                <mat-icon>{{selectedGlobalActionItem.iconName}}</mat-icon>
+                <span class="global-action-name">{{selectedGlobalActionItem.name}}</span>
+              </section>
+              }
+            </mat-select-trigger>
+            @for (globalActionItem of globalBulkActions; track globalActionItem.id) {
+            <mat-option [value]="globalActionItem">
+              <section class="ccs3-op-flex-row">
+                <mat-icon>{{globalActionItem.iconName}}</mat-icon>
+                <span class="global-action-name">{{globalActionItem.name}}</span>
+              </section>
+            </mat-option>
+            <!-- <mat-option [value]="globalActionItem.id">
+              <section class="ccs3-op-flex-row">
+                @if(globalActionItem.iconName) {
+                <mat-icon>{{globalActionItem.iconName}}</mat-icon>
+                }
+                <span class="global-action-name">{{globalActionItem.name}}</span>
+              </section>
+            </mat-option> -->
+            }
+          </mat-select>
+        </mat-form-field>
+        <section class="ccs3-op-flex-column">
+          <section class="global-action-options">
+          </section>
+          <button (click)="onExecuteGlobalAction()" [disabled]="!selectedGlobalActionItem" mat-flat-button>
+            {{t('Execute global action')}}
+          </button>
+        </section>
+      </section>
+      <mat-divider></mat-divider>
       <section class="groups ccs3-op-flex-column">
         @for (deviceGroupItem of signals.groupsWithDevices(); track deviceGroupItem.deviceGroup.id) {
         <mat-expansion-panel>
@@ -50,7 +86,7 @@
 
                 }
               </section>
-              <button (click)="onExecute(deviceGroupItem)" mat-flat-button>{{t('Execute')}}</button>
+              <button (click)="onExecuteAction(deviceGroupItem)" mat-flat-button>{{t('Execute')}}</button>
             </section>
           </section>
         </mat-expansion-panel>

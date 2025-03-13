@@ -30,4 +30,6 @@ export enum IconName {
   troubleshoot = 'troubleshoot',
   schedule = 'schedule',
   stop = 'stop',
+  power_settings_new = 'power_settings_new',
+  restart_alt = 'restart_alt',
 }

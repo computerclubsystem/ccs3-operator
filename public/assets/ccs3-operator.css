@@ -24,6 +24,7 @@
   --ccs3-op-table-alternate-background-odd: var(--mat-sys-surface-container-highest);
   --ccs3-op-table-alternate-background-even: var(--mat-sys-surface-container-low);
   --ccs3-op-font-size-half: 0.5rem;
+  --ccs3-op-primary-color: var(--mat-sys-primary);
 }
 
 /* Flex */
@@ -89,6 +90,13 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
 
 .ccs3-op-block-padding {
   padding-block: var(--ccs3-op-padding);
+}
+
+/* Borders */
+.ccs3-op-primary-border {
+  border-width: 1px;
+  border-color: var(--ccs3-op-primary-color);
+  border-style: solid;
 }
 
 /* Spacing */
@@ -258,7 +266,8 @@ table {
   border-spacing: 0;
 }
 
-table th, table td {
+table th,
+table td {
   padding-inline: var(--ccs3-op-half-padding);
 }
 
@@ -326,7 +335,7 @@ ccs3-op-computer-statuses .device-options-expanders ccs3-op-expand-button .expan
 }
 
 ccs3-op-computer-statuses .computer-status-container.will-stop-soon .computer-name,
-ccs3-op-computer-statuses .computer-status-container.will-stop-soon .remaining-time  {
+ccs3-op-computer-statuses .computer-status-container.will-stop-soon .remaining-time {
   background-color: var(--ccs3-op-notification-warn-background-color);
   color: var(--ccs3-op-notification-warn-color);
   padding: var(--ccs3-op-half-padding);

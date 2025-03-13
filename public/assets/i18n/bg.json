@@ -44,5 +44,8 @@
   "Last shift completed at {{date}} by {{username}}": "Последната смяна е приключена на {{date}} от {{username}}",
   "Bulk action '{{action}}'": "Bulk action '{{action}}'",
   "Do you want to execute action '{{action}}' on devices {{names}}": "Искате ли да изпълните действието '{{action}}' на компютри {{names}}",
-  "~ No group ~": " ~ Без група ~"
+  "~ No group ~": " ~ Без група ~",
+  "Do you want to execute global action '{{action}}'": "Искате ли да изпълните глобалното действие '{{action}}'",
+  "Global bulk action '{{action}}'": "Глобално действие '{{action}}'",
+  "Shutdown message was sent to {{count}} computers": "Съобщението за изключване беше изпратено до {{count}} компютъра"
 }

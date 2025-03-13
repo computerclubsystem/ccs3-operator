@@ -37,7 +37,7 @@
             <section class="ccs3-op-bulk-actions ccs3-op-max-width-large-text">
               <ccs3-op-bulk-actions [allDevicesMap]="signals.allDevicesMap()" [allTariffsMap]="signals.allTariffsMap()"
                 [deviceStatuses]="signals.deviceStatuses()" [allDeviceGroupsMap]="signals.allDeviceGroupsMap()"
-                (execute)="onExecuteBulkAction($event)">
+                (execute)="onExecuteBulkAction($event)" (executeGlobal)="onExecuteGlobalBulkAction($event)">
               </ccs3-op-bulk-actions>
             </section>
             @if (signals.canRechargePrepaidTariffs()) {
@@ -49,7 +49,7 @@
             </section>
             }
             <section class="layout-rows-controls ccs3-op-flex-row">
-              <mat-expansion-panel togglePosition="before">
+              <mat-expansion-panel togglePosition="before" class="ccs3-op-primary-border">
                 <mat-expansion-panel-header>
                   <span>{{t('Layout rows')}}</span>
                 </mat-expansion-panel-header>

@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
 
 import { GroupingService, SorterService } from '@ccs3-operator/shared';
@@ -15,14 +16,14 @@ import { Device, DeviceGroup, DeviceStatus, Tariff } from '@ccs3-operator/messag
 import { IconName, IdWithName } from '@ccs3-operator/shared/types';
 import { ConfirmationComponent } from './confirmation/confirmation.component';
 import { ConfirmationComponentData } from './confirmation/declarations';
-import { BulkActionData, BulkActionId, BulkActionSetNoteData } from './declarations';
+import { BulkActionData, BulkActionId, BulkActionSetNoteData, GlobalBulkActionData, GlobalBulkActionId } from './declarations';
 
 @Component({
   selector: 'ccs3-op-bulk-actions',
   templateUrl: 'bulk-actions.component.html',
   imports: [
     MatCardModule, MatExpansionModule, MatListModule, MatButtonModule, MatSelectModule, MatFormFieldModule, MatIconModule,
-    MatInputModule, TranslocoDirective
+    MatInputModule, MatDividerModule, TranslocoDirective
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -32,11 +33,15 @@ export class BulkActionsComponent implements OnInit {
   allDeviceGroupsMap = input<Map<number, DeviceGroup>>();
   deviceStatuses = input<DeviceStatus[]>();
   execute = output<BulkActionData>();
+  executeGlobal = output<GlobalBulkActionData>();
 
+  readonly globalBulkActions = this.createGlobalBulkActionItems();
   readonly bulkActions = this.createBulkActionItems();
   readonly signals = this.createSignals();
   readonly bulkActionId = BulkActionId;
   readonly iconName = IconName;
+
+  selectedGlobalActionItem?: ItemWithIcon<GlobalBulkActionId> | null;
 
   private readonly groupingSvc = inject(GroupingService);
   private readonly sorterSvc = inject(SorterService);
@@ -68,7 +73,41 @@ export class BulkActionsComponent implements OnInit {
     this.deviceGroupNoteMap.set(deviceGroupItem.deviceGroup.id, noteText);
   }
 
-  onExecute(deviceGroupItem: GroupWithDevices): void {
+  onGlobalActionChanged(globalActionItem: ItemWithIcon<GlobalBulkActionId>): void {
+    this.selectedGlobalActionItem = globalActionItem;
+  }
+
+  onExecuteGlobalAction(): void {
+    if (!this.selectedGlobalActionItem) {
+      return;
+    }
+    const confirmationMessage = translate(`Do you want to execute global action '{{action}}'`, {
+      action: this.selectedGlobalActionItem.name,
+    });
+    const confirmationComponentData: ConfirmationComponentData = {
+      title: translate(`Global bulk action '{{action}}'`, { action: this.selectedGlobalActionItem.name }),
+      message: confirmationMessage,
+    };
+    this.matDialog.open(ConfirmationComponent, {
+      data: confirmationComponentData,
+    }).afterClosed().subscribe(dlgResult => dlgResult && this.processGlobalBulkAction(this.selectedGlobalActionItem!.id));
+  }
+
+  processGlobalBulkAction(globalActionId: GlobalBulkActionId): void {
+    const globalBulkData: GlobalBulkActionData = {
+      globalActionId: globalActionId,
+    };
+    // TODO: Use switch when global actions support settings
+    // switch (globalActionId) {
+    //   case GlobalBulkActionId.shutdownStopped:
+    //     break;
+    //   case GlobalBulkActionId.restartStopped:
+    //     break;
+    // }
+    this.executeGlobal.emit(globalBulkData);
+  }
+
+  onExecuteAction(deviceGroupItem: GroupWithDevices): void {
     const groupId = deviceGroupItem.deviceGroup.id;
     const actionId = this.deviceGroupSelectedActionMap.get(groupId);
     if (!actionId) {
@@ -117,6 +156,17 @@ export class BulkActionsComponent implements OnInit {
     return setNoteData;
   }
 
+  getGlobalActionOptionsVisibility(globalActionItem: ItemWithIcon<GlobalBulkActionId>): GlobalActionOptionsVisibility {
+    // TODO: Implement when global actions need settings
+    switch (globalActionItem.id) {
+      case GlobalBulkActionId.shutdownStopped:
+        break;
+      case GlobalBulkActionId.restartStopped:
+        break;
+    }
+    return {};
+  }
+
   getActionOptionsVisibility(groupId: number | undefined | null): ActionOptionsVisibility {
     const groupSelectedActionId = this.deviceGroupSelectedActionMap.get(groupId);
     if (!groupSelectedActionId) {
@@ -153,9 +203,9 @@ export class BulkActionsComponent implements OnInit {
   }
 
   createGroupsWithDevices(devicesMap: Map<number, Device>, deviceGroupsMap: Map<number, DeviceGroup>, deviceStatuses: DeviceStatus[]): GroupWithDevices[] {
-    const devices = Array.from(devicesMap.values());
+    const activeDevices = Array.from(devicesMap.values());
     const result: GroupWithDevices[] = [];
-    const groupedDevices = this.groupingSvc.groupBy(devices, x => x.deviceGroupId);
+    const groupedDevices = this.groupingSvc.groupBy(activeDevices, x => x.deviceGroupId);
     for (const grp of groupedDevices) {
       const deviceGroupId = grp.key;
 
@@ -192,12 +242,31 @@ export class BulkActionsComponent implements OnInit {
     return result;
   }
 
+  createGlobalBulkActionItems(): ItemWithIcon<GlobalBulkActionId>[] {
+    const result: ItemWithIcon<GlobalBulkActionId>[] = [
+      { id: GlobalBulkActionId.shutdownStopped, name: translate('Shutdown stopped'), iconName: IconName.power_settings_new },
+      // { id: GlobalBulkActionId.restartStopped, name: translate('Restart stopped'), iconName: IconName.restart_alt },
+    ];
+    return result;
+  }
+
   createBulkActionItems(): IdWithName[] {
     const result: IdWithName[] = [
       { id: BulkActionId.setNote, name: translate('Set note') }
     ];
     return result;
   }
+}
+
+interface ItemWithIcon<TId> {
+  id: TId;
+  iconName?: IconName | null;
+  name: string;
+}
+
+interface GlobalActionOptionsVisibility {
+  shutdown?: boolean | null;
+  restart?: boolean | null;
 }
 
 interface ActionOptionsVisibility {

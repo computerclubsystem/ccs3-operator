@@ -29,7 +29,8 @@ import {
   SignInInformationNotificationMessage, SignInInformationNotificationMessageBody,
   createGetAllDeviceGroupsRequestMessage, GetAllDeviceGroupsReplyMessage, DeviceGroup,
   GetProfileSettingsReplyMessage, UserProfileSettingName, createUpdateProfileSettingsRequestMessage,
-  createRechargeTariffDurationRequestMessage, RechargeTariffDurationReplyMessage
+  createRechargeTariffDurationRequestMessage, RechargeTariffDurationReplyMessage,
+  createShutdownStoppedRequestMessage, ShutdownStoppedReplyMessage
 } from '@ccs3-operator/messages';
 import {
   InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, PermissionName,
@@ -46,7 +47,7 @@ import { ShiftCompletedEventArgs } from './shift-status/declarations';
 import { RemainingTimeRankComponent } from './remaining-time-rank/remaining-time-rank.component';
 import { RechargePrepaidTariffComponent } from './recharge-prepaid-tariff/recharge-prepaid-tariff.component';
 import { BulkActionsComponent } from './bulk-actions/bulk-actions.component';
-import { BulkActionData, BulkActionId, BulkActionSetNoteData } from './bulk-actions/declarations';
+import { BulkActionData, BulkActionId, BulkActionSetNoteData, GlobalBulkActionData, GlobalBulkActionId } from './bulk-actions/declarations';
 
 @Component({
   selector: 'ccs3-op-computer-statuses',
@@ -110,6 +111,36 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   applyPermissions(): void {
     const canRechargePrepaidTariffs = this.permissionsSvc.hasPermission(PermissionName.tariffsRechargeDuration);
     this.signals.canRechargePrepaidTariffs.set(canRechargePrepaidTariffs);
+  }
+
+  onExecuteGlobalBulkAction(globalBulkActionData: GlobalBulkActionData): void {
+    const globalActionId = globalBulkActionData.globalActionId;
+    switch (globalActionId) {
+      case GlobalBulkActionId.shutdownStopped:
+        this.executeShutdownStoppedGlobalBulkAction();
+        break;
+      case GlobalBulkActionId.restartStopped:
+        this.executeRestartStoppedGlobalBulkAction();
+        break;
+    }
+  }
+
+  executeShutdownStoppedGlobalBulkAction(): void {
+    const reqMsg = createShutdownStoppedRequestMessage();
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => {
+      const msg = replyMsg as ShutdownStoppedReplyMessage;
+      if (msg.header.failure) {
+        return;
+      }
+      const notificationMessage = translate('Shutdown message was sent to {{count}} computers', { count: msg.body.targetsCount });
+      this.notificationsSvc.show(NotificationType.success, notificationMessage, null, IconName.check, replyMsg);
+    });
+  }
+
+  executeRestartStoppedGlobalBulkAction(): void {
+    // TODO: Implement this
   }
 
   onExecuteBulkAction(bulkActionData: BulkActionData): void {
@@ -363,13 +394,12 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     this.signals.getAllAllowedDeviceObjectsReplyMsg.set(getAllAllowedDeviceObjectsReplyMsg);
   }
 
-
   processGetAllDevicesReplyMessage(getAllDevicesReplyMsg: GetAllDevicesReplyMessage): void {
     if (getAllDevicesReplyMsg.header.failure || !getAllDevicesReplyMsg.body.devices) {
       return;
     }
     this.signals.allDevices.set(getAllDevicesReplyMsg.body.devices);
-    const mapItems: [number, Device][] = getAllDevicesReplyMsg.body.devices.map(device => ([device.id, device]));
+    const mapItems: [number, Device][] = getAllDevicesReplyMsg.body.devices.filter(x => x.approved && x.enabled).map(device => ([device.id, device]));
     this.signals.allDevicesMap.set(new Map<number, Device>(mapItems));
     // When all devices are available, we must refresh the signals.deviceStatusItems to show device names
     this.refreshDeviceStatusItemsWithLastNotificationMessage();
@@ -397,7 +427,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     if (!allTariffsReplyMsg.body.tariffs) {
       return;
     }
-    const mapItems: [number, Tariff][] = allTariffsReplyMsg.body.tariffs.map(tariff => [tariff.id, tariff]);
+    const mapItems: [number, Tariff][] = allTariffsReplyMsg.body.tariffs.filter(x => x.enabled).map(tariff => [tariff.id, tariff]);
     this.signals.allTariffsMap.set(new Map<number, Tariff>(mapItems));
     // When all tariffs are available, we must refresh the signals.deviceStatusItems to show tariff names
     this.refreshDeviceStatusItemsWithLastNotificationMessage();

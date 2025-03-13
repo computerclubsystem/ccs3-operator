@@ -1,4 +1,6 @@
 export const enum MessageType {
+  shutdownStoppedRequest = 'shutdown-stopped-request',
+  shutdownStoppedReply = 'shutdown-stopped-reply',
   filterServerLogsRequest = 'filter-server-logs-request',
   filterServerLogsReply = 'filter-server-logs-reply',
   getDeviceCompletedSessionsRequest = 'get-device-completed-sessions-request',
