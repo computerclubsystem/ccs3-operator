@@ -11,7 +11,7 @@
         @for (deviceGroupItem of signals.groupsWithDevices(); track deviceGroupItem.deviceGroup.id) {
         <mat-expansion-panel>
           <mat-expansion-panel-header>
-            <span>{{deviceGroupItem.deviceGroup.name}}</span>
+            <span>{{deviceGroupItem.deviceGroup.name || t('~ No group ~')}}</span>
           </mat-expansion-panel-header>
           <section class="ccs3-op-flex-column group-items">
             <section class="group-devices ccs3-op-max-height-small-text ccs3-op-overflow-auto">

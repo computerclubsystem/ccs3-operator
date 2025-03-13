@@ -24,6 +24,7 @@
   "Settings": "Настройки",
   "System settings": "Системни настройки",
   "Select": "Избор",
+  "Start": "Старт",
   "The tariff '{{tariffName}}' can't be used right now": "Тарифата '{{tariffName}}' не може да се използва в момента",
   "Reply message '{{messageType}}' indicates failure": "Полученото съобщение '{{messageType}}' показва грешка",
   "Request message type '{{requestMessageType}}'": "Тип на заявката '{{requestMessageType}}'",
@@ -42,5 +43,6 @@
   "Session stats": "Статистика за сесията",
   "Last shift completed at {{date}} by {{username}}": "Последната смяна е приключена на {{date}} от {{username}}",
   "Bulk action '{{action}}'": "Bulk action '{{action}}'",
-  "Do you want to execute action '{{action}}' on devices {{names}}": "Искате ли да изпълните действието '{{action}}' на компютри {{names}}"
+  "Do you want to execute action '{{action}}' on devices {{names}}": "Искате ли да изпълните действието '{{action}}' на компютри {{names}}",
+  "~ No group ~": " ~ Без група ~"
 }

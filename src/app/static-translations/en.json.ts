@@ -43,5 +43,6 @@ export const en = {
   "Session stats": "Session stats",
   "Last shift completed at {{date}} by {{username}}": "Last shift completed at {{date}} by {{username}}",
   "Bulk action '{{action}}'": "Bulk action '{{action}}'",
-  "Do you want to execute action '{{action}}' on devices {{names}}": "Do you want to execute action '{{action}}' on devices {{names}}"
+  "Do you want to execute action '{{action}}' on devices {{names}}": "Do you want to execute action '{{action}}' on devices {{names}}",
+  "~ No group ~": " ~ No group ~"
 };
