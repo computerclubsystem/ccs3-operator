@@ -19,54 +19,52 @@
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         @if (toolsExpansionPanel.expanded) {
-        <mat-card-content class="computer-statuses-tools-content">
-          <section class="ccs3-op-flex-row ccs3-op-align-items-flex-start computer-statuses-tools-section">
-            <section class="ccs3-op-computer-statuses-current-shift-status ccs3-op-max-width-medium-text">
-              <ccs3-op-shift-status [currentShiftReply]="signals.currentShiftReply()"
-                [lastShiftCompletedAt]="signInNotificationMsgBody?.lastShiftCompletedAt"
-                [lastShiftCompletedBy]="signInNotificationMsgBody?.lastShiftCompletedByUsername"
-                (refreshed)="onRefreshCurrentShiftStatus()"
-                (shiftCompleted)="onCompleteShift($event)"></ccs3-op-shift-status>
-            </section>
-            <section class="ccs3-op-remaining-time-rank ccs3-op-max-width-medium-text">
-              <ccs3-op-remaining-time-rank [allDevicesMap]="signals.allDevicesMap()"
-                [allTariffsMap]="signals.allTariffsMap()" [deviceStatuses]="signals.deviceStatuses()"
-                [allDeviceGroupsMap]="signals.allDeviceGroupsMap()">
-              </ccs3-op-remaining-time-rank>
-            </section>
-            <section class="ccs3-op-bulk-actions ccs3-op-max-width-large-text">
-              <ccs3-op-bulk-actions [allDevicesMap]="signals.allDevicesMap()" [allTariffsMap]="signals.allTariffsMap()"
-                [deviceStatuses]="signals.deviceStatuses()" [allDeviceGroupsMap]="signals.allDeviceGroupsMap()"
-                (execute)="onExecuteBulkAction($event)" (executeGlobal)="onExecuteGlobalBulkAction($event)">
-              </ccs3-op-bulk-actions>
-            </section>
-            @if (signals.canRechargePrepaidTariffs()) {
-            <section class="ccs3-op-recharge-prepaid-tariff">
-              <ccs3-op-recharge-prepaid-tariff [prepaidTariffs]="signals.allAvailablePrepaidTariffs()"
-                [resultDescription]="signals.rechargeTariffResultDescription()"
-                (selectedTariffChanged)="onRechargePrepaidTariffSelectedTariffChanged($event)"
-                (rechargeTariff)="onRechargePrepaidTariff($event)"></ccs3-op-recharge-prepaid-tariff>
-            </section>
-            }
-            <section class="layout-rows-controls ccs3-op-flex-row">
-              <mat-expansion-panel togglePosition="before" class="ccs3-op-primary-border">
-                <mat-expansion-panel-header>
-                  <span>{{t('Layout rows')}}</span>
-                </mat-expansion-panel-header>
-
-                <section class="layout-rows-modification-container ccs3-op-flex-row ccs3-no-gap">
-                  <button (click)="onDecreaseLayoutRows()" mat-icon-button>
-                    <mat-icon>{{iconName.remove}}</mat-icon>
-                  </button>
-                  <span>{{signals.layoutRowsCount()}}</span>
-                  <button (click)="onIncreaseLayoutRows()" mat-icon-button>
-                    <mat-icon>{{iconName.add}}</mat-icon>
-                  </button>
-                </section>
-              </mat-expansion-panel>
-            </section>
+        <section class="ccs3-op-flex-row ccs3-op-align-items-flex-start computer-statuses-tools-section">
+          <section class="ccs3-op-computer-statuses-current-shift-status ccs3-op-max-width-medium-text">
+            <ccs3-op-shift-status [currentShiftReply]="signals.currentShiftReply()"
+              [lastShiftCompletedAt]="signInNotificationMsgBody?.lastShiftCompletedAt"
+              [lastShiftCompletedBy]="signInNotificationMsgBody?.lastShiftCompletedByUsername"
+              (refreshed)="onRefreshCurrentShiftStatus()"
+              (shiftCompleted)="onCompleteShift($event)"></ccs3-op-shift-status>
           </section>
-        </mat-card-content>
+          <section class="ccs3-op-remaining-time-rank ccs3-op-max-width-medium-text">
+            <ccs3-op-remaining-time-rank [allDevicesMap]="signals.allDevicesMap()"
+              [allTariffsMap]="signals.allTariffsMap()" [deviceStatuses]="signals.deviceStatuses()"
+              [allDeviceGroupsMap]="signals.allDeviceGroupsMap()">
+            </ccs3-op-remaining-time-rank>
+          </section>
+          <section class="ccs3-op-bulk-actions ccs3-op-max-width-large-text">
+            <ccs3-op-bulk-actions [allDevicesMap]="signals.allDevicesMap()" [allTariffsMap]="signals.allTariffsMap()"
+              [deviceStatuses]="signals.deviceStatuses()" [allDeviceGroupsMap]="signals.allDeviceGroupsMap()"
+              (execute)="onExecuteBulkAction($event)" (executeGlobal)="onExecuteGlobalBulkAction($event)">
+            </ccs3-op-bulk-actions>
+          </section>
+          @if (signals.canRechargePrepaidTariffs()) {
+          <section class="ccs3-op-recharge-prepaid-tariff">
+            <ccs3-op-recharge-prepaid-tariff [prepaidTariffs]="signals.allAvailablePrepaidTariffs()"
+              [resultDescription]="signals.rechargeTariffResultDescription()"
+              (selectedTariffChanged)="onRechargePrepaidTariffSelectedTariffChanged($event)"
+              (rechargeTariff)="onRechargePrepaidTariff($event)"></ccs3-op-recharge-prepaid-tariff>
+          </section>
+          }
+          <section class="layout-rows-controls ccs3-op-flex-row">
+            <mat-expansion-panel togglePosition="before" class="ccs3-op-primary-border">
+              <mat-expansion-panel-header>
+                <span>{{t('Layout rows')}}</span>
+              </mat-expansion-panel-header>
+
+              <section class="layout-rows-modification-container ccs3-op-flex-row ccs3-no-gap">
+                <button (click)="onDecreaseLayoutRows()" mat-icon-button>
+                  <mat-icon>{{iconName.remove}}</mat-icon>
+                </button>
+                <span>{{signals.layoutRowsCount()}}</span>
+                <button (click)="onIncreaseLayoutRows()" mat-icon-button>
+                  <mat-icon>{{iconName.add}}</mat-icon>
+                </button>
+              </section>
+            </mat-expansion-panel>
+          </section>
+        </section>
         }
       </ng-template>
     </mat-expansion-panel>
