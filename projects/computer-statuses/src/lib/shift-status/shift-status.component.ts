@@ -13,13 +13,14 @@ import { GetCurrentShiftStatusReplyMessage } from '@ccs3-operator/messages';
 import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { ShiftCompletedEventArgs } from './declarations';
 import { NoYearDatePipe } from '@ccs3-operator/shared';
+import { ExpandButtonComponent, ExpandButtonType } from '@ccs3-operator/expand-button';
 
 @Component({
   selector: 'ccs3-op-shift-status',
   templateUrl: 'shift-status.component.html',
   imports: [
     ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatExpansionModule,
-    MatCheckboxModule, MatDividerModule, TranslocoDirective, MoneyFormatterComponent, NoYearDatePipe
+    MatCheckboxModule, MatDividerModule, TranslocoDirective, MoneyFormatterComponent, ExpandButtonComponent, NoYearDatePipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -29,6 +30,7 @@ export class ShiftStatusComponent {
   lastShiftCompletedBy = input<string | null>();
   readonly refreshed = output();
   readonly shiftCompleted = output<ShiftCompletedEventArgs>();
+  readonly expandButtonType = ExpandButtonType;
 
   private readonly formBuilder = inject(FormBuilder);
   form = this.createForm();

@@ -8,86 +8,25 @@
       @let lastShiftCompletedAtValue = lastShiftCompletedAt();
       @let lastShiftCompletedByUsernameValue = lastShiftCompletedBy();
       <mat-card-content>
-        <section class="ccs3-op-flex-column">
+        <section class="ccs3-op-flex-row ccs3-op-align-items-flex-start">
           @if (replyMessage) {
           @let shiftStatus = replyMessage.body.shiftStatus;
 
-          <mat-card class="ccs3-op-flex-column running-sessions-card">
-            <mat-card-title class="running-sessions-cart-title ccs3-op-success-color">
-              <section class="ccs3-op-flex-row ccs3-op-align-items-flex-end">
-                <span>{{t('Running')}}</span>
-                <span>=</span>
-                <ccs3-op-money-formatter class="running-devices-total ccs3-op-font-size-double"
-                  [value]="shiftStatus.runningTotal"></ccs3-op-money-formatter>
-              </section>
-            </mat-card-title>
-            <mat-card-content class="ccs3-op-mat-card-content-no-padding running-sessions-card-content">
-              <section class="ccs3-op-flex-column">
-                <table class="ccs3-op-no-alt-colors running-sessions-table">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      <th class="ccs3-op-align-text-end">{{t('Total')}}</th>
-                      <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{{t('Running devices')}}</td>
-                      <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
-                          [value]="shiftStatus.runningSessionsTotal"></ccs3-op-money-formatter>
-                      </td>
-                      <td class="ccs3-op-align-text-end">{{shiftStatus.runningSessionsCount}}</td>
-                    </tr>
-                    <tr>
-                      <td>{{t('Continuations')}}</td>
-                      <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
-                          [value]="shiftStatus.continuationsTotal"></ccs3-op-money-formatter>
-                      </td>
-                      <td class="ccs3-op-align-text-end">{{shiftStatus.continuationsCount}}</td>
-                    </tr>
-                  </tbody>
-                </table>
-                @if (shiftStatus.runningSummaryByUser && shiftStatus.runningSummaryByUser.length > 0) {
-                <section class="running-sessions-summary-by-user ccs3-op-flex-column">
-                  <span>{{t('Running summary by user')}}</span>
-                  <table class="ccs3-op-no-alt-colors running-sessions-summary-by-user-table">
-                    <thead>
-                      <tr>
-                        <th class="ccs3-op-align-text-start">{{t('Username')}}</th>
-                        <th class="ccs3-op-align-text-end">{{t('Total')}}</th>
-                        <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @for (runningSummaryItem of shiftStatus.runningSummaryByUser; track runningSummaryItem.username)
-                      {
-                      <tr>
-                        <td class="ccs3-op-align-text-start">{{runningSummaryItem.username}}</td>
-                        <td class="ccs3-op-align-text-end">
-                          <ccs3-op-money-formatter [value]="runningSummaryItem.total"></ccs3-op-money-formatter>
-                        </td>
-                        <td class="ccs3-op-align-text-end">{{runningSummaryItem.count}}</td>
-                      </tr>
-                      }
-                    </tbody>
-                  </table>
-                </section>
-                }
-              </section>
-            </mat-card-content>
-          </mat-card>
-
-          <mat-divider></mat-divider>
-
           <mat-card class="ccs3-op-flex-column completed-sessions-card">
             <mat-card-title class="completed-sessions-card-title ccs3-op-success-color">
-              <section class="ccs3-op-flex-row ccs3-op-align-items-flex-end">
-                <span>{{t('Completed')}}</span>
-                <span>=</span>
-                <ccs3-op-money-formatter class="running-devices-total ccs3-op-font-size-double"
-                  [value]="shiftStatus.completedTotal">
-                </ccs3-op-money-formatter>
+              <section class="ccs3-op-flex-row ccs3-op-half-gap">
+                <ccs3-op-expand-button
+                  (click)="completedDetailsExpansionPanel.expanded = !completedDetailsExpansionPanel.expanded;"
+                  [isExpanded]="completedDetailsExpansionPanel.expanded" [type]="expandButtonType.matIconButton"
+                  [title]="t('Completed details')">
+                </ccs3-op-expand-button>
+                <section class="ccs3-op-flex-row ccs3-op-align-items-flex-end">
+                  <span>{{t('Completed')}}</span>
+                  <span>=</span>
+                  <ccs3-op-money-formatter class="running-devices-total ccs3-op-font-size-double"
+                    [value]="shiftStatus.completedTotal">
+                  </ccs3-op-money-formatter>
+                </section>
               </section>
             </mat-card-title>
             <mat-card-content class="ccs3-op-mat-card-content-no-padding completed-sessions-card-content">
@@ -99,13 +38,6 @@
                     <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>{{t('Completed sessions')}}</td>
-                      <td class="ccs3-op-align-text-end">
-                        <ccs3-op-money-formatter [value]="shiftStatus.completedSessionsTotal"></ccs3-op-money-formatter>
-                      </td>
-                      <td class="ccs3-op-align-text-end">{{shiftStatus.completedSessionsCount}}</td>
-                    </tr>
                     <tr>
                       <td>{{t('Created prepaid tariffs')}}</td>
                       <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
@@ -122,34 +54,147 @@
                     </tr>
                   </tbody>
                 </table>
-                @if (shiftStatus.completedSummaryByUser && shiftStatus.completedSummaryByUser.length > 0) {
-                <section class="completed-sessions-summary-by-user ccs3-op-flex-column">
-                  <span>{{t('Completed summary by user')}}</span>
-                  <table class="ccs3-op-no-alt-colors completed-sessions-summary-by-user-table">
-                    <thead>
-                      <tr>
-                        <th class="ccs3-op-align-text-start">{{t('Username')}}</th>
-                        <th class="ccs3-op-align-text-end">{{t('Total')}}</th>
-                        <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @for (completedSummaryItem of shiftStatus.completedSummaryByUser; track
-                      completedSummaryItem.username)
-                      {
-                      <tr>
-                        <td class="ccs3-op-align-text-start">{{completedSummaryItem.username}}</td>
-                        <td class="ccs3-op-align-text-end">
-                          <ccs3-op-money-formatter [value]="completedSummaryItem.total"></ccs3-op-money-formatter>
-                        <td class="ccs3-op-align-text-end">{{completedSummaryItem.count}}</td>
-                      </tr>
-                      }
-                    </tbody>
-                  </table>
-                </section>
-                }
               </section>
             </mat-card-content>
+            <mat-expansion-panel #completedDetailsExpansionPanel>
+              <ng-template matExpansionPanelContent>
+                @if (completedDetailsExpansionPanel.expanded) {
+                <mat-card-content class="ccs3-op-mat-card-content-no-padding completed-sessions-card-content">
+                  <section class="ccs3-op-flex-column">
+                    <table class="ccs3-op-no-alt-colors completed-sessions-table">
+                      <thead>
+                        <th></th>
+                        <th class="ccs3-op-align-text-end">{{t('Total')}}</th>
+                        <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{{t('Completed sessions')}}</td>
+                          <td class="ccs3-op-align-text-end">
+                            <ccs3-op-money-formatter
+                              [value]="shiftStatus.completedSessionsTotal"></ccs3-op-money-formatter>
+                          </td>
+                          <td class="ccs3-op-align-text-end">{{shiftStatus.completedSessionsCount}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    @if (shiftStatus.completedSummaryByUser && shiftStatus.completedSummaryByUser.length > 0) {
+                    <section class="completed-sessions-summary-by-user ccs3-op-flex-column">
+                      <span>{{t('Completed summary by user')}}</span>
+                      <table class="ccs3-op-no-alt-colors completed-sessions-summary-by-user-table">
+                        <thead>
+                          <tr>
+                            <th class="ccs3-op-align-text-start">{{t('Username')}}</th>
+                            <th class="ccs3-op-align-text-end">{{t('Total')}}</th>
+                            <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (completedSummaryItem of shiftStatus.completedSummaryByUser; track
+                          completedSummaryItem.username)
+                          {
+                          <tr>
+                            <td class="ccs3-op-align-text-start">{{completedSummaryItem.username}}</td>
+                            <td class="ccs3-op-align-text-end">
+                              <ccs3-op-money-formatter [value]="completedSummaryItem.total"></ccs3-op-money-formatter>
+                            <td class="ccs3-op-align-text-end">{{completedSummaryItem.count}}</td>
+                          </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </section>
+                    }
+                  </section>
+                </mat-card-content>
+                }
+              </ng-template>
+            </mat-expansion-panel>
+          </mat-card>
+
+          <mat-divider></mat-divider>
+
+          <mat-card class="ccs3-op-flex-column running-sessions-card">
+            <mat-card-title class="running-sessions-cart-title ccs3-op-success-color">
+              <section class="ccs3-op-flex-row ccs3-op-half-gap">
+                <ccs3-op-expand-button
+                  (click)="runningDetailsExpansionPanel.expanded = !runningDetailsExpansionPanel.expanded;"
+                  [isExpanded]="runningDetailsExpansionPanel.expanded" [type]="expandButtonType.matIconButton"
+                  [title]="t('Running details')">
+                </ccs3-op-expand-button>
+                <section class="ccs3-op-flex-row ccs3-op-align-items-flex-end">
+                  <span>{{t('Running')}}</span>
+                  <span>=</span>
+                  <ccs3-op-money-formatter class="running-devices-total ccs3-op-font-size-double"
+                    [value]="shiftStatus.runningTotal"></ccs3-op-money-formatter>
+                </section>
+              </section>
+            </mat-card-title>
+            <mat-expansion-panel #runningDetailsExpansionPanel>
+              <ng-template matExpansionPanelContent>
+                @if (runningDetailsExpansionPanel.expanded) {
+                <mat-card-content class="ccs3-op-mat-card-content-no-padding running-sessions-card-content">
+                  <section class="ccs3-op-flex-column">
+                    <table class="ccs3-op-no-alt-colors running-sessions-table">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th class="ccs3-op-align-text-end">{{t('Total')}}</th>
+                          <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{{t('Running devices')}}</td>
+                          <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                              [value]="shiftStatus.runningSessionsTotal"></ccs3-op-money-formatter>
+                          </td>
+                          <td class="ccs3-op-align-text-end">{{shiftStatus.runningSessionsCount}}</td>
+                        </tr>
+                        <tr>
+                          <td>{{t('Continuations')}}</td>
+                          <td class="ccs3-op-align-text-end"><ccs3-op-money-formatter
+                              [value]="shiftStatus.continuationsTotal"></ccs3-op-money-formatter>
+                          </td>
+                          <td class="ccs3-op-align-text-end">{{shiftStatus.continuationsCount}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    @if (shiftStatus.runningSummaryByUser && shiftStatus.runningSummaryByUser.length > 0) {
+                    <section class="running-sessions-summary-by-user ccs3-op-flex-column">
+                      <span>{{t('Running summary by user')}}</span>
+                      <table class="ccs3-op-no-alt-colors running-sessions-summary-by-user-table">
+                        <thead>
+                          <tr>
+                            <th class="ccs3-op-align-text-start">{{t('Username')}}</th>
+                            <th class="ccs3-op-align-text-end">{{t('Total')}}</th>
+                            <th class="ccs3-op-align-text-end">{{t('Count')}}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @for (runningSummaryItem of shiftStatus.runningSummaryByUser; track
+                          runningSummaryItem.username)
+                          {
+                          <tr>
+                            <td class="ccs3-op-align-text-start">{{runningSummaryItem.username}}</td>
+                            <td class="ccs3-op-align-text-end">
+                              <ccs3-op-money-formatter [value]="runningSummaryItem.total"></ccs3-op-money-formatter>
+                            </td>
+                            <td class="ccs3-op-align-text-end">{{runningSummaryItem.count}}</td>
+                          </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </section>
+                    }
+                  </section>
+                  <!-- <mat-expansion-panel togglePosition="before">
+                <mat-expansion-panel-header>
+                </mat-expansion-panel-header>
+              </mat-expansion-panel> -->
+                </mat-card-content>
+                }
+              </ng-template>
+            </mat-expansion-panel>
           </mat-card>
           }
         </section>
