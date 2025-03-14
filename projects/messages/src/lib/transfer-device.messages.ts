@@ -5,6 +5,7 @@ import { MessageType } from './declarations/message-type';
 export interface TransferDeviceRequestMessageBody {
   sourceDeviceId: number;
   targetDeviceId: number;
+  transferNote?: boolean | null;
 }
 
 export type TransferDeviceRequestMessage = Message<TransferDeviceRequestMessageBody>;

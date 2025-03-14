@@ -11,6 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
 import { filter, forkJoin, Observable } from 'rxjs';
 
@@ -55,7 +56,7 @@ import { BulkActionData, BulkActionId, BulkActionSetNoteData, GlobalBulkActionDa
   styleUrls: ['computer-statuses.component.css'],
   imports: [
     NgClass, MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
-    TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
+    MatCheckboxModule, TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
     SecondsFormatterComponent, ExpandButtonComponent, ShiftStatusComponent, RemainingTimeRankComponent,
     RechargePrepaidTariffComponent, BulkActionsComponent,
   ],
@@ -593,6 +594,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     deviceStatusItem.stopNote = currentStatusItem?.stopNote;
     deviceStatusItem.newDeviceNote = currentStatusItem?.newDeviceNote;
     deviceStatusItem.selectedTransferToDeviceId = currentStatusItem?.selectedTransferToDeviceId;
+    deviceStatusItem.transferNote = currentStatusItem?.transferNote;
     deviceStatusItem.selectedContinueWithTariffId = currentStatusItem?.selectedContinueWithTariffId;
     deviceStatusItem.deviceConnectivity = currentStatusItem?.deviceConnectivity;
     deviceStatusItem.optionsVisibility = currentStatusItem?.optionsVisibility ? currentStatusItem?.optionsVisibility : {
@@ -711,6 +713,10 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     sourceItem.selectedTransferToDeviceId = transferToDeviceId;
   }
 
+  onTransferNoteChanged(change: MatCheckboxChange, sourceItem: DeviceStatusItem): void {
+    sourceItem.transferNote = change.checked;
+  }
+
   onContinueWithChanged(tariffId: number, sourceItem: DeviceStatusItem): void {
     sourceItem.selectedContinueWithTariffId = tariffId;
   }
@@ -756,6 +762,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     const requestMsg = createTransferDeviceRequestMessage();
     requestMsg.body.sourceDeviceId = sourceDeviceId;
     requestMsg.body.targetDeviceId = targetDeviceId;
+    requestMsg.body.transferNote = item.transferNote;
     this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(replyMsg => this.processTransferDeviceReplyMessage(replyMsg as TransferDeviceReplyMessage));
@@ -875,6 +882,7 @@ interface DeviceStatusItem {
   deviceNote?: string | null;
   newDeviceNote?: string | null;
   selectedTransferToDeviceId?: number | null;
+  transferNote?: boolean | null;
   selectedContinueWithTariffId?: number | null;
   deviceConnectivity?: DeviceConnectivityItem | null;
   optionsVisibility: OptionsVisibility;
