@@ -145,6 +145,10 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   text-align: end;
 }
 
+.ccs3-op-vertical-align-baseline {
+  vertical-align: baseline;
+}
+
 /* Size */
 .ccs3-op-full-width {
   width: 100%;
