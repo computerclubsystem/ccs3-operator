@@ -110,6 +110,9 @@
       "@ccs3-operator/diagnostics/filter-server-logs": [
         "projects/diagnostics/src/lib/filter-server-logs/public-api.ts"
       ],
+      "@ccs3-operator/linked-lists": [
+        "projects/linked-lists/src/public-api.ts"
+      ],
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

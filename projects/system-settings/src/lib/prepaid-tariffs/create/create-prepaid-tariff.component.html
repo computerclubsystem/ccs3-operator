@@ -16,90 +16,97 @@
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    @if (!signals.isLoading()) {
-    <form [formGroup]="form" class="ccs3-op-flex-column ccs3-op-max-width-large-text">
-      <mat-form-field>
-        <mat-label>{{t('Name')}}</mat-label>
-        <input matInput type="text" [formControl]="form.controls.name" autocomplete="off" />
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{t('Description')}}</mat-label>
-        <input matInput type="text" [formControl]="form.controls.description" autocomplete="off" />
-      </mat-form-field>
-      <mat-checkbox [formControl]="form.controls.enabled">{{t('Active')}}</mat-checkbox>
-      <mat-form-field>
-        <mat-label>{{t('Duration')}}</mat-label>
-        <input matInput type="text" [formControl]="durationFormControls.duration" autocomplete="off" />
-        <mat-hint>{{t('Duration in "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-hint>
-        @if (signals.durationHasNotTwoPartsError()) {
-        <mat-error>{{t('Use "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-error>
-        }
-        @if (signals.durationHasOutOfRangeError()) {
-        <mat-error>{{t('Hours must be 0 or greater. Minutes must be between 0 and 59')}}</mat-error>
-        }
-        @if (signals.durationHasInvalidCharError()) {
-        <mat-error>{{t('Invalid character. Use "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-error>
-        }
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{t('Price')}}</mat-label>
-        <input matInput type="number" [formControl]="form.controls.price" autocomplete="off" />
-        <mat-hint>Use dot as separator - 1.50, 4.00, 10.50 etc.</mat-hint>
-        @if (signals.priceHasError()) {
-        <mat-error>{{t('Invalid number. Use only digits and dot as separator - 1.50, 4.00, 10.50 etc.')}}</mat-error>
-        }
-      </mat-form-field>
-      @if (!signals.isCreate()) {
-      <section class="ccs3-op-flex-row">
-        <mat-label>{{t('Remaining time')}}</mat-label>
-        <ccs3-op-seconds-formatter [value]="tariff?.remainingSeconds"></ccs3-op-seconds-formatter>
-      </section>
-      <section class="add-tariff-duration">
-        @let translationParams = {duration: signals.initialDuration(), price: signals.initialPrice()};
+    <section class="card-content ccs3-op-flex-row ccs3-op-align-items-flex-start">
+      @if (!signals.isLoading()) {
+      <form [formGroup]="form" class="ccs3-op-flex-column ccs3-op-width-medium-text">
+        <mat-form-field>
+          <mat-label>{{t('Name')}}</mat-label>
+          <input matInput type="text" [formControl]="form.controls.name" autocomplete="off" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{t('Description')}}</mat-label>
+          <input matInput type="text" [formControl]="form.controls.description" autocomplete="off" />
+        </mat-form-field>
+        <mat-checkbox [formControl]="form.controls.enabled">{{t('Active')}}</mat-checkbox>
+        <mat-form-field>
+          <mat-label>{{t('Duration')}}</mat-label>
+          <input matInput type="text" [formControl]="durationFormControls.duration" autocomplete="off" />
+          <mat-hint>{{t('Duration in "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-hint>
+          @if (signals.durationHasNotTwoPartsError()) {
+          <mat-error>{{t('Use "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-error>
+          }
+          @if (signals.durationHasOutOfRangeError()) {
+          <mat-error>{{t('Hours must be 0 or greater. Minutes must be between 0 and 59')}}</mat-error>
+          }
+          @if (signals.durationHasInvalidCharError()) {
+          <mat-error>{{t('Invalid character. Use "hours:minutes" format - 0:30, 2:00, 10:30 etc.')}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{t('Price')}}</mat-label>
+          <input matInput type="number" [formControl]="form.controls.price" autocomplete="off" />
+          <mat-hint>Use dot as separator - 1.50, 4.00, 10.50 etc.</mat-hint>
+          @if (signals.priceHasError()) {
+          <mat-error>{{t('Invalid number. Use only digits and dot as separator - 1.50, 4.00, 10.50 etc.')}}</mat-error>
+          }
+        </mat-form-field>
+        @if (!signals.isCreate()) {
         <section class="ccs3-op-flex-row">
-          <mat-checkbox #rechargeCheckbox>{{t('Allow recharge')}}</mat-checkbox>
-          <button (click)="onRecharge(); rechargeCheckbox.checked = false;" [disabled]="!rechargeCheckbox.checked"
-            mat-flat-button>
-            {{t('Recharge duration {{duration}} for price {{price}}', translationParams)}}
-          </button>
+          <mat-label>{{t('Remaining time')}}</mat-label>
+          <ccs3-op-seconds-formatter [value]="tariff?.remainingSeconds"></ccs3-op-seconds-formatter>
         </section>
-      </section>
-      }
-      <mat-checkbox [formControl]="form.controls.canBeStartedByCustomer">
-        {{t('Can be started by customer')}}
-      </mat-checkbox>
-      @if (!signals.isCreate()) {
-      <mat-checkbox [formControl]="form.controls.setPassword">{{t('Set password')}}</mat-checkbox>
-      }
-      @if (signals.showPasswords()) {
-      @let passwordsAreDifferent = hasPasswordsNotEqualError();
-      <mat-form-field>
-        <mat-label>{{t('Password')}}</mat-label>
-        <input matInput type="password" name="new-password" [formControl]="form.controls.password"
-          autocomplete="new-password" />
-        @if (passwordsAreDifferent){
-        <mat-error>{{t('Passwords do not match')}}</mat-error>
+        <section class="add-tariff-duration">
+          @let translationParams = {duration: signals.initialDuration(), price: signals.initialPrice()};
+          <section class="ccs3-op-flex-row">
+            <mat-checkbox #rechargeCheckbox>{{t('Allow recharge')}}</mat-checkbox>
+            <button (click)="onRecharge(); rechargeCheckbox.checked = false;" [disabled]="!rechargeCheckbox.checked"
+              mat-flat-button>
+              {{t('Recharge duration {{duration}} for price {{price}}', translationParams)}}
+            </button>
+          </section>
+        </section>
         }
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>{{t('Confirm password')}}</mat-label>
-        <input matInput type="password" name="confirm-new-password" [formControl]="form.controls.confirmPassword"
-          autocomplete="new-password" />
-        @if (passwordsAreDifferent){
-        <mat-error>{{t('Passwords do not match')}}</mat-error>
+        <mat-checkbox [formControl]="form.controls.canBeStartedByCustomer">
+          {{t('Can be started by customer')}}
+        </mat-checkbox>
+        @if (!signals.isCreate()) {
+        <mat-checkbox [formControl]="form.controls.setPassword">{{t('Set password')}}</mat-checkbox>
         }
-      </mat-form-field>
+        @if (signals.showPasswords()) {
+        @let passwordsAreDifferent = hasPasswordsNotEqualError();
+        <mat-form-field>
+          <mat-label>{{t('Password')}}</mat-label>
+          <input matInput type="password" name="new-password" [formControl]="form.controls.password"
+            autocomplete="new-password" />
+          @if (passwordsAreDifferent){
+          <mat-error>{{t('Passwords do not match')}}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{t('Confirm password')}}</mat-label>
+          <input matInput type="password" name="confirm-new-password" [formControl]="form.controls.confirmPassword"
+            autocomplete="new-password" />
+          @if (passwordsAreDifferent){
+          <mat-error>{{t('Passwords do not match')}}</mat-error>
+          }
+        </mat-form-field>
+        }
+        @let createdTariff = signals.createdTariff();
+        @if (createdTariff) {
+        <section class="ccs3-op-flex-row">
+          <span>{{t('Created tariff ID:')}}</span>
+          <span>{{createdTariff.id}}</span>
+        </section>
+        }
+      </form>
+      <ccs3-op-linked-lists [availableItemsTitle]="t('Available device groups')"
+        [availableItems]="signals.availableDeviceGroups()" [selectedItemsTitle]="t('Tariff device groups')"
+        [selectedItems]="signals.tariffDeviceGroups()">
+      </ccs3-op-linked-lists>
       }
-      @let createdTariff = signals.createdTariff();
-      @if (createdTariff) {
-      <section class="ccs3-op-flex-row">
-        <span>{{t('Created tariff ID:')}}</span>
-        <span>{{createdTariff.id}}</span>
-      </section>
-      }
-    </form>
-    }
+    </section>
   </mat-card-content>
+  <mat-divider></mat-divider>
   <mat-card-actions>
     <section class="ccs3-op-flex-row">
       @let saveButtonText = signals.isCreate() ? t('Create') : t('Update');

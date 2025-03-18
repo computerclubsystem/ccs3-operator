@@ -1,4 +1,6 @@
 export const enum MessageType {
+  getTariffDeviceGroupsRequest = 'get-tariff-device-groups-request',
+  getTariffDeviceGroupsReply = 'get-tariff-device-groups-reply',
   shutdownStoppedRequest = 'shutdown-stopped-request',
   shutdownStoppedReply = 'shutdown-stopped-reply',
   filterServerLogsRequest = 'filter-server-logs-request',

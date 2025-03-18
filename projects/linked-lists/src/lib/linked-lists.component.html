@@ -1,0 +1,36 @@
+<section class="linked-list-section ccs3-op-flex-row ccs3-op-align-items-flex-start">
+  <section class="available-items ccs3-op-flex-column">
+    <span class="ccs3-op-header-1">{{availableItemsTitle()}}</span>
+    <mat-divider></mat-divider>
+    <div class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
+      @for (availableItem of availableItems(); track availableItem.id) {
+      <section class="ccs3-op-flex-column">
+        <section class="ccs3-op-flex-row ccs3-op-flex-no-wrap ccs3-op-half-gap">
+          <button (click)="onAddToSelectedItems(availableItem)" mat-icon-button>
+            <mat-icon class="ccs3-op-success-color">{{iconName.add}}</mat-icon>
+          </button>
+          <span class="available-item-name">{{availableItem.name}}</span>
+        </section>
+      </section>
+      <mat-divider></mat-divider>
+      }
+    </div>
+  </section>
+  <section class="selected-items ccs3-op-flex-column">
+    <span class="ccs3-op-header-1">{{selectedItemsTitle()}}</span>
+    <mat-divider></mat-divider>
+    <div class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
+      @for (selectedItem of selectedItems(); track selectedItem.id) {
+      <section class="ccs3-op-flex-column">
+        <section class="ccs3-op-flex-row ccs3-op-flex-no-wrap ccs3-op-half-gap">
+          <button (click)="onRemoveFromSelectedItems(selectedItem)" mat-icon-button>
+            <mat-icon class="ccs3-op-error-color">{{iconName.remove}}</mat-icon>
+          </button>
+          <span class="selected-item-name">{{selectedItem.name}}</span>
+        </section>
+      </section>
+      <mat-divider></mat-divider>
+      }
+    </div>
+  </section>
+</section>

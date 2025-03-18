@@ -1,7 +1,7 @@
 import { WritableSignal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { Tariff } from '@ccs3-operator/messages';
+import { DeviceGroup, Tariff } from '@ccs3-operator/messages';
 import { NumericIdWithName } from '@ccs3-operator/shared/types';
 
 export interface FormControls {
@@ -38,4 +38,6 @@ export interface Signals {
   isCreate: WritableSignal<boolean>;
   isLoading: WritableSignal<boolean>;
   tariff: WritableSignal<Tariff | null>;
+  tariffDeviceGroups: WritableSignal<DeviceGroup[]>;
+  availableDeviceGroups: WritableSignal<DeviceGroup[]>;
 }

@@ -9,14 +9,20 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
+import { forkJoin, Observable } from 'rxjs';
 
 import { IconName, NumericIdWithName } from '@ccs3-operator/shared/types';
 import {
-  createCreateTariffRequestMessage, createGetTariffByIdRequestMessage, CreateTariffReplyMessage,
-  createUpdateTariffRequestMessage, GetTariffByIdReplyMessage, Tariff, TariffType, UpdateTariffReplyMessage
+  createCreateTariffRequestMessage, createGetAllDeviceGroupsRequestMessage, createGetTariffByIdRequestMessage,
+  createGetTariffDeviceGroupsRequestMessage, CreateTariffReplyMessage, createUpdateTariffRequestMessage,
+  DeviceGroup, GetAllDeviceGroupsReplyMessage, GetTariffByIdReplyMessage, GetTariffDeviceGroupsReplyMessage,
+  Message, ReplyMessage, Tariff, TariffType, UpdateTariffReplyMessage
 } from '@ccs3-operator/messages';
-import { InternalSubjectsService, MessageTransportService, NotificationType, TimeConverterService } from '@ccs3-operator/shared';
+import {
+  InternalSubjectsService, MessageTransportService, NotificationType, SorterService, TimeConverterService
+} from '@ccs3-operator/shared';
 import { NotificationsService } from '@ccs3-operator/notifications';
+import { LinkedListsComponent } from '@ccs3-operator/linked-lists';
 import { CreateTariffService } from './create-tariff.service';
 import { DurationFormControls, FormControls, FromToFormControls, Signals } from './declarations';
 
@@ -25,7 +31,7 @@ import { DurationFormControls, FormControls, FromToFormControls, Signals } from 
   templateUrl: 'create-tariff.component.html',
   imports: [
     ReactiveFormsModule, MatInputModule, MatSelectModule, MatFormFieldModule, MatButtonModule, MatCardModule,
-    TranslocoDirective, MatCheckboxModule,
+    TranslocoDirective, MatCheckboxModule, LinkedListsComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -41,41 +47,96 @@ export class CreateTariffComponent implements OnInit {
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly notificationsSvc = inject(NotificationsService);
   private readonly internalSubjectsSvc = inject(InternalSubjectsService);
+  private readonly sorterSvc = inject(SorterService);
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     this.form = this.createTariffSvc.createForm();
     this.subscribeToFormChanges();
     this.processTariffTypeItemChanges(this.form.controls.type.value);
+    this.internalSubjectsSvc.whenSignedIn().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => this.init());
+  }
+
+  init(): void {
     const tariffId = this.activatedRoute.snapshot.paramMap.get('tariffId');
     this.signals.isCreate.set(!tariffId);
     if (tariffId) {
       this.loadTariff(+tariffId);
+    } else {
+      this.loadNewTariffData();
     }
+  }
+
+  loadNewTariffData(): void {
+    this.signals.isLoading.set(true);
+    const getAllDeviceGroupsRequestMsg = createGetAllDeviceGroupsRequestMessage();
+    this.messageTransportSvc.sendAndAwaitForReply(getAllDeviceGroupsRequestMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processNewTariffDataLoaded(replyMsg as GetAllDeviceGroupsReplyMessage));
+  }
+
+  processNewTariffDataLoaded(getAllDeviceGroupsReplyMsg: GetAllDeviceGroupsReplyMessage): void {
+    if (getAllDeviceGroupsReplyMsg.header.failure) {
+      return;
+    }
+    this.signals.isLoading.set(false);
+
+    this.signals.tariffDeviceGroups.set([]);
+    this.sorterSvc.sortBy(getAllDeviceGroupsReplyMsg.body.deviceGroups, x => x.name);
+    this.signals.availableDeviceGroups.set(getAllDeviceGroupsReplyMsg.body.deviceGroups);
   }
 
   loadTariff(tariffId: number): void {
     this.signals.isLoading.set(true);
-    this.internalSubjectsSvc.whenSignedIn().pipe(
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => this.processLoadTariff(tariffId));
-  }
-
-  processLoadTariff(tariffId: number): void {
     const getTariffRequestMsg = createGetTariffByIdRequestMessage();
     getTariffRequestMsg.body.tariffId = tariffId;
-    this.messageTransportSvc.sendAndAwaitForReply(getTariffRequestMsg).pipe(
+    const getTariffDeviceGroupsReqMsg = createGetTariffDeviceGroupsRequestMessage();
+    getTariffDeviceGroupsReqMsg.body.tariffId = tariffId;
+    const getAllDeviceGroupsRequestMsg = createGetAllDeviceGroupsRequestMessage();
+    const observables: LoadDataObservablesObject = {
+      tariff: this.messageTransportSvc.sendAndAwaitForReply(getTariffRequestMsg),
+      tariffDeviceGroups: this.messageTransportSvc.sendAndAwaitForReply(getTariffDeviceGroupsReqMsg),
+      allDeviceGroups: this.messageTransportSvc.sendAndAwaitForReply(getAllDeviceGroupsRequestMsg),
+    };
+    forkJoin(observables).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(getTariffByIdReplyMsg => this.processGetTariffByIdReplyMessage(getTariffByIdReplyMsg as GetTariffByIdReplyMessage));
+    ).subscribe(replyMessages => this.processTariffDataLoaded(replyMessages as LoadDataMessagesObject));
   }
 
-  processGetTariffByIdReplyMessage(getTariffByIdReplyMsg: GetTariffByIdReplyMessage): void {
-    if (getTariffByIdReplyMsg.header.failure) {
+  processTariffDataLoaded(replyMessages: LoadDataMessagesObject): void {
+    if (replyMessages.allDeviceGroups?.header.failure
+      || replyMessages.tariff?.header.failure
+      || replyMessages.tariffDeviceGroups?.header.failure
+    ) {
       return;
     }
+    this.signals.isLoading.set(false);
 
-    // Apply tariff to the form
-    const tariff = getTariffByIdReplyMsg.body.tariff!;
+    const deviceGroupsMap = new Map<number, DeviceGroup>(replyMessages.allDeviceGroups.body.deviceGroups.map(x => ([x.id, x])));
+    const tariffDeviceGroupsMap = new Map<number, DeviceGroup>();
+    const availableDeviceGroupsMap = new Map<number, DeviceGroup>();
+    for (const tariffDeviceGroupId of replyMessages.tariffDeviceGroups.body.deviceGroupIds) {
+      const deviceGroup = deviceGroupsMap.get(tariffDeviceGroupId)!;
+      tariffDeviceGroupsMap.set(tariffDeviceGroupId, deviceGroup);
+    }
+    for (const deviceGroupMapItem of deviceGroupsMap) {
+      if (!tariffDeviceGroupsMap.has(deviceGroupMapItem[0])) {
+        availableDeviceGroupsMap.set(deviceGroupMapItem[0], deviceGroupMapItem[1]);
+      }
+    }
+
+    const tariffDeviceGroups = Array.from(tariffDeviceGroupsMap.values());
+    this.sorterSvc.sortBy(tariffDeviceGroups, x => x.name);
+    this.signals.tariffDeviceGroups.set(tariffDeviceGroups);
+    const availableDeviceGroups = Array.from(availableDeviceGroupsMap.values());
+    this.sorterSvc.sortBy(availableDeviceGroups, x => x.name);
+    this.signals.availableDeviceGroups.set(availableDeviceGroups);
+    this.applyTariffToTheForm(replyMessages.tariff.body.tariff!);
+  }
+
+  applyTariffToTheForm(tariff: Tariff): void {
     this.signals.tariff.set(tariff);
     this.form.patchValue({
       description: tariff.description,
@@ -99,17 +160,20 @@ export class CreateTariffComponent implements OnInit {
 
   onSave(): void {
     const tariff = this.signals.tariff();
+    const tariffDeviceGroupIds = this.signals.tariffDeviceGroups().map(x => x.id);
     if (tariff) {
       // Update tariff
       const requestMsg = createUpdateTariffRequestMessage();
       requestMsg.body.tariff = this.createTariff();
       requestMsg.body.tariff.id = tariff.id;
+      requestMsg.body.deviceGroupIds = tariffDeviceGroupIds;
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(replyMsg => this.processUpdateTariffReplyMessage(replyMsg as UpdateTariffReplyMessage));
     } else {
       const requestMsg = createCreateTariffRequestMessage();
       requestMsg.body.tariff = this.createTariff();
+      requestMsg.body.deviceGroupIds = tariffDeviceGroupIds;
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(replyMsg => this.processCreateTariffReplyMessage(replyMsg as CreateTariffReplyMessage));
@@ -231,7 +295,21 @@ export class CreateTariffComponent implements OnInit {
       isCreate: signal(true),
       isLoading: signal(false),
       tariff: signal(null),
+      tariffDeviceGroups: signal([]),
+      availableDeviceGroups: signal([]),
     };
     return signals;
   }
+}
+
+interface LoadDataObservablesObject extends Record<string, Observable<Message<unknown>>> {
+  tariff: Observable<Message<unknown>>;
+  tariffDeviceGroups: Observable<Message<unknown>>;
+  allDeviceGroups: Observable<Message<unknown>>;
+}
+
+interface LoadDataMessagesObject extends Record<string, ReplyMessage<unknown>> {
+  tariff: GetTariffByIdReplyMessage;
+  tariffDeviceGroups: GetTariffDeviceGroupsReplyMessage;
+  allDeviceGroups: GetAllDeviceGroupsReplyMessage;
 }

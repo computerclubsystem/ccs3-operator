@@ -12,10 +12,13 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
+import { forkJoin, Observable } from 'rxjs';
 
 import {
-  HashService, InternalSubjectsService, MessageTransportService, NotificationType, TimeConverterService,
+  HashService, InternalSubjectsService, MessageTransportService, NotificationType, SorterService, TimeConverterService,
   ValidatorsService
 } from '@ccs3-operator/shared';
 import { SecondsFormatterComponent, SecondsFormatterService } from '@ccs3-operator/seconds-formatter';
@@ -23,25 +26,29 @@ import {
   createCreatePrepaidTariffRequestMessage, createGetTariffByIdRequestMessage,
   createRechargeTariffDurationRequestMessage, CreatePrepaidTariffReplyMessage,
   createUpdateTariffRequestMessage, GetTariffByIdReplyMessage, RechargeTariffDurationReplyMessage,
-  Tariff, TariffType, UpdateTariffReplyMessage
+  Tariff, TariffType, UpdateTariffReplyMessage, DeviceGroup, createGetAllDeviceGroupsRequestMessage,
+  createGetTariffDeviceGroupsRequestMessage, Message, ReplyMessage, GetTariffDeviceGroupsReplyMessage,
+  GetAllDeviceGroupsReplyMessage
 } from '@ccs3-operator/messages';
 import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
 import { DurationFormControls, FormControls, Signals } from './declarations';
 import { CreatePrepaidTariffService } from './create-prepaid-tariff.service';
+import { LinkedListsComponent } from '@ccs3-operator/linked-lists';
 
 @Component({
   selector: 'ccs3-op-system-settings-create-prepaid-tariff',
   templateUrl: 'create-prepaid-tariff.component.html',
   imports: [
     ReactiveFormsModule, MatInputModule, MatSelectModule, MatFormFieldModule, MatButtonModule, MatCardModule,
-    TranslocoDirective, MatCheckboxModule, SecondsFormatterComponent,
+    TranslocoDirective, MatCheckboxModule, MatDividerModule, MatIconModule, SecondsFormatterComponent, LinkedListsComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreatePrepaidTariffComponent implements OnInit {
   signals = this.createSignals();
   form!: FormGroup<FormControls>;
+  iconName = IconName;
 
   private readonly secondsFormatterSvc = inject(SecondsFormatterService);
   private readonly createPrepaidTariffSvc = inject(CreatePrepaidTariffService);
@@ -51,6 +58,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
   private readonly notificationsSvc = inject(NotificationsService);
   private readonly validatorsSvc = inject(ValidatorsService);
   private readonly hashSvc = inject(HashService);
+  private readonly sorterSvc = inject(SorterService);
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
@@ -59,17 +67,24 @@ export class CreatePrepaidTariffComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.createPrepaidTariffSvc.createForm();
     this.subscribeToFormChanges();
+    this.internalSubjectsSvc.whenSignedIn().pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => this.init());
+  }
+
+  init(): void {
     const tariffId = this.activatedRoute.snapshot.paramMap.get('tariffId');
     this.signals.isCreate.set(!tariffId);
     if (tariffId) {
       this.form.patchValue({
         setPassword: false,
       });
-      this.loadTariff(+tariffId);
+      this.loadTariffData(+tariffId);
     } else {
       this.form.patchValue({
         setPassword: true,
       });
+      this.loadNewTariffData();
     }
   }
 
@@ -126,19 +141,71 @@ export class CreatePrepaidTariffComponent implements OnInit {
       || this.form.controls.confirmPassword.hasError(notEqualErrorName);
   }
 
-  loadTariff(tariffId: number): void {
+  loadNewTariffData(): void {
     this.signals.isLoading.set(true);
-    this.internalSubjectsSvc.whenSignedIn().pipe(
+    const getAllDeviceGroupsRequestMsg = createGetAllDeviceGroupsRequestMessage();
+    this.messageTransportSvc.sendAndAwaitForReply(getAllDeviceGroupsRequestMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => this.processLoadTariff(tariffId));
+    ).subscribe(replyMsg => this.processNewTariffDataLoaded(replyMsg as GetAllDeviceGroupsReplyMessage));
   }
 
-  processLoadTariff(tariffId: number): void {
+  processNewTariffDataLoaded(getAllDeviceGroupsReplyMsg: GetAllDeviceGroupsReplyMessage): void {
+    if (getAllDeviceGroupsReplyMsg.header.failure) {
+      return;
+    }
+    this.signals.isLoading.set(false);
+
+    this.signals.tariffDeviceGroups.set([]);
+    this.sorterSvc.sortBy(getAllDeviceGroupsReplyMsg.body.deviceGroups, x => x.name);
+    this.signals.availableDeviceGroups.set(getAllDeviceGroupsReplyMsg.body.deviceGroups);
+  }
+
+  loadTariffData(tariffId: number): void {
+    this.signals.isLoading.set(true);
     const getTariffRequestMsg = createGetTariffByIdRequestMessage();
     getTariffRequestMsg.body.tariffId = tariffId;
-    this.messageTransportSvc.sendAndAwaitForReply(getTariffRequestMsg).pipe(
+    const getTariffDeviceGroupsReqMsg = createGetTariffDeviceGroupsRequestMessage();
+    getTariffDeviceGroupsReqMsg.body.tariffId = tariffId;
+    const getAllDeviceGroupsRequestMsg = createGetAllDeviceGroupsRequestMessage();
+    const observables: LoadDataObservablesObject = {
+      tariff: this.messageTransportSvc.sendAndAwaitForReply(getTariffRequestMsg),
+      tariffDeviceGroups: this.messageTransportSvc.sendAndAwaitForReply(getTariffDeviceGroupsReqMsg),
+      allDeviceGroups: this.messageTransportSvc.sendAndAwaitForReply(getAllDeviceGroupsRequestMsg),
+    };
+    forkJoin(observables).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(getTariffByIdReplyMsg => this.processGetTariffByIdReplyMessage(getTariffByIdReplyMsg as GetTariffByIdReplyMessage));
+    ).subscribe(replyMessages => this.processTariffDataLoaded(replyMessages as LoadDataMessagesObject));
+  }
+
+  processTariffDataLoaded(replyMessages: LoadDataMessagesObject): void {
+    if (replyMessages.allDeviceGroups?.header.failure
+      || replyMessages.tariff?.header.failure
+      || replyMessages.tariffDeviceGroups?.header.failure
+    ) {
+      return;
+    }
+    this.signals.isLoading.set(false);
+
+    const deviceGroupsMap = new Map<number, DeviceGroup>(replyMessages.allDeviceGroups.body.deviceGroups.map(x => ([x.id, x])));
+    const tariffDeviceGroupsMap = new Map<number, DeviceGroup>();
+    const availableDeviceGroupsMap = new Map<number, DeviceGroup>();
+    for (const tariffDeviceGroupId of replyMessages.tariffDeviceGroups.body.deviceGroupIds) {
+      const deviceGroup = deviceGroupsMap.get(tariffDeviceGroupId)!;
+      tariffDeviceGroupsMap.set(tariffDeviceGroupId, deviceGroup);
+    }
+    for (const deviceGroupMapItem of deviceGroupsMap) {
+      if (!tariffDeviceGroupsMap.has(deviceGroupMapItem[0])) {
+        availableDeviceGroupsMap.set(deviceGroupMapItem[0], deviceGroupMapItem[1]);
+      }
+    }
+
+    const tariffDeviceGroups = Array.from(tariffDeviceGroupsMap.values());
+    this.sorterSvc.sortBy(tariffDeviceGroups, x => x.name);
+    this.signals.tariffDeviceGroups.set(tariffDeviceGroups);
+    const availableDeviceGroups = Array.from(availableDeviceGroupsMap.values());
+    this.sorterSvc.sortBy(availableDeviceGroups, x => x.name);
+    this.signals.availableDeviceGroups.set(availableDeviceGroups);
+    this.applyTariffToTheForm(replyMessages.tariff.body.tariff!);
   }
 
   processGetTariffByIdReplyMessage(getTariffByIdReplyMsg: GetTariffByIdReplyMessage): void {
@@ -165,7 +232,6 @@ export class CreatePrepaidTariffComponent implements OnInit {
     });
     this.signals.initialDuration.set(durationText);
     this.signals.initialPrice.set(tariff.price);
-    this.signals.isLoading.set(false);
   }
 
   processDurationValueChanges(): void {
@@ -215,6 +281,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
       const requestMsg = createUpdateTariffRequestMessage();
       requestMsg.body.tariff = this.createPrepaidTariff();
       requestMsg.body.tariff.id = tariff.id;
+      requestMsg.body.deviceGroupIds = this.signals.tariffDeviceGroups().map(x => x.id);
       if (formRawValue.setPassword) {
         requestMsg.body.passwordHash = await this.hashSvc.getSha512(formRawValue.password!);
       }
@@ -228,6 +295,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
       if (formRawValue.setPassword) {
         requestMsg.body.passwordHash = await this.hashSvc.getSha512(formRawValue.password!);
       }
+      requestMsg.body.deviceGroupIds = this.signals.tariffDeviceGroups().map(x => x.id);
       this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(replyMsg => this.processCreatePrepaidTariffReplyMessage(replyMsg as CreatePrepaidTariffReplyMessage));
@@ -248,6 +316,26 @@ export class CreatePrepaidTariffComponent implements OnInit {
       this.signals.createdTariff.set(createPrepaidTariffReplyMsg.body.tariff);
     }
   }
+
+  // onAddToDeviceGroup(deviceGroup: DeviceGroup): void {
+  //   const availableDeviceGroups = this.signals.availableDeviceGroups();
+  //   const tariffDeviceGroups = this.signals.tariffDeviceGroups();
+  //   const selectedTariffIndex = availableDeviceGroups.indexOf(deviceGroup);
+  //   tariffDeviceGroups.push(deviceGroup);
+  //   availableDeviceGroups.splice(selectedTariffIndex, 1);
+  //   this.signals.availableDeviceGroups.set(availableDeviceGroups);
+  //   this.signals.tariffDeviceGroups.set(tariffDeviceGroups);
+  // }
+
+  // onRemoveFromDeviceGroup(deviceGroup: DeviceGroup): void {
+  //   const tariffDeviceGroups = this.signals.tariffDeviceGroups();
+  //   const availableDeviceGroups = this.signals.availableDeviceGroups();
+  //   const selectedDeviceGroupIndex = tariffDeviceGroups.indexOf(deviceGroup);
+  //   availableDeviceGroups.push(deviceGroup);
+  //   tariffDeviceGroups.splice(selectedDeviceGroupIndex, 1);
+  //   this.signals.availableDeviceGroups.set(availableDeviceGroups);
+  //   this.signals.tariffDeviceGroups.set(tariffDeviceGroups);
+  // }
 
   onGoToList(): void {
     if (this.signals.tariff()) {
@@ -292,7 +380,21 @@ export class CreatePrepaidTariffComponent implements OnInit {
       showPasswords: signal(false),
       initialDuration: signal(null),
       initialPrice: signal(null),
+      availableDeviceGroups: signal([]),
+      tariffDeviceGroups: signal([]),
     };
     return signals;
   }
+}
+
+interface LoadDataObservablesObject extends Record<string, Observable<Message<unknown>>> {
+  tariff: Observable<Message<unknown>>;
+  tariffDeviceGroups: Observable<Message<unknown>>;
+  allDeviceGroups: Observable<Message<unknown>>;
+}
+
+interface LoadDataMessagesObject extends Record<string, ReplyMessage<unknown>> {
+  tariff: GetTariffByIdReplyMessage;
+  tariffDeviceGroups: GetTariffDeviceGroupsReplyMessage;
+  allDeviceGroups: GetAllDeviceGroupsReplyMessage;
 }

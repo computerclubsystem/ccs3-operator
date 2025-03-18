@@ -16,86 +16,88 @@
       </mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      @if (!signals.isLoading()) {
-      <form [formGroup]="form" class="ccs3-op-flex-column ccs3-op-max-width-large-text">
-        <mat-form-field>
-          <mat-label>{{t('Name')}}</mat-label>
-          <input matInput type="text" [formControl]="form.controls.name" />
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>{{t('Description')}}</mat-label>
-          <input matInput type="text" [formControl]="form.controls.description" />
-        </mat-form-field>
-        <mat-checkbox [formControl]="form.controls.restrictDeviceTransfers">
-          {{t('Restrict device transfers within the device group')}}
-        </mat-checkbox>
-      </form>
-      <mat-divider></mat-divider>
-      <section class="device-group-devices">
-        <h2>{{t('Devices in the group')}}</h2>
-        <table>
-          <thead>
-            <tr>
-              <th class="ccs3-op-align-text-start">{{t('Name')}}</th>
-              <th class="ccs3-op-align-text-start">{{t('Id')}}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (device of signals.devicesInGroup(); track device.id) {
-            <tr>
-              <td class="ccs3-op-align-text-start">{{device.name}}</td>
-              <td class="ccs3-op-align-text-start">{{device.id}}</td>
-            </tr>
-            }
-          </tbody>
-        </table>
-      </section>
-      <mat-divider></mat-divider>
-      <section class="device-group-tariffs-selection ccs3-op-flex-row ccs3-op-align-items-start">
-        <section class="available-tariffs">
-          <h2>{{t('Available tariffs')}}</h2>
-          <div
-            class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
-            @for (tariff of signals.availableTariffs(); track tariff.id) {
-            <section class="ccs3-op-flex-column">
-              <section class="ccs3-op-flex-row ccs3-op-flex-no-wrap ccs3-op-half-gap">
-                <button (click)="onAddTariff(tariff)" mat-icon-button>
-                  <mat-icon class="ccs3-op-success-color">{{iconName.add}}</mat-icon>
-                </button>
-                <span class="tariff-name">{{tariff.name}}</span>
-              </section>
-              @if (tariff.description) {
-              <span class="tariff-description">{{tariff.description}}</span>
+      <section class="device-group-sections ccs3-op-flex-row ccs3-op-align-items-flex-start">
+        @if (!signals.isLoading()) {
+        <form [formGroup]="form" class="ccs3-op-flex-column ccs3-op-max-width-large-text">
+          <mat-form-field>
+            <mat-label>{{t('Name')}}</mat-label>
+            <input matInput type="text" [formControl]="form.controls.name" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{t('Description')}}</mat-label>
+            <input matInput type="text" [formControl]="form.controls.description" />
+          </mat-form-field>
+          <mat-checkbox [formControl]="form.controls.restrictDeviceTransfers">
+            {{t('Restrict device transfers within the device group')}}
+          </mat-checkbox>
+        </form>
+        <mat-divider [vertical]="true"></mat-divider>
+        <section class="device-group-devices">
+          <span class="ccs3-op-header-1">{{t('Devices in the group')}}</span>
+          <table>
+            <thead>
+              <tr>
+                <th class="ccs3-op-align-text-start">{{t('Name')}}</th>
+                <th class="ccs3-op-align-text-start">{{t('Id')}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (device of signals.devicesInGroup(); track device.id) {
+              <tr>
+                <td class="ccs3-op-align-text-start">{{device.name}}</td>
+                <td class="ccs3-op-align-text-start">{{device.id}}</td>
+              </tr>
               }
-            </section>
-            <mat-divider></mat-divider>
-            }
-          </div>
+            </tbody>
+          </table>
         </section>
-        <section class="device-group-tariffs">
-          <h2>{{t('Device group tariffs')}}</h2>
-          <div
-            class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
-            @for (tariff of signals.deviceGroupTariffs(); track tariff.id) {
-            <section class="ccs3-op-flex-column">
-              <section class="ccs3-op-flex-row ccs3-op-flex-no-wrap ccs3-op-half-gap">
-                <button (click)="onRemoveTariff(tariff)" mat-icon-button>
-                  <mat-icon class="ccs3-op-error-color">{{iconName.remove}}</mat-icon>
-                </button>
-                <span class="tariff-name">{{tariff.name}}</span>
+        <mat-divider [vertical]="true"></mat-divider>
+        <section class="device-group-tariffs-selection ccs3-op-flex-row ccs3-op-align-items-flex-start">
+          <section class="available-tariffs">
+            <span class="ccs3-op-header-1">{{t('Available tariffs')}}</span>
+            <div
+              class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
+              @for (tariff of signals.availableTariffs(); track tariff.id) {
+              <section class="ccs3-op-flex-column">
+                <section class="ccs3-op-flex-row ccs3-op-flex-no-wrap ccs3-op-half-gap">
+                  <button (click)="onAddTariff(tariff)" mat-icon-button>
+                    <mat-icon class="ccs3-op-success-color">{{iconName.add}}</mat-icon>
+                  </button>
+                  <span class="tariff-name">{{tariff.name}}</span>
+                </section>
+                @if (tariff.description) {
+                <span class="tariff-description">{{tariff.description}}</span>
+                }
               </section>
-              @if (tariff.description) {
-              <span class="tariff-description">{{tariff.description}}</span>
+              <mat-divider></mat-divider>
               }
-            </section>
-            <mat-divider></mat-divider>
-            }
-          </div>
+            </div>
+          </section>
+          <section class="device-group-tariffs">
+            <span class="ccs3-op-header-1">{{t('Device group tariffs')}}</span>
+            <div
+              class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
+              @for (tariff of signals.deviceGroupTariffs(); track tariff.id) {
+              <section class="ccs3-op-flex-column">
+                <section class="ccs3-op-flex-row ccs3-op-flex-no-wrap ccs3-op-half-gap">
+                  <button (click)="onRemoveTariff(tariff)" mat-icon-button>
+                    <mat-icon class="ccs3-op-error-color">{{iconName.remove}}</mat-icon>
+                  </button>
+                  <span class="tariff-name">{{tariff.name}}</span>
+                </section>
+                @if (tariff.description) {
+                <span class="tariff-description">{{tariff.description}}</span>
+                }
+              </section>
+              <mat-divider></mat-divider>
+              }
+            </div>
+          </section>
         </section>
+        }
       </section>
-      }
     </mat-card-content>
-    <mat-divider></mat-divider>
+    <mat-divider ></mat-divider>
     <mat-card-actions>
       <section class="ccs3-op-flex-row">
         <button (click)="onSave()" mat-flat-button [disabled]="form.invalid">

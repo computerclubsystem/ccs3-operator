@@ -202,6 +202,17 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   line-height: normal;
 }
 
+/* Headers */
+.ccs3-op-header-1 {
+  font-size: x-large;
+  font-weight: bold;
+}
+
+.ccs3-op-header-2 {
+  font-size: larger;
+  font-weight: bold;
+}
+
 /* Overflow */
 .ccs3-op-overflow-auto {
   overflow: auto;

@@ -66,11 +66,10 @@ export class TariffsComponent implements OnInit {
     };
     forkJoin(forkJoinObservablesObject).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(loadDataReplyMessages => this.processLoadDataReplyMessagesloadDataReplyMessagess(loadDataReplyMessages as LoadDataMessages));
-    // this.messageTransportSvc.sendAndAwaitForReply<GetAllTcAllTariffsReplyMessage(getAllTariffsReplyMsg as GetAllTariffsReplyMessage));
+    ).subscribe(loadDataReplyMessages => this.processLoadDataReplyMessagesLoadDataReplyMessagess(loadDataReplyMessages as LoadDataMessages));
   }
 
-  processLoadDataReplyMessagesloadDataReplyMessagess(loadDataReplyMessages: LoadDataMessages): void {
+  processLoadDataReplyMessagesLoadDataReplyMessagess(loadDataReplyMessages: LoadDataMessages): void {
     if (loadDataReplyMessages.tariffs.header.failure
       || loadDataReplyMessages.users.header.failure
     ) {

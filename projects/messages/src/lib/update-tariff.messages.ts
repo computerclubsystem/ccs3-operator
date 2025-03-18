@@ -5,6 +5,7 @@ import { MessageType } from './declarations/message-type';
 export interface UpdateTariffRequestMessageBody {
   tariff: Tariff;
   passwordHash?: string;
+  deviceGroupIds?: number[] | null;
 }
 
 export type UpdateTariffRequestMessage = Message<UpdateTariffRequestMessageBody>;
