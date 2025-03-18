@@ -47,5 +47,6 @@ export const en = {
   "~ No group ~": " ~ No group ~",
   "Do you want to execute global action '{{action}}'": "Do you want to execute global action '{{action}}'",
   "Global bulk action '{{action}}'": "Global bulk action '{{action}}'",
-  "Shutdown message was sent to {{count}} computers": "Shutdown message was sent to {{count}} computers"
+  "Shutdown message was sent to {{count}} computers": "Shutdown message was sent to {{count}} computers",
+  "Restart message was sent to {{count}} computers": "Restart message was sent to {{count}} computers"
 };

@@ -144,6 +144,9 @@ export class BulkActionsComponent implements OnInit {
       case BulkActionId.setNote:
         bulkData.data = this.createSetNoteData(groupId);
         break;
+      case BulkActionId.restart:
+        bulkData.data = null;
+        break;
     }
     this.execute.emit(bulkData);
   }
@@ -161,8 +164,8 @@ export class BulkActionsComponent implements OnInit {
     switch (globalActionItem.id) {
       case GlobalBulkActionId.shutdownStopped:
         break;
-      case GlobalBulkActionId.restartStopped:
-        break;
+      // case GlobalBulkActionId.restartStopped:
+      //   break;
     }
     return {};
   }
@@ -175,8 +178,10 @@ export class BulkActionsComponent implements OnInit {
     switch (groupSelectedActionId) {
       case BulkActionId.setNote:
         return { setNote: true };
-      case BulkActionId.start:
-        return { start: true };
+      case BulkActionId.restart:
+        return { restart: true };
+      // case BulkActionId.start:
+      //   return { start: true };
     }
     return {};
   }
@@ -252,7 +257,8 @@ export class BulkActionsComponent implements OnInit {
 
   createBulkActionItems(): IdWithName[] {
     const result: IdWithName[] = [
-      { id: BulkActionId.setNote, name: translate('Set note') }
+      { id: BulkActionId.setNote, name: translate('Set note') },
+      { id: BulkActionId.restart, name: translate('Restart') }
     ];
     return result;
   }
@@ -271,6 +277,7 @@ interface GlobalActionOptionsVisibility {
 
 interface ActionOptionsVisibility {
   setNote?: boolean | null;
+  restart?: boolean | null;
   start?: boolean | null;
 }
 

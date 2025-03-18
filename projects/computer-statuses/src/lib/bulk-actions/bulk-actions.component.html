@@ -82,8 +82,8 @@
                   <mat-label>{{t('Note')}}</mat-label>
                   <input (input)="onNoteChanged(deviceGroupItem, $event)" matInput />
                 </mat-form-field>
+                } @else if (actionVisibility.restart) {
                 } @else if (actionVisibility.start) {
-
                 }
               </section>
               <button (click)="onExecuteAction(deviceGroupItem)" mat-flat-button>{{t('Execute')}}</button>

@@ -31,7 +31,8 @@ import {
   createGetAllDeviceGroupsRequestMessage, GetAllDeviceGroupsReplyMessage, DeviceGroup,
   GetProfileSettingsReplyMessage, UserProfileSettingName, createUpdateProfileSettingsRequestMessage,
   createRechargeTariffDurationRequestMessage, RechargeTariffDurationReplyMessage,
-  createShutdownStoppedRequestMessage, ShutdownStoppedReplyMessage
+  createShutdownStoppedRequestMessage, ShutdownStoppedReplyMessage, createRestartDevicesRequestMessage,
+  RestartDevicesReplyMessage
 } from '@ccs3-operator/messages';
 import {
   InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, PermissionName,
@@ -120,9 +121,6 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       case GlobalBulkActionId.shutdownStopped:
         this.executeShutdownStoppedGlobalBulkAction();
         break;
-      case GlobalBulkActionId.restartStopped:
-        this.executeRestartStoppedGlobalBulkAction();
-        break;
     }
   }
 
@@ -140,17 +138,31 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     });
   }
 
-  executeRestartStoppedGlobalBulkAction(): void {
-    // TODO: Implement this
-  }
-
   onExecuteBulkAction(bulkActionData: BulkActionData): void {
     const actionId = bulkActionData.actionId;
     switch (actionId) {
       case BulkActionId.setNote:
         this.executeSetNoteBulkAction(bulkActionData);
         break;
+      case BulkActionId.restart:
+        this.executeRestartBulkAction(bulkActionData);
+        break;
     }
+  }
+
+  executeRestartBulkAction(bulkActionData: BulkActionData): void {
+    const reqMsg = createRestartDevicesRequestMessage();
+    reqMsg.body.deviceIds = bulkActionData.deviceIds;
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => {
+      const msg = replyMsg as RestartDevicesReplyMessage;
+      if (msg.header.failure) {
+        return;
+      }
+      const notificationMessage = translate('Restart message was sent to {{count}} computers', { count: msg.body.targetsCount });
+      this.notificationsSvc.show(NotificationType.success, notificationMessage, null, IconName.check, replyMsg);
+    });
   }
 
   executeSetNoteBulkAction(bulkActionData: BulkActionData): void {

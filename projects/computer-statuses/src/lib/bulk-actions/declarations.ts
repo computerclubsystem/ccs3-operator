@@ -1,6 +1,6 @@
 export enum GlobalBulkActionId {
   shutdownStopped = 'shutdownStopped',
-  restartStopped = 'restartStopped',
+  // restartStopped = 'restartStopped',
 }
 
 // TODO: Add interfaces for the different actions
@@ -13,6 +13,7 @@ export interface GlobalBulkActionData {
 
 export enum BulkActionId {
   setNote = 'setNote',
+  restart = 'restart',
   start = 'start',
 }
 

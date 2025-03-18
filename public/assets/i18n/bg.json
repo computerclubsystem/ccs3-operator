@@ -47,5 +47,6 @@
   "~ No group ~": " ~ Без група ~",
   "Do you want to execute global action '{{action}}'": "Искате ли да изпълните глобалното действие '{{action}}'",
   "Global bulk action '{{action}}'": "Глобално действие '{{action}}'",
-  "Shutdown message was sent to {{count}} computers": "Съобщението за изключване беше изпратено до {{count}} компютъра"
+  "Shutdown message was sent to {{count}} computers": "Съобщението за изключване беше изпратено до {{count}} компютъра",
+  "Restart message was sent to {{count}} computers": "Съобщението за рестартиране беше изпратено до {{count}} компютъра"
 }

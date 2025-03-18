@@ -60,6 +60,7 @@ export * from './lib/get-device-completed-sessions.messages';
 export * from './lib/filter-server-logs.messages';
 export * from './lib/shutdown-stopped.messages';
 export * from './lib/get-tariff-device-groups.messages';
+export * from './lib/restart-devices.messages';
 
 export * from './lib/entities/device-connectivity-item';
 export * from './lib/entities/device';
