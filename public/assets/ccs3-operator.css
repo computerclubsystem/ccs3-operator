@@ -50,6 +50,10 @@
   flex-wrap: nowrap;
 }
 
+.ccs3-op-flex-grow {
+  flex-grow: 1;
+}
+
 /* Routing */
 a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   border-width: 1px;
@@ -377,7 +381,10 @@ button[mat-button].mat-tonal-button {
   color: var(--mat-sys-on-secondary-container);
 }
 
-mat-card-content.ccs3-op-mat-card-content-no-padding {
+mat-card-content.ccs3-op-mat-card-content-no-padding,
+mat-card-content.ccs3-op-mat-card-content-no-padding:first-child,
+mat-card-content.ccs3-op-mat-card-content-no-padding:last-child
+{
   padding: 0;
 }
 

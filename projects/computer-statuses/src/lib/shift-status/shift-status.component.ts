@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output, signal, WritableSignal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -32,6 +32,7 @@ export class ShiftStatusComponent {
   readonly shiftCompleted = output<ShiftCompletedEventArgs>();
   readonly expandButtonType = ExpandButtonType;
 
+  readonly signals = this.createSignals();
   private readonly formBuilder = inject(FormBuilder);
   form = this.createForm();
 
@@ -53,8 +54,23 @@ export class ShiftStatusComponent {
     const form = this.formBuilder.group(controls);
     return form;
   }
+
+  toggleDetails(): void {
+    this.signals.detailsExpanded.set(!this.signals.detailsExpanded());
+  }
+
+  createSignals(): Signals {
+    const signals: Signals = {
+      detailsExpanded: signal(false),
+    };
+    return signals;
+  }
 }
 
 interface FormControls {
   shiftNote: FormControl<string | null>;
+}
+
+interface Signals {
+  detailsExpanded: WritableSignal<boolean>;
 }
