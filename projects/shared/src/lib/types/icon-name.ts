@@ -32,4 +32,5 @@ export enum IconName {
   stop = 'stop',
   power_settings_new = 'power_settings_new',
   restart_alt = 'restart_alt',
+  sort = 'sort',
 }

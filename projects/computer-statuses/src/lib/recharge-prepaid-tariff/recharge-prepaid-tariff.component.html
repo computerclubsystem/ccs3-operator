@@ -4,14 +4,19 @@
   </mat-expansion-panel-header>
   <ng-template matExpansionPanelContent>
     <form [formGroup]="form" class="ccs3-op-flex-column">
-      <mat-form-field subscriptSizing="dynamic">
-        <mat-label>{{t('Tariff')}}</mat-label>
-        <mat-select [formControl]="form.controls.tariff">
-          @for (tariff of prepaidTariffs(); track tariff.id) {
-          <mat-option [value]="tariff" [title]="tariff.name">{{tariff.id}} - {{tariff.name}}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      <section class="ccs3-op-flex-row">
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>{{t('Tariff')}}</mat-label>
+          <mat-select [formControl]="form.controls.tariff">
+            @for (tariff of signals.sortedPrepaidTariffs(); track tariff.id) {
+            <mat-option [value]="tariff" [title]="tariff.name">{{tariff.id}} - {{tariff.name}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <button mat-icon-button (click)="toggleTariffSortProperty()" [title]="t('Toggle sort by Name or Id')">
+          <mat-icon>{{iconName.sort}}</mat-icon>
+        </button>
+      </section>
       @if (form.valid) {
       <mat-checkbox #rechargeCheckbox>{{t('Allow recharge')}}</mat-checkbox>
       @let tariffInfo = signals.tariffInfo();
