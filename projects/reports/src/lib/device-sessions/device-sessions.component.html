@@ -41,12 +41,36 @@
             }
           </mat-select>
         </mat-form-field>
+        <mat-checkbox [formControl]="form.controls.showChart">{{t('Show usage chart')}}</mat-checkbox>
         <button (click)="onLoadDeviceSessions()" [disabled]="form.invalid" mat-flat-button>{{t('Load')}}</button>
       </section>
     </form>
   </section>
-  <section class="device-sessions-container">
+  <section class="device-sessions-section ccs3-op-flex-column">
     @if(signals.sessionsLoaded()) {
+    @let sessionssUsageChartInfo = signals.deviceSessionsUsageChartInfo();
+    @if(sessionssUsageChartInfo) {
+    <section class="device-sessions-usage-section">
+      <span class="ccs3-op-header-2">{{t('Session usage chart')}}</span>
+      <mat-divider></mat-divider>
+      @for (sessionChartInfo of sessionssUsageChartInfo; track sessionChartInfo.device.id) {
+      <section [ngStyle]="sessionChartInfo.cssGridStyleObject" class="device-session-usage"
+        [attr.ccs3-op-device-id]="sessionChartInfo.device.id" [attr.ccs3-op-device-name]="sessionChartInfo.device.name">
+        <span class="session-usage-device-name">{{sessionChartInfo.device.name}}</span>
+        @for (cell of sessionChartInfo.sessionChartInfos; track cell.sessionUsageId) {
+        <span class="device-session-item" [ngClass]="{
+      'idle-session': cell.isIdle,
+      'completed-session': !cell.isIdle,
+      }" [attr.ccs3-op-tariff-id]="cell.tariff ? cell.tariff.id : ''"
+          [attr.ccs3-op-tariff-type]="cell.tariff ? cell.tariff.type : ''"
+          [attr.ccs3-op-tariff-price]="cell.tariff ? cell.tariff.price : ''"
+          [title]="cell.session ? (cell.session.startedAt | noYearDate) + ' - ' + (cell.session.stoppedAt | noYearDate)+ ', ' + cell.tariff?.name : ''"></span>
+        }
+      </section>
+      <mat-divider></mat-divider>
+      }
+    </section>
+    }
     <table class="device-sessions-table">
       <thead>
         <tr>
@@ -95,7 +119,8 @@
         </tr>
         <tr>
           <td colspan="2"></td>
-          <td class="summary-total-cell ccs3-op-important-table-cell">{{this.signals.replyMessage()?.body?.totalSum |moneyFormat}}</td>
+          <td class="summary-total-cell ccs3-op-important-table-cell">{{this.signals.replyMessage()?.body?.totalSum
+            |moneyFormat}}</td>
           <td colspan="8"></td>
         </tr>
       </tbody>

@@ -53,18 +53,16 @@
         </mat-form-field>
         <mat-checkbox [formControl]="durationFormControls.restrictStart">{{t('Restrict start period')}}</mat-checkbox>
         @if (durationFormControls.restrictStart.value) {
-        <section class="ccs3-op-flex-row">
-          <mat-form-field>
-            <mat-label>{{t('Can be started after')}}</mat-label>
-            <input matInput type="time" matNativeControl [formControl]="durationFormControls.restrictStartFromTime" />
-            <mat-hint>{{t('The tariff can be started after this time')}}</mat-hint>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{t('Can be started before')}}</mat-label>
-            <input matInput type="time" matNativeControl [formControl]="durationFormControls.restrictStartToTime" />
-            <mat-hint>{{t('The tariff can be started before this time')}}</mat-hint>
-          </mat-form-field>
-        </section>
+        <mat-form-field class="ccs3-op-full-width">
+          <mat-label>{{t('Can be started after')}}</mat-label>
+          <input matInput type="time" matNativeControl [formControl]="durationFormControls.restrictStartFromTime" />
+          <mat-hint>{{t('The tariff can be started after this time')}}</mat-hint>
+        </mat-form-field>
+        <mat-form-field class="ccs3-op-full-width">
+          <mat-label>{{t('Can be started before')}}</mat-label>
+          <input matInput type="time" matNativeControl [formControl]="durationFormControls.restrictStartToTime" />
+          <mat-hint>{{t('The tariff can be started before this time')}}</mat-hint>
+        </mat-form-field>
         }
         }
         @if (signals.showFromToTypeSettings()) {
@@ -84,7 +82,7 @@
         <mat-form-field>
           <mat-label>{{t('Price')}}</mat-label>
           <input matInput type="number" [formControl]="form.controls.price" />
-          <mat-hint>Use dot as separator - 1.50, 4.00, 10.50 etc.</mat-hint>
+          <mat-hint>{{t('Use dot as separator - 1.50, 4.00, 10.50 etc.')}}</mat-hint>
           @if (signals.priceHasError()) {
           <mat-error>{{t('Invalid number. Use only digits and dot as separator - 1.50, 4.00, 10.50 etc.')}}</mat-error>
           }

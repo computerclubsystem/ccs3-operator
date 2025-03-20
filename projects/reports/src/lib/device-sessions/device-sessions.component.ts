@@ -1,30 +1,35 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NgClass } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { forkJoin, Observable } from 'rxjs';
 
-import { FullDatePipe, InternalSubjectsService, MessageTransportService, MoneyFormatPipe, SorterService } from '@ccs3-operator/shared';
+import {
+  FullDatePipe, GroupingService, InternalSubjectsService, MessageTransportService, MoneyFormatPipe, NoYearDatePipe, SorterService
+} from '@ccs3-operator/shared';
 import {
   createGetAllDevicesRequestMessage, createGetAllTariffsRequestMessage, createGetAllUsersRequestMessage,
-  createGetDeviceCompletedSessionsRequestMessage,
-  Device, DeviceSession, GetAllDevicesReplyMessage, GetAllDevicesRequestMessageBody, GetAllTariffsReplyMessage,
-  GetAllTariffsRequestMessageBody, GetAllUsersReplyMessage, GetAllUsersRequestMessageBody,
-  GetDeviceCompletedSessionsReplyMessage, Message, ReplyMessage, Tariff, User
+  createGetDeviceCompletedSessionsRequestMessage, Device, DeviceSession, GetAllDevicesReplyMessage,
+  GetAllDevicesRequestMessageBody, GetAllTariffsReplyMessage, GetAllTariffsRequestMessageBody,
+  GetAllUsersReplyMessage, GetAllUsersRequestMessageBody, GetDeviceCompletedSessionsReplyMessage, Message,
+  ReplyMessage, Tariff, User
 } from '@ccs3-operator/messages';
-import { BooleanIndicatorComponent } from "../../../../boolean-indicator/src/lib/boolean-indicator.component";
+import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 
 @Component({
   selector: 'ccs3-op-device-sessions-report',
   templateUrl: 'device-sessions.component.html',
   imports: [
-    ReactiveFormsModule, NgClass, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule,
-    TranslocoDirective, MoneyFormatPipe, FullDatePipe, BooleanIndicatorComponent
+    ReactiveFormsModule, NgClass, NgStyle, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule,
+    MatCheckboxModule, MatDividerModule, TranslocoDirective, MoneyFormatPipe, FullDatePipe, NoYearDatePipe,
+    BooleanIndicatorComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -35,6 +40,7 @@ export class DeviceSessionsComponent implements OnInit {
   private readonly internalsSubjectsSvc = inject(InternalSubjectsService);
   private readonly messageTransportSvc = inject(MessageTransportService);
   private readonly sorterSvc = inject(SorterService);
+  private readonly groupingSvc = inject(GroupingService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
@@ -85,18 +91,28 @@ export class DeviceSessionsComponent implements OnInit {
   onLoadDeviceSessions(): void {
     const formValue = this.form.value;
     const reqMsg = createGetDeviceCompletedSessionsRequestMessage();
-    reqMsg.body.fromDate = new Date(formValue.fromDate!).toISOString();
-    reqMsg.body.toDate = new Date(formValue.toDate!).toISOString();
+    const fromDate = new Date(formValue.fromDate!).toISOString();
+    const toDate = new Date(formValue.toDate!).toISOString();
+    reqMsg.body.fromDate = fromDate;
+    reqMsg.body.toDate = toDate;
     reqMsg.body.userId = formValue.userId;
     reqMsg.body.deviceId = formValue.deviceId;
     reqMsg.body.tariffId = formValue.tariffId;
     this.signals.sessionsLoaded.set(false);
     this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(replyMsg => this.processGetDeviceCompletedSessionsReplyMessage(replyMsg as GetDeviceCompletedSessionsReplyMessage));
+    ).subscribe(replyMsg => this.processGetDeviceCompletedSessionsReplyMessage(
+      replyMsg as GetDeviceCompletedSessionsReplyMessage,
+      fromDate,
+      toDate,
+    ));
   }
 
-  processGetDeviceCompletedSessionsReplyMessage(replyMsg: GetDeviceCompletedSessionsReplyMessage): void {
+  processGetDeviceCompletedSessionsReplyMessage(
+    replyMsg: GetDeviceCompletedSessionsReplyMessage,
+    fromDate: string,
+    toDate: string,
+  ): void {
     if (replyMsg.header.failure) {
       return;
     }
@@ -104,7 +120,109 @@ export class DeviceSessionsComponent implements OnInit {
     this.signals.sessionsLoaded.set(true);
     const displayItems = this.createSessionDisplayItems(replyMsg.body.deviceSessions);
     this.signals.sessionDisplayItems.set(displayItems);
+
+    if (this.form.value.showChart) {
+      const chartInfo = this.createDeviceSessionChartInfos(replyMsg.body.deviceSessions, fromDate, toDate);
+      this.signals.deviceSessionsUsageChartInfo.set(chartInfo);
+    } else {
+      this.signals.deviceSessionsUsageChartInfo.set(null);
+    }
     this.changeDetectorRef.markForCheck();
+  }
+
+  createDeviceSessionChartInfos(deviceSessions: DeviceSession[], fromDate: string, toDate: string): DeviceSessionsUsageChartInfo[] {
+    const periodFromSeconds = Math.round(new Date(fromDate).getTime() / 1000);
+    const periodToSeconds = Math.round(new Date(toDate).getTime() / 1000);
+    const durationSeconds = periodToSeconds - periodFromSeconds;
+    const chartInfo: DeviceSessionsUsageChartInfo[] = [];
+    const allDevicesMap = this.signals.allDevicesMap()!;
+    const allTariffsMap = this.signals.allTariffsMap()!;
+    const groupedByDeviceId = this.groupingSvc.groupBy(deviceSessions, x => x.deviceId);
+    let fakeSessionUsageId = 0;
+    const generateFakeSessionUsageId = () => `idle-session-id-${++fakeSessionUsageId}`;
+    for (const grp of groupedByDeviceId) {
+      this.sorterSvc.sortBy(grp.items, x => new Date(x.startedAt));
+      const sessionInfos: SessionUsageChartInfo[] = [];
+      for (const session of grp.items) {
+        const sessionStartSeconds = Math.round(new Date(session.startedAt).getTime() / 1000);
+        const sessionStopSeconds = Math.round(new Date(session.stoppedAt).getTime() / 1000);
+        let sessionFromSecond = sessionStartSeconds - periodFromSeconds;
+        if (sessionFromSecond < 0) {
+          sessionFromSecond = 0;
+        }
+        let sessionToSecond = sessionStopSeconds - periodFromSeconds;
+        if (sessionToSecond > durationSeconds) {
+          sessionToSecond = durationSeconds;
+        }
+        sessionInfos.push({
+          session: session,
+          fromSecond: sessionFromSecond,
+          toSecond: sessionToSecond,
+          tariff: allTariffsMap.get(session.tariffId)!,
+          isIdle: false,
+          sessionUsageId: `${session.id}`,
+        });
+      }
+      const deviceFinalSessionInfos: SessionUsageChartInfo[] = [];
+      // Fill idle periods with idle sessions
+      for (let idx = 0; idx < sessionInfos.length; idx++) {
+        const currentSessionInfo = sessionInfos[idx];
+        const prevSessionInfo = sessionInfos[idx - 1];
+        if (prevSessionInfo) {
+          // There is previous session
+          // Check if there is a gap between the stop of the previous session and start of the current one
+          if (currentSessionInfo.fromSecond > prevSessionInfo.toSecond) {
+            // There is a gap - create idle session
+            deviceFinalSessionInfos.push({
+              fromSecond: prevSessionInfo.toSecond + 1,
+              toSecond: currentSessionInfo.fromSecond - 1,
+              session: null,
+              tariff: null,
+              isIdle: true,
+              sessionUsageId: generateFakeSessionUsageId(),
+            });
+          }
+        } else {
+          // There is no previous session
+          // Check if current session starts from the beginning and if not - add idle session
+          if (currentSessionInfo.fromSecond > 0) {
+            deviceFinalSessionInfos.push({
+              fromSecond: 0,
+              toSecond: currentSessionInfo.fromSecond - 1,
+              session: null,
+              tariff: null,
+              isIdle: true,
+              sessionUsageId: generateFakeSessionUsageId(),
+            });
+          }
+        }
+        deviceFinalSessionInfos.push(currentSessionInfo);
+      }
+      //Check if there is an idle session after the last one
+      const lastSessionInfo = sessionInfos[sessionInfos.length - 1];
+      if (lastSessionInfo && (lastSessionInfo.toSecond < durationSeconds)) {
+        deviceFinalSessionInfos.push({
+          fromSecond: lastSessionInfo.toSecond + 1,
+          toSecond: durationSeconds,
+          session: null,
+          tariff: null,
+          isIdle: true,
+          sessionUsageId: generateFakeSessionUsageId(),
+        });
+      }
+      const fractions = deviceFinalSessionInfos.map(x => x.toSecond - x.fromSecond).map(x => `${x}fr`).join(' ');
+      // const gridStyle = `display: grid; grid-template-columns: ${fractions}`;
+      const gridStyleObject: Record<string, string> = {
+        display: 'grid',
+        'grid-template-columns': `auto ${fractions}`,
+      };
+      chartInfo.push({
+        device: allDevicesMap.get(grp.key)!,
+        sessionChartInfos: deviceFinalSessionInfos,
+        cssGridStyleObject: gridStyleObject,
+      });
+    }
+    return chartInfo;
   }
 
   createSessionDisplayItems(deviceSessions: DeviceSession[]): SessionDisplayItem[] {
@@ -132,6 +250,7 @@ export class DeviceSessionsComponent implements OnInit {
       userId: new FormControl(null),
       tariffId: new FormControl(null),
       deviceId: new FormControl(null),
+      showChart: new FormControl(false),
     };
     const form = this.formBuilder.group<FormControls>(controls);
     return form;
@@ -149,6 +268,7 @@ export class DeviceSessionsComponent implements OnInit {
       allUsersMap: signal(null),
       sessionDisplayItems: signal([]),
       replyMessage: signal(null),
+      deviceSessionsUsageChartInfo: signal(null),
     };
     return signals;
   }
@@ -173,6 +293,7 @@ interface Signals {
   allDevicesMap: WritableSignal<Map<number, Device> | null>;
   sessionDisplayItems: WritableSignal<SessionDisplayItem[]>;
   replyMessage: WritableSignal<GetDeviceCompletedSessionsReplyMessage | null>;
+  deviceSessionsUsageChartInfo: WritableSignal<DeviceSessionsUsageChartInfo[] | null>;
 }
 
 interface FormControls {
@@ -181,6 +302,7 @@ interface FormControls {
   userId: FormControl<number | null>;
   tariffId: FormControl<number | null>;
   deviceId: FormControl<number | null>;
+  showChart: FormControl<boolean | null>;
 }
 
 interface LoadDataObservablesObject extends Record<string, Observable<Message<unknown>>> {
@@ -193,4 +315,19 @@ interface LoadDataMessagesObject extends Record<string, ReplyMessage<unknown>> {
   allUsers: GetAllUsersReplyMessage;
   allTariffs: GetAllTariffsReplyMessage;
   allDevices: GetAllDevicesReplyMessage;
+}
+
+interface SessionUsageChartInfo {
+  fromSecond: number;
+  toSecond: number;
+  tariff?: Tariff | null;
+  session?: DeviceSession | null;
+  isIdle: boolean;
+  sessionUsageId: string;
+}
+
+interface DeviceSessionsUsageChartInfo {
+  device: Device;
+  cssGridStyleObject: Record<string, string>;
+  sessionChartInfos: SessionUsageChartInfo[];
 }

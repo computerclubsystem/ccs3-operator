@@ -1,4 +1,4 @@
-import { SystemSettingType } from "./system-setting-type";
+import { SystemSettingType } from './system-setting-type';
 
 export interface SystemSetting {
   name: string;

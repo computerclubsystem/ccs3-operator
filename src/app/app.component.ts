@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { Params, Router, RouterOutlet } from '@angular/router';
 import { MatIconRegistry } from '@angular/material/icon';
 import { translate, TranslocoService } from '@jsverse/transloco';
-import { filter } from 'rxjs';
+import { filter, firstValueFrom } from 'rxjs';
 
 import { ConnectorService, ConnectorSettings, OnCloseEventArgs, OnErrorEventArgs } from '@ccs3-operator/connector';
 import {
@@ -13,6 +13,7 @@ import {
   SignOutReplyMessage, createSignOutRequestMessage, ReplyMessage, NotificationMessageType,
   NotificationMessage, createGetProfileSettingsRequestMessage, GetProfileSettingsReplyMessage,
   UserProfileSettingName, SignInInformationNotificationMessage,
+  createUpdateProfileSettingsRequestMessage,
 } from '@ccs3-operator/messages';
 import {
   CustomStylesService, MessageSubjectsService, NotificationType, PermissionName, PermissionsService,
@@ -167,8 +168,16 @@ export class AppComponent implements OnInit {
       .subscribe(authReplyMsg => this.processAuthReplyMessage(authReplyMsg as AuthReplyMessage));
   }
 
-  processLanguageSelected(language: string): void {
+  async processLanguageSelected(language: string): Promise<void> {
     this.translocoService.setActiveLang(language);
+    const isSignedIn = await firstValueFrom(this.internalSubjectsSvc.getSignedIn());
+    if (isSignedIn) {
+      const reqMsg = createUpdateProfileSettingsRequestMessage();
+      reqMsg.body.profileSettings = [
+        { name: UserProfileSettingName.language, value: language },
+      ];
+      this.messageTransportSvc.sendAndAwaitForReply(reqMsg).subscribe();
+    }
   }
 
   processMainMenuSelected(mainMenuItem: MainMenuItem): void {
@@ -185,9 +194,9 @@ export class AppComponent implements OnInit {
       case MainMenuItemId.reports:
         this.router.navigate([RouteName.reports]);
         break;
-        case MainMenuItemId.diagnostics:
-          this.router.navigate([RouteName.diagnostics]);
-          break;
+      case MainMenuItemId.diagnostics:
+        this.router.navigate([RouteName.diagnostics]);
+        break;
     }
   }
 
@@ -398,7 +407,16 @@ export class AppComponent implements OnInit {
     }
     const customCssSetting = replyMsg.body.settings.find(x => x.name === UserProfileSettingName.customCss);
     this.applyCustomCss(customCssSetting?.value);
+    const languageSetting = replyMsg.body.settings.find(x => x.name === UserProfileSettingName.language);
+    this.applyUserLanguage(languageSetting?.value);
     this.internalSubjectsSvc.setProfileSettingsReplyMessage(replyMsg);
+  }
+
+  applyUserLanguage(language: string | undefined | null): void {
+    if (!language) {
+      return;
+    }
+    this.translocoService.setActiveLang(language);
   }
 
   private applyCustomCss(css?: string | null): void {

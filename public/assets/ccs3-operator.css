@@ -25,6 +25,10 @@
   --ccs3-op-table-alternate-background-even: var(--mat-sys-surface-container-low);
   --ccs3-op-font-size-half: 0.5rem;
   --ccs3-op-primary-color: var(--mat-sys-primary);
+  --ccs3-op-tiny-text: 10ch;
+  --ccs3-op-small-text: 20ch;
+  --ccs3-op-medium-text: 40ch;
+  --ccs3-op-large-text: 60ch;
 }
 
 /* Flex */
@@ -159,39 +163,39 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
 }
 
 .ccs3-op-max-width-small-text {
-  max-width: 20ch;
+  max-width: var(--ccs3-op-small-text);
 }
 
 .ccs3-op-width-small-text {
-  width: 20ch;
+  width: var(--ccs3-op-small-text);
 }
 
 .ccs3-op-max-width-medium-text {
-  max-width: 40ch;
+  max-width: var(--ccs3-op-medium-text);
 }
 
 .ccs3-op-width-medium-text {
-  width: 40ch;
+  width: var(--ccs3-op-medium-text);
 }
 
 .ccs3-op-max-width-large-text {
-  max-width: 60ch;
+  max-width: var(--ccs3-op-large-text);
 }
 
 .ccs3-op-width-large-text {
-  width: 60ch;
+  width: var(--ccs3-op-large-text);
 }
 
 .ccs3-op-max-height-small-text {
-  max-height: 20ch;
+  max-height: var(--ccs3-op-small-text);
 }
 
 .ccs3-op-max-height-medium-text {
-  max-height: 40ch;
+  max-height: var(--ccs3-op-medium-text);
 }
 
 .ccs3-op-max-height-large-text {
-  max-height: 60ch;
+  max-height: var(--ccs3-op-large-text);
 }
 
 .ccs3-op-font-size-small {
@@ -363,6 +367,18 @@ ccs3-op-computer-statuses .computer-status-container.will-stop-soon .remaining-t
 ccs3-op-computer-statuses .computer-note {
   max-height: 4ch;
   overflow: hidden;
+}
+
+ccs3-op-device-sessions-report .device-session-usage .completed-session {
+  background-color: var(--ccs3-op-primary-color);
+}
+
+ccs3-op-device-sessions-report .device-session-usage [ccs3-op-tariff-price="0"] {
+  background-color: var(--ccs3-op-sys-error);
+}
+
+ccs3-op-device-sessions-report .device-session-usage .session-usage-device-name {
+  width: var(--ccs3-op-tiny-text);
 }
 
 /* Misc */

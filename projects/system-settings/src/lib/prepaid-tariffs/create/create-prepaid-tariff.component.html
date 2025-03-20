@@ -45,7 +45,7 @@
         <mat-form-field>
           <mat-label>{{t('Price')}}</mat-label>
           <input matInput type="number" [formControl]="form.controls.price" autocomplete="off" />
-          <mat-hint>Use dot as separator - 1.50, 4.00, 10.50 etc.</mat-hint>
+          <mat-hint>{{t('Use dot as separator - 1.50, 4.00, 10.50 etc.')}}</mat-hint>
           @if (signals.priceHasError()) {
           <mat-error>{{t('Invalid number. Use only digits and dot as separator - 1.50, 4.00, 10.50 etc.')}}</mat-error>
           }

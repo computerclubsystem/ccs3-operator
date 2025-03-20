@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'ccs3-op-reports',
   templateUrl: 'reports.component.html',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatButtonModule, TranslocoModule],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatButtonModule, TranslocoDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportsComponent {
