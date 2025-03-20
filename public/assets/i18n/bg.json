@@ -246,5 +246,6 @@
   "Zero price sessions total time": "Общо време на сесиите с нулева цена",
   "Zero price sessions count": "Общ брой на сесиите с нулева цена",
   "Zero price sessions % of used time": "% от използваното време на сесиите с нулева цена",
-  "Device sessions details": "Детайли за сесиите на устройствата"
+  "Device sessions details": "Детайли за сесиите на устройствата",
+  "Tariff usage summary": "Обобщение на използването на тарифите"
 }

@@ -247,4 +247,5 @@ export const en = {
   "Zero price sessions count": "Zero price sessions count",
   "Zero price sessions % of used time": "Zero price sessions % of used time",
   "Device sessions details": "Device sessions details",
+  "Tariff usage summary": "Tariff usage summary",
 };

@@ -126,8 +126,12 @@ export class DeviceSessionsComponent implements OnInit {
     this.signals.deviceSessionsUsageChartInfo.set(chartInfo);
 
     const deviceUsageSummaryInfo = this.createDeviceUsageSummaryInfo(replyMsg.body.deviceSessions, fromDate, toDate);
-    this.sorterSvc.sortBy(deviceUsageSummaryInfo, x => x.totalSum, SortOrder.descending);
+    this.sorterSvc.sortBy(deviceUsageSummaryInfo, x => x.totalAmount, SortOrder.descending);
     this.signals.deviceUsageSummary.set(deviceUsageSummaryInfo);
+
+    const tariffUsageSummaryInfo = this.createTariffSessionChartInfos(replyMsg.body.deviceSessions);
+    this.sorterSvc.sortBy(tariffUsageSummaryInfo, x => x.totalAmount, SortOrder.descending);
+    this.signals.tariffUsageSummary.set(tariffUsageSummaryInfo);
 
     this.changeDetectorRef.markForCheck();
   }
@@ -152,7 +156,7 @@ export class DeviceSessionsComponent implements OnInit {
           totalCount: 1,
           // This will be in milliseconds - later we will convert it to seconds
           totalSeconds: sessionDurationMilliseconds,
-          totalSum: session.totalAmount,
+          totalAmount: session.totalAmount,
           zeroPriceCount: session.totalAmount === 0 ? 1 : 0,
           zeroPriceTotalSeconds: session.totalAmount === 0 ? sessionDurationMilliseconds : 0,
           zeroPricePercentage: 0,
@@ -161,7 +165,7 @@ export class DeviceSessionsComponent implements OnInit {
       } else {
         mapItem.totalCount++;
         mapItem.totalSeconds += sessionDurationMilliseconds;
-        mapItem.totalSum += session.totalAmount;
+        mapItem.totalAmount += session.totalAmount;
         if (session.totalAmount === 0) {
           mapItem.zeroPriceCount++;
           mapItem.zeroPriceTotalSeconds += sessionDurationMilliseconds;
@@ -175,10 +179,43 @@ export class DeviceSessionsComponent implements OnInit {
       infoItem.zeroPriceTotalSeconds = Math.round(infoItem.zeroPriceTotalSeconds / 1000);
       infoItem.percentage = Math.round((infoItem.totalSeconds / durationSeconds) * 100);
       infoItem.zeroPricePercentage = Math.round((infoItem.zeroPriceTotalSeconds / infoItem.totalSeconds) * 100);
-      infoItem.totalSum = Math.round(infoItem.totalSum * 100) / 100;
+      infoItem.totalAmount = Math.round(infoItem.totalAmount * 100) / 100;
       summaryInfo.push(infoItem);
     }
     return summaryInfo;
+  }
+
+  createTariffSessionChartInfos(deviceSessions: DeviceSession[]): TariffUsageSummaryInfo[] {
+    const summaryInfos: TariffUsageSummaryInfo[] = [];
+    const allTariffsMap = this.signals.allTariffsMap()!;
+    const map = new Map<number, TariffUsageSummaryInfo>();
+    for (const session of deviceSessions) {
+      const startedAtTime = new Date(session.startedAt).getTime();
+      const stoppedAtTime = new Date(session.stoppedAt).getTime();
+      const sessionDurationMilliseconds = stoppedAtTime - startedAtTime;
+      const mapItem = map.get(session.tariffId);
+      const tariff = allTariffsMap.get(session.tariffId)!;
+      if (!mapItem) {
+        map.set(session.tariffId, {
+          tariff: tariff,
+          totalAmount: tariff.price,
+          totalCount: 1,
+          totalSeconds: sessionDurationMilliseconds,
+        });
+      } else {
+        mapItem.totalAmount += tariff.price;
+        mapItem.totalCount++;
+        mapItem.totalSeconds += sessionDurationMilliseconds;
+      }
+    }
+    for (const mapItem of map) {
+      const infoItem = mapItem[1];
+      // totalSeconds contains milliseconds - convert them to seconds
+      infoItem.totalSeconds = Math.round(infoItem.totalSeconds / 1000);
+      infoItem.totalAmount = Math.round(infoItem.totalAmount * 100) / 100;
+      summaryInfos.push(infoItem);
+    }
+    return summaryInfos;
   }
 
   createDeviceSessionChartInfos(deviceSessions: DeviceSession[], fromDate: string, toDate: string): DeviceSessionsUsageChartInfo[] {
@@ -322,6 +359,7 @@ export class DeviceSessionsComponent implements OnInit {
       replyMessage: signal(null),
       deviceSessionsUsageChartInfo: signal(null),
       deviceUsageSummary: signal(null),
+      tariffUsageSummary: signal(null),
     };
     return signals;
   }
@@ -348,6 +386,7 @@ interface Signals {
   replyMessage: WritableSignal<GetDeviceCompletedSessionsReplyMessage | null>;
   deviceSessionsUsageChartInfo: WritableSignal<DeviceSessionsUsageChartInfo[] | null>;
   deviceUsageSummary: WritableSignal<DeviceUsageSummaryInfo[] | null>;
+  tariffUsageSummary: WritableSignal<TariffUsageSummaryInfo[] | null>;
 }
 
 interface FormControls {
@@ -391,16 +430,16 @@ interface DeviceUsageSummaryInfo {
   device: Device;
   totalSeconds: number;
   totalCount: number;
-  totalSum: number;
+  totalAmount: number;
   percentage: number;
   zeroPriceCount: number;
   zeroPriceTotalSeconds: number;
   zeroPricePercentage: number;
 }
 
-// interface TariffUsageSummaryInfo {
-//   device: Device;
-//   totalSeconds: number;
-//   totalCount: number;
-//   percentage: number;
-// }
+interface TariffUsageSummaryInfo {
+  tariff: Tariff;
+  totalSeconds: number;
+  totalCount: number;
+  totalAmount: number;
+}
