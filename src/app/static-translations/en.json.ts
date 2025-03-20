@@ -238,4 +238,13 @@ export const en = {
   "Show chart": "Show chart",
   "Session usage chart": "Session usage chart",
   "Show table": "Show table",
+  "Device usage summary": "Device usage summary",
+  "Total time used": "Total time used",
+  "Total count": "Total count",
+  "Total sum": "Total sum",
+  "% used of total time": "% used of total time",
+  "Zero price sessions total time": "Zero price sessions total time",
+  "Zero price sessions count": "Zero price sessions count",
+  "Zero price sessions % of used time": "Zero price sessions % of used time",
+  "Device sessions details": "Device sessions details",
 };

@@ -12,7 +12,8 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { forkJoin, Observable } from 'rxjs';
 
 import {
-  FullDatePipe, GroupingService, InternalSubjectsService, MessageTransportService, MoneyFormatPipe, NoYearDatePipe, SorterService
+  FullDatePipe, GroupingService, InternalSubjectsService, MessageTransportService, MoneyFormatPipe, NoYearDatePipe, SecondsToTimePipe, SorterService,
+  SortOrder
 } from '@ccs3-operator/shared';
 import {
   createGetAllDevicesRequestMessage, createGetAllTariffsRequestMessage, createGetAllUsersRequestMessage,
@@ -29,7 +30,7 @@ import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
   imports: [
     ReactiveFormsModule, NgClass, NgStyle, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatCheckboxModule, MatDividerModule, TranslocoDirective, MoneyFormatPipe, FullDatePipe, NoYearDatePipe,
-    BooleanIndicatorComponent
+    SecondsToTimePipe, BooleanIndicatorComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -123,7 +124,61 @@ export class DeviceSessionsComponent implements OnInit {
 
     const chartInfo = this.createDeviceSessionChartInfos(replyMsg.body.deviceSessions, fromDate, toDate);
     this.signals.deviceSessionsUsageChartInfo.set(chartInfo);
+
+    const deviceUsageSummaryInfo = this.createDeviceUsageSummaryInfo(replyMsg.body.deviceSessions, fromDate, toDate);
+    this.sorterSvc.sortBy(deviceUsageSummaryInfo, x => x.totalSum, SortOrder.descending);
+    this.signals.deviceUsageSummary.set(deviceUsageSummaryInfo);
+
     this.changeDetectorRef.markForCheck();
+  }
+
+  createDeviceUsageSummaryInfo(deviceSessions: DeviceSession[], fromDate: string, toDate: string): DeviceUsageSummaryInfo[] {
+    const summaryInfo: DeviceUsageSummaryInfo[] = [];
+    const periodFromSeconds = Math.round(new Date(fromDate).getTime() / 1000);
+    const periodToSeconds = Math.round(new Date(toDate).getTime() / 1000);
+    const durationSeconds = periodToSeconds - periodFromSeconds;
+    const map = new Map<number, DeviceUsageSummaryInfo>();
+    const allDevicesMap = this.signals.allDevicesMap()!;
+    for (const session of deviceSessions) {
+      const startedAtTime = new Date(session.startedAt).getTime();
+      const stoppedAtTime = new Date(session.stoppedAt).getTime();
+      const sessionDurationMilliseconds = stoppedAtTime - startedAtTime;
+      const mapItem = map.get(session.deviceId);
+      if (!mapItem) {
+        const item: DeviceUsageSummaryInfo = {
+          device: allDevicesMap.get(session.deviceId)!,
+          // This will be calculated later
+          percentage: 0,
+          totalCount: 1,
+          // This will be in milliseconds - later we will convert it to seconds
+          totalSeconds: sessionDurationMilliseconds,
+          totalSum: session.totalAmount,
+          zeroPriceCount: session.totalAmount === 0 ? 1 : 0,
+          zeroPriceTotalSeconds: session.totalAmount === 0 ? sessionDurationMilliseconds : 0,
+          zeroPricePercentage: 0,
+        };
+        map.set(session.deviceId, item);
+      } else {
+        mapItem.totalCount++;
+        mapItem.totalSeconds += sessionDurationMilliseconds;
+        mapItem.totalSum += session.totalAmount;
+        if (session.totalAmount === 0) {
+          mapItem.zeroPriceCount++;
+          mapItem.zeroPriceTotalSeconds += sessionDurationMilliseconds;
+        }
+      }
+    }
+    for (const mapItem of map) {
+      const infoItem = mapItem[1];
+      // totalSeconds contains milliseconds - convert them to seconds
+      infoItem.totalSeconds = Math.round(infoItem.totalSeconds / 1000);
+      infoItem.zeroPriceTotalSeconds = Math.round(infoItem.zeroPriceTotalSeconds / 1000);
+      infoItem.percentage = Math.round((infoItem.totalSeconds / durationSeconds) * 100);
+      infoItem.zeroPricePercentage = Math.round((infoItem.zeroPriceTotalSeconds / infoItem.totalSeconds) * 100);
+      infoItem.totalSum = Math.round(infoItem.totalSum * 100) / 100;
+      summaryInfo.push(infoItem);
+    }
+    return summaryInfo;
   }
 
   createDeviceSessionChartInfos(deviceSessions: DeviceSession[], fromDate: string, toDate: string): DeviceSessionsUsageChartInfo[] {
@@ -266,6 +321,7 @@ export class DeviceSessionsComponent implements OnInit {
       sessionDisplayItems: signal([]),
       replyMessage: signal(null),
       deviceSessionsUsageChartInfo: signal(null),
+      deviceUsageSummary: signal(null),
     };
     return signals;
   }
@@ -291,6 +347,7 @@ interface Signals {
   sessionDisplayItems: WritableSignal<SessionDisplayItem[]>;
   replyMessage: WritableSignal<GetDeviceCompletedSessionsReplyMessage | null>;
   deviceSessionsUsageChartInfo: WritableSignal<DeviceSessionsUsageChartInfo[] | null>;
+  deviceUsageSummary: WritableSignal<DeviceUsageSummaryInfo[] | null>;
 }
 
 interface FormControls {
@@ -329,3 +386,21 @@ interface DeviceSessionsUsageChartInfo {
   cssGridStyleObject: Record<string, string>;
   sessionChartInfos: SessionUsageChartInfo[];
 }
+
+interface DeviceUsageSummaryInfo {
+  device: Device;
+  totalSeconds: number;
+  totalCount: number;
+  totalSum: number;
+  percentage: number;
+  zeroPriceCount: number;
+  zeroPriceTotalSeconds: number;
+  zeroPricePercentage: number;
+}
+
+// interface TariffUsageSummaryInfo {
+//   device: Device;
+//   totalSeconds: number;
+//   totalCount: number;
+//   percentage: number;
+// }

@@ -72,7 +72,40 @@
       }
     </section>
     }
+    @let deviceUsageSummary = signals.deviceUsageSummary();
+    @if (deviceUsageSummary) {
+    <span class="ccs3-op-header-2">{{t('Device usage summary')}}</span>
+    <table class="device-usage-summary-table">
+      <thead>
+        <tr>
+          <th class="ccs3-op-align-text-start">{{t('Name')}}</th>
+          <th class="ccs3-op-align-text-end">{{t('Total time used')}}</th>
+          <th class="ccs3-op-align-text-end">{{t('Total count')}}</th>
+          <th class="ccs3-op-align-text-end">{{t('Total sum')}}</th>
+          <th class="ccs3-op-align-text-end">{{t('% used of total time')}}</th>
+          <th class="ccs3-op-align-text-end">{{t('Zero price sessions total time')}}</th>
+          <th class="ccs3-op-align-text-end">{{t('Zero price sessions count')}}</th>
+          <th class="ccs3-op-align-text-end">{{t('Zero price sessions % of used time')}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (summary of deviceUsageSummary; track summary.device.id) {
+        <tr>
+          <td class="ccs3-op-align-text-start">{{summary.device.name}}</td>
+          <td class="ccs3-op-align-text-end">{{summary.totalSeconds | secondsToTime}}</td>
+          <td class="ccs3-op-align-text-end">{{summary.totalCount}}</td>
+          <td class="ccs3-op-align-text-end">{{summary.totalSum | moneyFormat}}</td>
+          <td class="ccs3-op-align-text-end">{{summary.percentage}}</td>
+          <td class="ccs3-op-align-text-end">{{summary.zeroPriceTotalSeconds | secondsToTime}}</td>
+          <td class="ccs3-op-align-text-end">{{summary.zeroPriceCount}}</td>
+          <td class="ccs3-op-align-text-end">{{summary.zeroPricePercentage}}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+    }
     @if (form.controls.showTable.value) {
+    <span class="ccs3-op-header-2">{{t('Device sessions details')}}</span>
     <table class="device-sessions-table">
       <thead>
         <tr>

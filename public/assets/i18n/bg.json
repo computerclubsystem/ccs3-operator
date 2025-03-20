@@ -237,5 +237,14 @@
   "Sent \"ping\" messages": "Изпратени \"ping\" съобщения",
   "Show chart": "Покажи графика",
   "Session usage chart": "Графика на използването",
-  "Show table": "Покажи таблица"
+  "Show table": "Покажи таблица",
+  "Device usage summary": "Обобщение на използването на устройствата",
+  "Total time used": "Общо време използван",
+  "Total count": "Общ брой",
+  "Total sum": "Обща сума",
+  "% used of total time": "% използван от общото време",
+  "Zero price sessions total time": "Общо време на сесиите с нулева цена",
+  "Zero price sessions count": "Общ брой на сесиите с нулева цена",
+  "Zero price sessions % of used time": "% от използваното време на сесиите с нулева цена",
+  "Device sessions details": "Детайли за сесиите на устройствата"
 }
