@@ -237,4 +237,5 @@ export const en = {
   "Sent \"ping\" messages": "Sent \"ping\" messages",
   "Show usage chart": "Show usage chart",
   "Session usage chart": "Session usage chart",
+  "Show sessions table": "Show sessions table",
 };

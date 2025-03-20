@@ -41,15 +41,16 @@
             }
           </mat-select>
         </mat-form-field>
+        <mat-checkbox [formControl]="form.controls.showTable">{{t('Show sessions table')}}</mat-checkbox>
         <mat-checkbox [formControl]="form.controls.showChart">{{t('Show usage chart')}}</mat-checkbox>
         <button (click)="onLoadDeviceSessions()" [disabled]="form.invalid" mat-flat-button>{{t('Load')}}</button>
       </section>
     </form>
   </section>
   <section class="device-sessions-section ccs3-op-flex-column">
-    @if(signals.sessionsLoaded()) {
+    @if (signals.sessionsLoaded()) {
     @let sessionssUsageChartInfo = signals.deviceSessionsUsageChartInfo();
-    @if(sessionssUsageChartInfo) {
+    @if (form.controls.showChart.value) {
     <section class="device-sessions-usage-section">
       <span class="ccs3-op-header-2">{{t('Session usage chart')}}</span>
       <mat-divider></mat-divider>
@@ -71,6 +72,7 @@
       }
     </section>
     }
+    @if (form.controls.showTable.value) {
     <table class="device-sessions-table">
       <thead>
         <tr>
@@ -125,6 +127,7 @@
         </tr>
       </tbody>
     </table>
+    }
     }
   </section>
   }

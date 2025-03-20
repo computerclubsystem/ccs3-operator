@@ -121,12 +121,8 @@ export class DeviceSessionsComponent implements OnInit {
     const displayItems = this.createSessionDisplayItems(replyMsg.body.deviceSessions);
     this.signals.sessionDisplayItems.set(displayItems);
 
-    if (this.form.value.showChart) {
-      const chartInfo = this.createDeviceSessionChartInfos(replyMsg.body.deviceSessions, fromDate, toDate);
-      this.signals.deviceSessionsUsageChartInfo.set(chartInfo);
-    } else {
-      this.signals.deviceSessionsUsageChartInfo.set(null);
-    }
+    const chartInfo = this.createDeviceSessionChartInfos(replyMsg.body.deviceSessions, fromDate, toDate);
+    this.signals.deviceSessionsUsageChartInfo.set(chartInfo);
     this.changeDetectorRef.markForCheck();
   }
 
@@ -250,7 +246,8 @@ export class DeviceSessionsComponent implements OnInit {
       userId: new FormControl(null),
       tariffId: new FormControl(null),
       deviceId: new FormControl(null),
-      showChart: new FormControl(false),
+      showTable: new FormControl(true),
+      showChart: new FormControl(true),
     };
     const form = this.formBuilder.group<FormControls>(controls);
     return form;
@@ -303,6 +300,7 @@ interface FormControls {
   tariffId: FormControl<number | null>;
   deviceId: FormControl<number | null>;
   showChart: FormControl<boolean | null>;
+  showTable: FormControl<boolean | null>;
 }
 
 interface LoadDataObservablesObject extends Record<string, Observable<Message<unknown>>> {
