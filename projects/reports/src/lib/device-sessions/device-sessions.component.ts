@@ -20,7 +20,7 @@ import {
   createGetDeviceCompletedSessionsRequestMessage, Device, DeviceSession, GetAllDevicesReplyMessage,
   GetAllDevicesRequestMessageBody, GetAllTariffsReplyMessage, GetAllTariffsRequestMessageBody,
   GetAllUsersReplyMessage, GetAllUsersRequestMessageBody, GetDeviceCompletedSessionsReplyMessage, Message,
-  ReplyMessage, Tariff, User
+  ReplyMessage, Tariff, TariffType, User
 } from '@ccs3-operator/messages';
 import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 
@@ -195,15 +195,16 @@ export class DeviceSessionsComponent implements OnInit {
       const sessionDurationMilliseconds = stoppedAtTime - startedAtTime;
       const mapItem = map.get(session.tariffId);
       const tariff = allTariffsMap.get(session.tariffId)!;
+      const tariffPrice = tariff.type !== TariffType.prepaid ? tariff.price : 0;
       if (!mapItem) {
         map.set(session.tariffId, {
           tariff: tariff,
-          totalAmount: tariff.price,
+          totalAmount: tariffPrice,
           totalCount: 1,
           totalSeconds: sessionDurationMilliseconds,
         });
       } else {
-        mapItem.totalAmount += tariff.price;
+        mapItem.totalAmount += tariffPrice;
         mapItem.totalCount++;
         mapItem.totalSeconds += sessionDurationMilliseconds;
       }
