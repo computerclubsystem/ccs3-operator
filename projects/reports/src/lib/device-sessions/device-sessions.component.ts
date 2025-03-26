@@ -130,7 +130,18 @@ export class DeviceSessionsComponent implements OnInit {
     this.signals.deviceUsageSummary.set(deviceUsageSummaryInfo);
 
     const tariffUsageSummaryInfo = this.createTariffSessionChartInfos(replyMsg.body.deviceSessions);
-    this.sorterSvc.sortBy(tariffUsageSummaryInfo, x => x.totalAmount, SortOrder.descending);
+    // Sort by totalAmount, if equal - by totalSeconds, if equal again - by totalCount
+    this.sorterSvc.sortByMany(tariffUsageSummaryInfo, [{
+      sortOrder: SortOrder.descending,
+      valueSelector: x => x.totalAmount,
+    }, {
+      sortOrder: SortOrder.descending,
+      valueSelector: x => x.totalSeconds,
+    }, {
+      // It is highly unlikely the tariff summary item to have same totalSeconds to need to sort by totalCount
+      sortOrder: SortOrder.descending,
+      valueSelector: x => x.totalCount,
+    }]);
     this.signals.tariffUsageSummary.set(tariffUsageSummaryInfo);
 
     this.changeDetectorRef.markForCheck();
