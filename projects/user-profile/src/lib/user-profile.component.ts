@@ -1,22 +1,34 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, WritableSignal
+} from '@angular/core';
+import {
+  AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators
+} from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ChangePasswordReplyMessage, createChangePasswordRequestMessage, createGetProfileSettingsRequestMessage, createUpdateProfileSettingsRequestMessage, GetProfileSettingsReplyMessage, UpdateProfileSettingsReplyMessage, UserProfileSettingName, UserProfileSettingWithValue } from '@ccs3-operator/messages';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDividerModule } from '@angular/material/divider';
+import { translate, TranslocoDirective } from '@jsverse/transloco';
+
+import {
+  ChangePasswordReplyMessage, createChangePasswordRequestMessage, createGetProfileSettingsRequestMessage,
+  createUpdateProfileSettingsRequestMessage, GetProfileSettingsReplyMessage, UpdateProfileSettingsReplyMessage,
+  UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue, UserProfileSettingName,
+  UserProfileSettingWithValue
+} from '@ccs3-operator/messages';
 import { NotificationsService } from '@ccs3-operator/notifications';
 import { HashService, InternalSubjectsService, MessageTransportService, NotificationType } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
-import { translate, TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'ccs3-op-user-profile',
   templateUrl: 'user-profile.component.html',
   imports: [
-    ReactiveFormsModule, MatCardModule, MatInputModule, MatFormFieldModule, MatButtonModule,
-    TranslocoDirective],
+    ReactiveFormsModule, MatCardModule, MatInputModule, MatFormFieldModule, MatButtonModule, MatRadioModule,
+    MatDividerModule, TranslocoDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserProfileComponent implements OnInit {
@@ -30,6 +42,8 @@ export class UserProfileComponent implements OnInit {
   readonly signals = this.createSignals();
   readonly changePasswordForm = this.createChangePasswordForm();
   readonly customStyleForm = this.createCustomStyleForm();
+  readonly actionsAndOptionsButtonsPlacementForm = this.createActionsAndOptionsButtonsPlacementForm();
+  readonly actionsAndOptionsButtonsPlacement = UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue;
 
   ngOnInit(): void {
     this.internalsSubjectSvc.whenSignedIn().pipe(
@@ -48,12 +62,54 @@ export class UserProfileComponent implements OnInit {
     if (replyMsg.header.failure) {
       return;
     }
+    const settings = replyMsg.body.settings;
     this.signals.profileReplyMessage.set(replyMsg);
-    const customStylesProfileSetting = replyMsg.body.settings.find(x => x.name === UserProfileSettingName.customCss);
+
+    this.setCustomStyleFormValue(settings);
+    this.setActionsAndOptionsButtonsPlacementFormValue(settings);
+  }
+
+  setActionsAndOptionsButtonsPlacementFormValue(settings: UserProfileSettingWithValue[]): void {
+    const actionsAndOptionsButtonsPlacementSetting = settings.find(x => x.name === UserProfileSettingName.actionsAndOptionsButtonsPlacement);
+    this.signals.actionsAndOptionsButtonsPlacementSetting.set(actionsAndOptionsButtonsPlacementSetting);
+    let placementValue = actionsAndOptionsButtonsPlacementSetting?.value;
+    if (placementValue !== UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue.start
+      && placementValue !== UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue.end
+    ) {
+      placementValue = UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue.start;
+    }
+    this.actionsAndOptionsButtonsPlacementForm.patchValue({
+      placement: placementValue,
+    });
+  }
+
+  setCustomStyleFormValue(settings: UserProfileSettingWithValue[]): void {
+    const customStylesProfileSetting = settings.find(x => x.name === UserProfileSettingName.customCss);
     this.signals.customStylesSetting.set(customStylesProfileSetting);
     this.customStyleForm.patchValue({
       customStyle: customStylesProfileSetting?.value,
     });
+  }
+
+  onSaveActionsAndOptionsButtonsPlacement(): void {
+    const formValue = this.actionsAndOptionsButtonsPlacementForm.value;
+    const reqMsg = createUpdateProfileSettingsRequestMessage();
+    reqMsg.body.profileSettings = [
+      {
+        name: UserProfileSettingName.actionsAndOptionsButtonsPlacement,
+        value: formValue.placement,
+      },
+    ];
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processUpdateActionsAndOptionsButtonsPlacementReplyMessage(replyMsg as UpdateProfileSettingsReplyMessage));
+  }
+
+  processUpdateActionsAndOptionsButtonsPlacementReplyMessage(replyMsg: UpdateProfileSettingsReplyMessage): void {
+    if (replyMsg.header.failure) {
+      return;
+    }
+    this.notificationsSvc.show(NotificationType.success, translate('Actions and Options buttons placement saved'), null, IconName.check, replyMsg);
   }
 
   onSaveCustomCss(): void {
@@ -63,7 +119,7 @@ export class UserProfileComponent implements OnInit {
       {
         name: UserProfileSettingName.customCss,
         value: formValue.customStyle,
-      }
+      },
     ];
     this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
       takeUntilDestroyed(this.destroyRef)
@@ -135,10 +191,19 @@ export class UserProfileComponent implements OnInit {
     return form;
   }
 
+  createActionsAndOptionsButtonsPlacementForm(): FormGroup<ActionsAndOptionsButtonsPlacementFormControls> {
+    const controls: ActionsAndOptionsButtonsPlacementFormControls = {
+      placement: new FormControl(UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue.start),
+    };
+    const form = this.formBuilder.group<ActionsAndOptionsButtonsPlacementFormControls>(controls);
+    return form;
+  }
+
   createSignals(): Signals {
     const signals: Signals = {
       profileReplyMessage: signal(null),
       customStylesSetting: signal(null),
+      actionsAndOptionsButtonsPlacementSetting: signal(null),
     };
     return signals;
   }
@@ -154,7 +219,12 @@ interface CustomStyleFormControls {
   customStyle: FormControl<string | null>;
 }
 
+interface ActionsAndOptionsButtonsPlacementFormControls {
+  placement: FormControl<string | null>;
+}
+
 interface Signals {
   profileReplyMessage: WritableSignal<GetProfileSettingsReplyMessage | null>;
-  customStylesSetting: WritableSignal<UserProfileSettingWithValue  | undefined | null>;
+  customStylesSetting: WritableSignal<UserProfileSettingWithValue | undefined | null>;
+  actionsAndOptionsButtonsPlacementSetting: WritableSignal<UserProfileSettingWithValue | undefined | null>;
 }

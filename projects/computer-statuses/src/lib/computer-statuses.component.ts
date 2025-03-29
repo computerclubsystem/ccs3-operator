@@ -32,7 +32,8 @@ import {
   GetProfileSettingsReplyMessage, UserProfileSettingName, createUpdateProfileSettingsRequestMessage,
   createRechargeTariffDurationRequestMessage, RechargeTariffDurationReplyMessage,
   createShutdownStoppedRequestMessage, ShutdownStoppedReplyMessage, createRestartDevicesRequestMessage,
-  RestartDevicesReplyMessage
+  RestartDevicesReplyMessage,
+  UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue
 } from '@ccs3-operator/messages';
 import {
   InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, PermissionName,
@@ -467,13 +468,21 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     if (!replyMsg?.header || replyMsg.header.failure) {
       return;
     }
-    const layoutRowsSetting = replyMsg.body.settings.find(x => x.name === UserProfileSettingName.computerStatusesLayoutRowsCount);
+
+    const settings = replyMsg.body.settings;
+
+    const layoutRowsSetting = settings.find(x => x.name === UserProfileSettingName.computerStatusesLayoutRowsCount);
     if (layoutRowsSetting) {
       const rowsCount = +layoutRowsSetting.value!;
       if ((typeof rowsCount) === 'number' && rowsCount > 0) {
         this.setLayoutRowsCount(rowsCount);
       }
     }
+
+    const actionsAndOptionsButtonsPlacementSettings = settings.find(x => x.name === UserProfileSettingName.actionsAndOptionsButtonsPlacement);
+    const showAtEnd = actionsAndOptionsButtonsPlacementSettings?.value === UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue.end;
+    this.signals.showActionsAndOptionsAtTheStart.set(!showAtEnd);
+    this.signals.showActionsAndOptionsAtTheEnd.set(showAtEnd);
   }
 
   setLayoutRowsCount(value: number): void {
@@ -825,6 +834,8 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       allDeviceGroupsMap: signal(new Map<number, DeviceGroup>()),
       canRechargePrepaidTariffs: signal(false),
       rechargeTariffResultDescription: signal(null),
+      showActionsAndOptionsAtTheStart: signal(true),
+      showActionsAndOptionsAtTheEnd: signal(false),
     };
     signals.allAvailablePrepaidTariffs = computed(() => {
       const allTariffs = Array.from(this.signals.allTariffsMap().values());
@@ -871,6 +882,8 @@ interface Signals {
   allDeviceGroupsMap: WritableSignal<Map<number, DeviceGroup>>;
   canRechargePrepaidTariffs: WritableSignal<boolean>;
   rechargeTariffResultDescription: WritableSignal<string | null>;
+  showActionsAndOptionsAtTheStart: WritableSignal<boolean>;
+  showActionsAndOptionsAtTheEnd: WritableSignal<boolean>;
 }
 
 interface OptionsVisibility {

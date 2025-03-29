@@ -247,5 +247,12 @@
   "Zero price sessions count": "Общ брой на сесиите с нулева цена",
   "Zero price sessions % of used time": "% от използваното време на сесиите с нулева цена",
   "Device sessions details": "Детайли за сесиите на устройствата",
-  "Tariff usage summary": "Обобщение на използването на тарифите"
+  "Tariff usage summary": "Обобщение на използването на тарифите",
+  "Actions and Options buttons placement": "Позиция на бутоните 'Действия' и 'Опции' на компютрите",
+  "Custom CSS saved": "Собственият CSS е записан",
+  "Actions and Options buttons placement saved": "Позицията на бутоните 'Действия' и 'Опции' е записана",
+  "Password has been changed": "Паролата беше успешно променена",
+  "At the start": "В началото",
+  "At the end": "В края",
+  "Most of the profile settings require browser refresh to take effect if changed": "За да се приложат промените на текущата ви сесия, след като запишете рефрешнете браузъра"
 }

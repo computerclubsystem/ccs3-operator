@@ -1,6 +1,7 @@
 <section *transloco="let t;">
   @let profileReplyMessage = signals.profileReplyMessage();
   <h2>{{t('User profile')}} {{profileReplyMessage?.body?.username}}</h2>
+  <h5>{{t('Most of the profile settings require browser refresh to take effect if changed')}}</h5>
   <section class="ccs3-op-flex-row ccs3-op-align-items-flex-start user-profile-sections">
     <section class="change-password-section ccs3-op-width-medium-text">
       <mat-card class="ccs3-op-flex-column">
@@ -58,6 +59,47 @@
             </mat-form-field>
           </form>
           <button (click)="onSaveCustomCss()" mat-flat-button>{{t('Save')}}</button>
+        </mat-card-content>
+        }
+      </mat-card>
+    </section>
+    <section class="actions-and-options-buttons-placement-section">
+      <mat-card class="ccs3-op-flex-column ccs3-op-width-medium-text">
+        <mat-card-header>
+          <mat-card-title>
+            <span>{{t('Actions and Options buttons placement')}}</span>
+          </mat-card-title>
+          <mat-card-subtitle>{{signals.actionsAndOptionsButtonsPlacementSetting()?.description}}</mat-card-subtitle>
+        </mat-card-header>
+        @if (profileReplyMessage) {
+        <mat-card-content class="ccs3-op-flex-column">
+          <mat-divider></mat-divider>
+          <section class="ccs3-op-flex-column">
+            <form [formGroup]="actionsAndOptionsButtonsPlacementForm">
+              <!-- <mat-form-field class="ccs3-op-full-width"> -->
+              <mat-radio-group [formControl]="actionsAndOptionsButtonsPlacementForm.controls.placement">
+                <section class="ccs3-op-flex-column">
+                  <section class="buttons-placement-start-section ccs3-op-flex-column">
+                    <mat-radio-button [value]="actionsAndOptionsButtonsPlacement.start">
+                      {{t('At the start')}}
+                    </mat-radio-button>
+                    <img src="assets/profile-settings/actions-and-options-buttons-placement-start.png" width="290"
+                      height="100" alt="Button placement at the start" />
+                  </section>
+                  <mat-divider></mat-divider>
+                  <section class="buttons-placement-end-section ccs3-op-flex-column">
+                    <mat-radio-button [value]="actionsAndOptionsButtonsPlacement.end">
+                      {{t('At the end')}}
+                    </mat-radio-button>
+                    <img src="assets/profile-settings/actions-and-options-buttons-placement-end.png" width="290"
+                      height="100" alt="Button placement at the end" />
+                  </section>
+                </section>
+              </mat-radio-group>
+              <mat-divider></mat-divider>
+            </form>
+            <button (click)="onSaveActionsAndOptionsButtonsPlacement()" mat-flat-button>{{t('Save')}}</button>
+          </section>
         </mat-card-content>
         }
       </mat-card>

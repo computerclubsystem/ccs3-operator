@@ -248,4 +248,11 @@ export const en = {
   "Zero price sessions % of used time": "Zero price sessions % of used time",
   "Device sessions details": "Device sessions details",
   "Tariff usage summary": "Tariff usage summary",
+  "Actions and Options buttons placement": "Actions and Options buttons placement",
+  "Custom CSS saved": "Custom CSS saved",
+  "Actions and Options buttons placement saved": "Actions and Options buttons placement saved",
+  "Password has been changed": "Password has been changed",
+  "At the start": "At the start",
+  "At the end": "At the end",
+  "Most of the profile settings require browser refresh to take effect if changed": "Most of the profile settings require browser refresh to take effect if changed",
 };
