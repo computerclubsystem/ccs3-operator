@@ -49,12 +49,12 @@
   </section>
   <section class="device-sessions-section ccs3-op-flex-column">
     @if (signals.sessionsLoaded()) {
-    @let sessionssUsageChartInfo = signals.deviceSessionsUsageChartInfo();
+    @let sessionsUsageChartInfo = signals.deviceSessionsUsageChartInfo();
     @if (form.controls.showChart.value) {
     <section class="device-sessions-usage-section">
       <span class="ccs3-op-header-2">{{t('Session usage chart')}}</span>
       <mat-divider></mat-divider>
-      @for (sessionChartInfo of sessionssUsageChartInfo; track sessionChartInfo.device.id) {
+      @for (sessionChartInfo of sessionsUsageChartInfo; track sessionChartInfo.device.id) {
       <section [ngStyle]="sessionChartInfo.cssGridStyleObject" class="device-session-usage"
         [attr.ccs3-op-device-id]="sessionChartInfo.device.id" [attr.ccs3-op-device-name]="sessionChartInfo.device.name">
         <span class="session-usage-device-name">{{sessionChartInfo.device.name}}</span>

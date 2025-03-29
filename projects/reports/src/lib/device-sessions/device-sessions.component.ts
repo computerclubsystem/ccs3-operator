@@ -316,12 +316,19 @@ export class DeviceSessionsComponent implements OnInit {
         display: 'grid',
         'grid-template-columns': `auto ${fractions}`,
       };
+      let totalSessionsAmount = 0;
+      for (const finalInfo of deviceFinalSessionInfos) {
+        const sessionTotalAmount = finalInfo.session?.totalAmount || 0;
+        totalSessionsAmount = Math.round((totalSessionsAmount + sessionTotalAmount) * 100) / 100;
+      }
       chartInfo.push({
         device: allDevicesMap.get(grp.key)!,
         sessionChartInfos: deviceFinalSessionInfos,
         cssGridStyleObject: gridStyleObject,
+        totalSessionsAmount: totalSessionsAmount,
       });
     }
+    this.sorterSvc.sortBy(chartInfo, x => x.totalSessionsAmount, SortOrder.descending);
     return chartInfo;
   }
 
@@ -436,6 +443,7 @@ interface DeviceSessionsUsageChartInfo {
   device: Device;
   cssGridStyleObject: Record<string, string>;
   sessionChartInfos: SessionUsageChartInfo[];
+  totalSessionsAmount: number;
 }
 
 interface DeviceUsageSummaryInfo {
