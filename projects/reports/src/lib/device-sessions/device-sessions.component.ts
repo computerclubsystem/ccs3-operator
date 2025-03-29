@@ -274,8 +274,8 @@ export class DeviceSessionsComponent implements OnInit {
           if (currentSessionInfo.fromSecond > prevSessionInfo.toSecond) {
             // There is a gap - create idle session
             deviceFinalSessionInfos.push({
-              fromSecond: prevSessionInfo.toSecond + 1,
-              toSecond: currentSessionInfo.fromSecond - 1,
+              fromSecond: prevSessionInfo.toSecond,
+              toSecond: currentSessionInfo.fromSecond,
               session: null,
               tariff: null,
               isIdle: true,
@@ -288,7 +288,7 @@ export class DeviceSessionsComponent implements OnInit {
           if (currentSessionInfo.fromSecond > 0) {
             deviceFinalSessionInfos.push({
               fromSecond: 0,
-              toSecond: currentSessionInfo.fromSecond - 1,
+              toSecond: currentSessionInfo.fromSecond,
               session: null,
               tariff: null,
               isIdle: true,
@@ -302,7 +302,7 @@ export class DeviceSessionsComponent implements OnInit {
       const lastSessionInfo = sessionInfos[sessionInfos.length - 1];
       if (lastSessionInfo && (lastSessionInfo.toSecond < durationSeconds)) {
         deviceFinalSessionInfos.push({
-          fromSecond: lastSessionInfo.toSecond + 1,
+          fromSecond: lastSessionInfo.toSecond,
           toSecond: durationSeconds,
           session: null,
           tariff: null,
@@ -310,7 +310,7 @@ export class DeviceSessionsComponent implements OnInit {
           sessionUsageId: generateFakeSessionUsageId(),
         });
       }
-      const fractions = deviceFinalSessionInfos.map(x => x.toSecond - x.fromSecond).map(x => `${x}fr`).join(' ');
+      const fractions = deviceFinalSessionInfos.map(x => Math.max(x.toSecond - x.fromSecond, 1)).map(x => `${x}fr`).join(' ');
       // const gridStyle = `display: grid; grid-template-columns: ${fractions}`;
       const gridStyleObject: Record<string, string> = {
         display: 'grid',
