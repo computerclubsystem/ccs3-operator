@@ -16,7 +16,6 @@ export enum IconName {
   error = 'error',
   add = 'add',
   remove = 'remove',
-  user_attributes = 'user_attributes',
   expand_circle_down = 'expand_circle_down',
   expand_circle_up = 'expand_circle_up',
   swap_horiz = 'swap_horiz',
@@ -33,4 +32,5 @@ export enum IconName {
   power_settings_new = 'power_settings_new',
   restart_alt = 'restart_alt',
   sort = 'sort',
+  manage_accounts = 'manage_accounts',
 }

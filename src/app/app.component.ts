@@ -460,7 +460,7 @@ export class AppComponent implements OnInit {
 
   private setSignedInAccountMenuItems(): void {
     const signedInAccountMenuItems: AccountMenuItem[] = [
-      { id: AccountMenuItemId.profileSettings, icon: IconName.user_attributes, translationKey: 'Profile settings' },
+      { id: AccountMenuItemId.profileSettings, icon: IconName.manage_accounts, translationKey: 'Profile settings' },
       { id: AccountMenuItemId.signOut, icon: IconName.logout, translationKey: 'Sign out' },
     ];
     this.internalSubjectsSvc.setAccountMenuItems(signedInAccountMenuItems);
