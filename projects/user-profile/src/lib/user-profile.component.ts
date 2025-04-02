@@ -39,6 +39,7 @@ export class UserProfileComponent implements OnInit {
   private readonly notificationsSvc = inject(NotificationsService);
   private readonly destroyRef = inject(DestroyRef);
 
+  readonly minPasswordLength = 10;
   readonly signals = this.createSignals();
   readonly changePasswordForm = this.createChangePasswordForm();
   readonly customStyleForm = this.createCustomStyleForm();
@@ -156,28 +157,44 @@ export class UserProfileComponent implements OnInit {
     const newPasswordValue = formValue.newPassword;
     const confirmNewPasswordValue = formValue.confirmNewPassword;
     const isWhiteSpace = (string?: string | null): boolean => !(string?.trim());
-    if (!isWhiteSpace(newPasswordValue) && !isWhiteSpace(confirmNewPasswordValue) && newPasswordValue === confirmNewPasswordValue) {
-      form.controls.newPassword.setErrors(null);
-      form.controls.confirmNewPassword.setErrors(null);
+    const areEqual = !isWhiteSpace(newPasswordValue) && !isWhiteSpace(confirmNewPasswordValue) && newPasswordValue === confirmNewPasswordValue;
+    const removeFormControlError = (control: FormControl, errorName: string): void => {
+      const currentErrors = control.errors;
+      delete currentErrors?.[errorName];
+      if (currentErrors) {
+        if (Object.keys(currentErrors).length > 0) {
+          control.setErrors(currentErrors);
+        } else {
+          control.setErrors(null);
+        }
+      }
+    };
+    if (areEqual) {
+      removeFormControlError(form.controls.newPassword, FormControlErrorName.notEqual);
+      removeFormControlError(form.controls.confirmNewPassword, FormControlErrorName.notEqual);
     } else {
-      form.controls.newPassword.setErrors({ notEqual: true });
-      form.controls.confirmNewPassword.setErrors({ notEqual: true });
+      const notEqualControlError: NotEqualFormValidationError = { notEqual: true };
+      form.controls.newPassword.setErrors({ ...form.controls.newPassword.errors, ...notEqualControlError });
+      form.controls.confirmNewPassword.setErrors({ ...form.controls.confirmNewPassword.errors, ...notEqualControlError });
     }
 
     return null;
   }
 
   hasPasswordsNotEqualError(): boolean {
-    const notEqualErrorName = 'notEqual';
-    return this.changePasswordForm.controls.newPassword.hasError(notEqualErrorName)
-      || this.changePasswordForm.controls.confirmNewPassword.hasError(notEqualErrorName);
+    return this.changePasswordForm.controls.newPassword.hasError(FormControlErrorName.notEqual)
+      || this.changePasswordForm.controls.confirmNewPassword.hasError(FormControlErrorName.notEqual);
+  }
+
+  hasMinLengthError(control: FormControl): boolean {
+    return control.hasError(FormControlErrorName.minlength);
   }
 
   createChangePasswordForm(): FormGroup<ChangePasswordFormControls> {
     const controls: ChangePasswordFormControls = {
       currentPassword: new FormControl(null, { validators: [Validators.required] }),
-      newPassword: new FormControl(null, { validators: [Validators.required] }),
-      confirmNewPassword: new FormControl(null, { validators: [Validators.required] }),
+      newPassword: new FormControl(null, { validators: [Validators.minLength(this.minPasswordLength)] }),
+      confirmNewPassword: new FormControl(null, { validators: [Validators.minLength(this.minPasswordLength)] }),
     };
     const form = this.formBuilder.group<ChangePasswordFormControls>(controls, { validators: [this.samePasswordValidator] });
     return form;
@@ -227,4 +244,12 @@ interface Signals {
   profileReplyMessage: WritableSignal<GetProfileSettingsReplyMessage | null>;
   customStylesSetting: WritableSignal<UserProfileSettingWithValue | undefined | null>;
   actionsAndOptionsButtonsPlacementSetting: WritableSignal<UserProfileSettingWithValue | undefined | null>;
+}
+
+const enum FormControlErrorName {
+  notEqual = 'notEqual',
+  minlength = 'minlength',
+}
+interface NotEqualFormValidationError {
+  [FormControlErrorName.notEqual]: boolean;
 }

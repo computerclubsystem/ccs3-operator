@@ -255,4 +255,5 @@ export const en = {
   "At the start": "At the start",
   "At the end": "At the end",
   "Most of the profile settings require browser refresh to take effect if changed": "Most of the profile settings require browser refresh to take effect if changed",
+  "Length must be at least {{count}} characters": "Length must be at least {{count}} characters",
 };

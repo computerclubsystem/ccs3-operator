@@ -17,7 +17,7 @@ export class CreatePrepaidTariffService {
     durationControls.duration.updateValueAndValidity();
   }
 
-  createForm(): FormGroup<FormControls> {
+  createForm(minPasswordLength: number): FormGroup<FormControls> {
     const durationTypeControls: DurationFormControls = {
       duration: new FormControl('', { validators: [Validators.required, this.validatorsSvc.durationValidator] }),
     };
@@ -29,8 +29,8 @@ export class CreatePrepaidTariffService {
       price: new FormControl(0, { validators: [Validators.required, this.validatorsSvc.priceValidator] }),
       canBeStartedByCustomer: new FormControl(false),
       setPassword: new FormControl(true),
-      password: new FormControl(null),
-      confirmPassword: new FormControl(null),
+      password: new FormControl(null, { validators: [Validators.required, Validators.minLength(minPasswordLength)] }),
+      confirmPassword: new FormControl(null, { validators: [Validators.required, Validators.minLength(minPasswordLength)] }),
     };
     const form = this.formBuilder.group(formControls);
     return form;

@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal
 } from '@angular/core';
 import {
-  AbstractControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators
+  AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -46,6 +46,8 @@ import { LinkedListsComponent } from '@ccs3-operator/linked-lists';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreatePrepaidTariffComponent implements OnInit {
+  readonly minPasswordLength = 10;
+
   signals = this.createSignals();
   form!: FormGroup<FormControls>;
   iconName = IconName;
@@ -65,7 +67,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
-    this.form = this.createPrepaidTariffSvc.createForm();
+    this.form = this.createPrepaidTariffSvc.createForm(this.minPasswordLength);
     this.subscribeToFormChanges();
     this.internalSubjectsSvc.whenSignedIn().pipe(
       takeUntilDestroyed(this.destroyRef)
@@ -104,8 +106,8 @@ export class CreatePrepaidTariffComponent implements OnInit {
     this.signals.showPasswords.set(setPasswordValue);
     if (setPasswordValue) {
       this.form.setValidators([this.samePasswordValidator]);
-      this.form.controls.password.setValidators([Validators.required, this.validatorsSvc.noWhiteSpace]);
-      this.form.controls.confirmPassword.setValidators([Validators.required, this.validatorsSvc.noWhiteSpace]);
+      this.form.controls.password.setValidators([Validators.required, Validators.minLength(this.minPasswordLength), this.validatorsSvc.noWhiteSpace]);
+      this.form.controls.confirmPassword.setValidators([Validators.required, Validators.minLength(this.minPasswordLength), this.validatorsSvc.noWhiteSpace]);
     } else {
       this.form.removeValidators(this.samePasswordValidator);
       this.form.controls.password.clearValidators();
@@ -121,12 +123,25 @@ export class CreatePrepaidTariffComponent implements OnInit {
     const passwordValue = formValue.password;
     const confirmPasswordValue = formValue.confirmPassword;
     const isWhiteSpace = (string?: string | null): boolean => !(string?.trim());
-    if (!isWhiteSpace(passwordValue) && !isWhiteSpace(confirmPasswordValue) && passwordValue === confirmPasswordValue) {
-      form.controls.password.setErrors(null);
-      form.controls.confirmPassword.setErrors(null);
+    const areEqual = !isWhiteSpace(passwordValue) && !isWhiteSpace(confirmPasswordValue) && passwordValue === confirmPasswordValue;
+    const removeFormControlError = (control: FormControl, errorName: string): void => {
+      const currentErrors = control.errors;
+      delete currentErrors?.[errorName];
+      if (currentErrors) {
+        if (Object.keys(currentErrors).length > 0) {
+          control.setErrors(currentErrors);
+        } else {
+          control.setErrors(null);
+        }
+      }
+    };
+    if (areEqual) {
+      removeFormControlError(form.controls.password, FormControlErrorName.notEqual);
+      removeFormControlError(form.controls.confirmPassword, FormControlErrorName.notEqual);
     } else {
-      form.controls.password.setErrors({ notEqual: true });
-      form.controls.confirmPassword.setErrors({ notEqual: true });
+      const notEqualControlError: NotEqualFormValidationError = { notEqual: true };
+      form.controls.password.setErrors({ ...form.controls.password.errors, ...notEqualControlError });
+      form.controls.confirmPassword.setErrors({ ...form.controls.confirmPassword.errors, ...notEqualControlError });
     }
 
     return null;
@@ -136,9 +151,12 @@ export class CreatePrepaidTariffComponent implements OnInit {
     if (!this.form.getRawValue().setPassword) {
       return false;
     }
-    const notEqualErrorName = 'notEqual';
-    return this.form.controls.password.hasError(notEqualErrorName)
-      || this.form.controls.confirmPassword.hasError(notEqualErrorName);
+    return this.form.controls.password.hasError(FormControlErrorName.notEqual)
+      || this.form.controls.confirmPassword.hasError(FormControlErrorName.notEqual);
+  }
+
+  hasMinLengthError(control: FormControl): boolean {
+    return control.hasError(FormControlErrorName.minlength);
   }
 
   loadNewTariffData(): void {
@@ -397,4 +415,12 @@ interface LoadDataMessagesObject extends Record<string, ReplyMessage<unknown>> {
   tariff: GetTariffByIdReplyMessage;
   tariffDeviceGroups: GetTariffDeviceGroupsReplyMessage;
   allDeviceGroups: GetAllDeviceGroupsReplyMessage;
+}
+
+const enum FormControlErrorName {
+  notEqual = 'notEqual',
+  minlength = 'minlength',
+}
+interface NotEqualFormValidationError {
+  [FormControlErrorName.notEqual]: boolean;
 }

@@ -27,8 +27,8 @@ import { NotificationsService } from '@ccs3-operator/notifications';
   selector: 'ccs3-op-system-settings-users-create',
   templateUrl: 'create-user.component.html',
   imports: [
-    ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatCheckboxModule, MatCardModule,
-    MatDividerModule, MatIconModule, TranslocoDirective
+    ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatInputModule,
+    MatCheckboxModule, MatCardModule, MatDividerModule, MatIconModule, TranslocoDirective,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -46,6 +46,7 @@ export class CreateUserComponent implements OnInit {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
 
+  readonly minPasswordLength = 10;
   form = this.createForm();
 
   ngOnInit(): void {
@@ -85,8 +86,8 @@ export class CreateUserComponent implements OnInit {
     this.signals.showPasswords.set(setPasswordValue);
     if (setPasswordValue) {
       this.form.setValidators([this.samePasswordValidator]);
-      this.form.controls.password.setValidators([Validators.required, this.validatorsSvc.noWhiteSpace]);
-      this.form.controls.confirmPassword.setValidators([Validators.required, this.validatorsSvc.noWhiteSpace]);
+      this.form.controls.password.setValidators([Validators.required, Validators.minLength(this.minPasswordLength), this.validatorsSvc.noWhiteSpace]);
+      this.form.controls.confirmPassword.setValidators([Validators.required, Validators.minLength(this.minPasswordLength), this.validatorsSvc.noWhiteSpace]);
     } else {
       this.form.removeValidators(this.samePasswordValidator);
       this.form.controls.password.clearValidators();
@@ -193,12 +194,25 @@ export class CreateUserComponent implements OnInit {
     const passwordValue = form.value.password;
     const confirmPasswordValue = form.value.confirmPassword;
     const isWhiteSpace = (string?: string | null): boolean => !(string?.trim());
-    if (!isWhiteSpace(passwordValue) && !isWhiteSpace(confirmPasswordValue) && passwordValue === confirmPasswordValue) {
-      form.controls.password.setErrors(null);
-      form.controls.confirmPassword.setErrors(null);
+    const areEqual = !isWhiteSpace(passwordValue) && !isWhiteSpace(confirmPasswordValue) && passwordValue === confirmPasswordValue;
+    const removeFormControlError = (control: FormControl, errorName: string): void => {
+      const currentErrors = control.errors;
+      delete currentErrors?.[errorName];
+      if (currentErrors) {
+        if (Object.keys(currentErrors).length > 0) {
+          control.setErrors(currentErrors);
+        } else {
+          control.setErrors(null);
+        }
+      }
+    };
+    if (areEqual) {
+      removeFormControlError(form.controls.password, FormControlErrorName.notEqual);
+      removeFormControlError(form.controls.confirmPassword, FormControlErrorName.notEqual);
     } else {
-      form.controls.password.setErrors({ notEqual: true });
-      form.controls.confirmPassword.setErrors({ notEqual: true });
+      const notEqualControlError: NotEqualFormValidationError = { notEqual: true };
+      form.controls.password.setErrors({ ...form.controls.password.errors, ...notEqualControlError });
+      form.controls.confirmPassword.setErrors({ ...form.controls.confirmPassword.errors, ...notEqualControlError });
     }
 
     return null;
@@ -258,9 +272,12 @@ export class CreateUserComponent implements OnInit {
     if (!this.form.value.setPassword) {
       return false;
     }
-    const notEqualErrorName = 'notEqual';
-    return this.form.controls.password.hasError(notEqualErrorName)
-      || this.form.controls.confirmPassword.hasError(notEqualErrorName);
+    return this.form.controls.password.hasError(FormControlErrorName.notEqual)
+      || this.form.controls.confirmPassword.hasError(FormControlErrorName.notEqual);
+  }
+
+  hasMinLengthError(control: FormControl): boolean {
+    return control.hasError(FormControlErrorName.minlength);
   }
 
   onGoToList(): void {
@@ -275,8 +292,8 @@ export class CreateUserComponent implements OnInit {
     const formControls: FormControls = {
       username: new FormControl('', { validators: [Validators.required, this.validatorsSvc.noWhiteSpace] }),
       // TODO: Passwords can contain leading or trailing whitespace characters but this.validatorsSvc.noWhiteSpace validator will report error
-      password: new FormControl(''),
-      confirmPassword: new FormControl(''),
+      password: new FormControl('', { validators: [Validators.minLength(this.minPasswordLength)] }),
+      confirmPassword: new FormControl('', { validators: [Validators.minLength(this.minPasswordLength)] }),
       enabled: new FormControl(true),
       setPassword: new FormControl(false),
     };
@@ -314,4 +331,12 @@ interface FormControls {
   password: FormControl<string | null>;
   confirmPassword: FormControl<string | null>;
   enabled: FormControl<boolean | null>;
+}
+
+const enum FormControlErrorName {
+  notEqual = 'notEqual',
+  minlength = 'minlength',
+}
+interface NotEqualFormValidationError {
+  [FormControlErrorName.notEqual]: boolean;
 }

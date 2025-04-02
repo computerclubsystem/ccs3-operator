@@ -254,5 +254,6 @@
   "Password has been changed": "Паролата беше успешно променена",
   "At the start": "В началото",
   "At the end": "В края",
-  "Most of the profile settings require browser refresh to take effect if changed": "За да се приложат промените на текущата ви сесия, след като запишете рефрешнете браузъра"
+  "Most of the profile settings require browser refresh to take effect if changed": "За да се приложат промените на текущата ви сесия, след като запишете рефрешнете браузъра",
+  "Length must be at least {{count}} characters": "Дължината трябва да бъде поне {{count}} символа"
 }
