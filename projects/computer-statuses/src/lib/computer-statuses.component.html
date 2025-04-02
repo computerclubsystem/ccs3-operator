@@ -284,6 +284,8 @@
                 <mat-icon>{{iconName.fast_forward}}</mat-icon>
               </ccs3-op-expand-button>
             </section>
+            @if (item.optionsVisibility.stop || item.optionsVisibility.transfer || item.optionsVisibility.continueWith)
+            {
             <section class="device-options-sections">
               @if (item.optionsVisibility.stop) {
               <section class="stop-section ccs3-op-flex-row ccs3-op-half-gap">
@@ -358,6 +360,7 @@
               </section>
               }
             </section>
+            }
           </section>
           }
         </section>

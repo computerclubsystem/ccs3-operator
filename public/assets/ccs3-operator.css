@@ -4,6 +4,7 @@
   --ccs3-op-double-gap: calc(var(--ccs3-op-gap) * 2);
   --ccs3-op-no-gap: 0;
   --ccs3-op-padding: 1rem;
+  --ccs3-op-quarter-padding: calc(var(--ccs3-op-padding) / 4);
   --ccs3-op-half-padding: calc(var(--ccs3-op-padding) / 2);
   --ccs3-op-double-padding: calc(var(--ccs3-op-padding) * 2);
   --ccs3-op-no-padding: 0;
@@ -367,6 +368,10 @@ ccs3-op-computer-statuses .computer-status-container.will-stop-soon .remaining-t
 ccs3-op-computer-statuses .computer-note {
   max-height: 4ch;
   overflow: hidden;
+}
+
+ccs3-op-computer-statuses .computers-container mat-card-header {
+  padding: var(--ccs3-op-quarter-padding);
 }
 
 ccs3-op-device-sessions-report .device-session-usage .completed-session {
