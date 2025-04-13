@@ -207,26 +207,6 @@
               <span>{{tl.willStopAt}}</span>
               <span class="will-stop-at">{{item.deviceStatus.expectedEndAt | noYearDate}}</span>
               }
-              @if (item.deviceConnectivity) {
-              <span>{{tl.messages}}</span>
-              <section class="ccs3-op-flex-row">
-                <span class="messages-count">{{item.deviceConnectivity.messagesCount}}</span>
-                @if (item.deviceConnectivity.secondsSinceLastMessage !== null) {
-                <section class="ccs3-op-flex-row ccs3-op-no-gap">
-                  (<ccs3-op-seconds-formatter [value]="item.deviceConnectivity.secondsSinceLastMessage"
-                    [title]="tl.timePassedSinceLastMessage"></ccs3-op-seconds-formatter>)
-                </section>
-                }
-              </section>
-              <span>{{tl.connections}}</span>
-              <section class="ccs3-op-flex-row">
-                <span class="connections-count">{{item.deviceConnectivity.connectionsCount}}</span>
-                <section class="ccs3-op-flex-row ccs3-op-no-gap">
-                  (<ccs3-op-seconds-formatter [value]="item.deviceConnectivity.secondsSinceLastConnected"
-                    [title]="tl.timePassedSinceLastConnection"></ccs3-op-seconds-formatter>)
-                </section>
-              </section>
-              }
               @if (item.deviceNote) {
               <span>{{t('Note')}}</span>
               <span>{{item.deviceNote}}</span>
