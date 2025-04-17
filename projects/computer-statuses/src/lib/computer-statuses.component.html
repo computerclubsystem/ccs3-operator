@@ -171,8 +171,10 @@
             </section>
             <ccs3-op-money-formatter [value]="item.deviceStatus.totalSum" [title]="tl.total"
               class="total-sum"></ccs3-op-money-formatter>
+            @if (item.deviceStatus.started) {
             <ccs3-op-seconds-formatter [value]="item.deviceStatus.remainingSeconds" [title]="tl.remainingTime"
               class="remaining-time"></ccs3-op-seconds-formatter>
+            }
             @if (item.deviceStatus.continuationTariffId) {
             <mat-icon
               [title]="t('Will continue with tariff {{tariffName}}', {tariffName: getTariffName(item.deviceStatus.continuationTariffId)})"
@@ -197,9 +199,11 @@
               <span>{{tl.total}}</span>
               <ccs3-op-money-formatter [value]="item.deviceStatus.totalSum" [title]="tl.total"
                 class="details-total-sum"></ccs3-op-money-formatter>
+              @if (item.deviceStatus.started) {
               <span>{{tl.remainingTime}}</span>
               <ccs3-op-seconds-formatter [value]="item.deviceStatus.remainingSeconds" [title]="tl.remainingTime"
                 class="details-remaining-time"></ccs3-op-seconds-formatter>
+              }
               <span>{{tl.tariff}}</span>
               <span class="tariff-name">{{item.tariffName}}</span>
               <span>{{tl.elapsedTime}}</span>
@@ -252,10 +256,12 @@
                     </ccs3-op-boolean-indicator>
                     <span>{{tl.receivedMessages}}</span>
                     <section class="ccs3-op-flex-row">
-                      <span class="received-messages-count">{{item.deviceConnectivityDetails.receivedMessagesCount}}</span>
+                      <span
+                        class="received-messages-count">{{item.deviceConnectivityDetails.receivedMessagesCount}}</span>
                       @if (item.deviceConnectivityDetails.secondsSinceLastReceivedMessage !== null) {
                       <section class="ccs3-op-flex-row ccs3-op-no-gap">
-                        (<ccs3-op-seconds-formatter [value]="item.deviceConnectivityDetails.secondsSinceLastReceivedMessage"
+                        (<ccs3-op-seconds-formatter
+                          [value]="item.deviceConnectivityDetails.secondsSinceLastReceivedMessage"
                           [title]="tl.timePassedSinceLastReceivedMessage"></ccs3-op-seconds-formatter>)
                       </section>
                       }
