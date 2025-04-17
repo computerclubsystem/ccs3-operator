@@ -147,6 +147,9 @@ export class BulkActionsComponent implements OnInit {
       case BulkActionId.restart:
         bulkData.data = null;
         break;
+      case BulkActionId.shutdown:
+        bulkData.data = null;
+        break;
     }
     this.execute.emit(bulkData);
   }
@@ -180,6 +183,8 @@ export class BulkActionsComponent implements OnInit {
         return { setNote: true };
       case BulkActionId.restart:
         return { restart: true };
+      case BulkActionId.shutdown:
+        return { shutdown: true };
       // case BulkActionId.start:
       //   return { start: true };
     }
@@ -258,7 +263,8 @@ export class BulkActionsComponent implements OnInit {
   createBulkActionItems(): IdWithName[] {
     const result: IdWithName[] = [
       { id: BulkActionId.setNote, name: translate('Set note') },
-      { id: BulkActionId.restart, name: translate('Restart') }
+      { id: BulkActionId.restart, name: translate('Restart') },
+      { id: BulkActionId.shutdown, name: translate('Shutdown') }
     ];
     return result;
   }
@@ -278,6 +284,7 @@ interface GlobalActionOptionsVisibility {
 interface ActionOptionsVisibility {
   setNote?: boolean | null;
   restart?: boolean | null;
+  shutdown?: boolean | null;
   start?: boolean | null;
 }
 

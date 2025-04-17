@@ -62,6 +62,7 @@ export * from './lib/shutdown-stopped.messages';
 export * from './lib/get-tariff-device-groups.messages';
 export * from './lib/restart-devices.messages';
 export * from './lib/get-device-connectivity-details.messsages';
+export * from './lib/shutdown-devices.messages';
 
 export * from './lib/entities/device-connectivity-item';
 export * from './lib/entities/device';

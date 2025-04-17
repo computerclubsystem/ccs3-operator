@@ -264,4 +264,7 @@ export const en = {
   "Message was sent to the server but did not receive reply. Message type {{messageType}}": "Message was sent to the server but did not receive reply. Message type {{messageType}}",
   "Time passed since last received message": "Time passed since last received message",
   "Time passed since last sent message": "Time passed since last sent message",
+  "Shutdown": "Shutdown",
+  "Cancel": "Cancel",
+  "OK": "OK",
 };

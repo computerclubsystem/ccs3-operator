@@ -15,6 +15,7 @@ export enum BulkActionId {
   setNote = 'setNote',
   restart = 'restart',
   start = 'start',
+  shutdown = 'shutdown',
 }
 
 export interface BulkActionSetNoteData {

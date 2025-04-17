@@ -34,6 +34,8 @@ import {
   createShutdownStoppedRequestMessage, ShutdownStoppedReplyMessage, createRestartDevicesRequestMessage,
   RestartDevicesReplyMessage, UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue,
   createGetDeviceConnectivityDetailsRequestMessage, GetDeviceConnectivityDetailsReplyMessage,
+  createShutdownDevicesRequestMessage,
+  ShutdownDevicesReplyMessage,
 } from '@ccs3-operator/messages';
 import {
   InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, PermissionName,
@@ -152,7 +154,25 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       case BulkActionId.restart:
         this.executeRestartBulkAction(bulkActionData);
         break;
+      case BulkActionId.shutdown:
+        this.executeShutdownBulkAction(bulkActionData);
+        break;
     }
+  }
+
+  executeShutdownBulkAction(bulkActionData: BulkActionData): void {
+    const reqMsg = createShutdownDevicesRequestMessage();
+    reqMsg.body.deviceIds = bulkActionData.deviceIds;
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => {
+      const msg = replyMsg as ShutdownDevicesReplyMessage;
+      if (msg.header.failure) {
+        return;
+      }
+      const notificationMessage = translate('Shutdown message was sent to {{count}} computers', { count: msg.body.targetsCount });
+      this.notificationsSvc.show(NotificationType.success, notificationMessage, null, IconName.check, replyMsg);
+    });
   }
 
   executeRestartBulkAction(bulkActionData: BulkActionData): void {

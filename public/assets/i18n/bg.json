@@ -263,5 +263,8 @@
   "Message timed out": "Съобщението таймаутна",
   "Message was sent to the server but did not receive reply. Message type {{messageType}}": "Съобщението беше изпратено до сървъра но не получи отговор. Тип на съобщението {{messageType}}",
   "Time passed since last received message": "Изминало време от последното получено съобщение",
-  "Time passed since last sent message": "Изминало време от последното изпратено съобщение"
+  "Time passed since last sent message": "Изминало време от последното изпратено съобщение",
+  "Shutdown": "Изключване",
+  "Cancel": "Отказ",
+  "OK": "OK"
 }
