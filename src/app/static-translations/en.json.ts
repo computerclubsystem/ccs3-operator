@@ -256,4 +256,12 @@ export const en = {
   "At the end": "At the end",
   "Most of the profile settings require browser refresh to take effect if changed": "Most of the profile settings require browser refresh to take effect if changed",
   "Length must be at least {{count}} characters": "Length must be at least {{count}} characters",
+  "Device connectivity details": "Device connectivity details",
+  "Refresh": "Refresh",
+  "Time": "Time",
+  "Connection ID": "Connection ID",
+  "Message timed out": "Message timed out",
+  "Message was sent to the server but did not receive reply. Message type {{messageType}}": "Message was sent to the server but did not receive reply. Message type {{messageType}}",
+  "Time passed since last received message": "Time passed since last received message",
+  "Time passed since last sent message": "Time passed since last sent message",
 };

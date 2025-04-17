@@ -1,7 +1,6 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, ElementRef, inject, OnInit,
-  Signal, signal, ViewChild, WritableSignal
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, ElementRef,
+  inject, OnInit, Signal, signal, ViewChild, WritableSignal
 } from '@angular/core';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -11,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
 import { filter, forkJoin, Observable } from 'rxjs';
@@ -32,8 +32,8 @@ import {
   GetProfileSettingsReplyMessage, UserProfileSettingName, createUpdateProfileSettingsRequestMessage,
   createRechargeTariffDurationRequestMessage, RechargeTariffDurationReplyMessage,
   createShutdownStoppedRequestMessage, ShutdownStoppedReplyMessage, createRestartDevicesRequestMessage,
-  RestartDevicesReplyMessage,
-  UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue
+  RestartDevicesReplyMessage, UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue,
+  createGetDeviceConnectivityDetailsRequestMessage, GetDeviceConnectivityDetailsReplyMessage,
 } from '@ccs3-operator/messages';
 import {
   InternalSubjectsService, MessageTransportService, NotificationType, NoYearDatePipe, PermissionName,
@@ -42,6 +42,7 @@ import {
 import { NotificationsService } from '@ccs3-operator/notifications';
 import { IconName } from '@ccs3-operator/shared/types';
 import { SecondsFormatterComponent, SecondsFormatterService } from '@ccs3-operator/seconds-formatter';
+import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
 import { ExpandButtonComponent, ExpandButtonType } from '@ccs3-operator/expand-button';
 import { MoneyFormatterComponent } from '@ccs3-operator/money-formatter';
 import { TariffService } from './tariff.service';
@@ -51,6 +52,8 @@ import { RemainingTimeRankComponent } from './remaining-time-rank/remaining-time
 import { RechargePrepaidTariffComponent } from './recharge-prepaid-tariff/recharge-prepaid-tariff.component';
 import { BulkActionsComponent } from './bulk-actions/bulk-actions.component';
 import { BulkActionData, BulkActionId, BulkActionSetNoteData, GlobalBulkActionData, GlobalBulkActionId } from './bulk-actions/declarations';
+import { DeviceConnectivityDetails } from './internals';
+import { ComputerStatusesService } from './computer-statuses.service';
 
 @Component({
   selector: 'ccs3-op-computer-statuses',
@@ -58,9 +61,9 @@ import { BulkActionData, BulkActionId, BulkActionSetNoteData, GlobalBulkActionDa
   styleUrls: ['computer-statuses.component.css'],
   imports: [
     NgClass, MatCardModule, MatButtonModule, MatExpansionModule, MatIconModule, MatInputModule, MatSelectModule,
-    MatCheckboxModule, TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
+    MatCheckboxModule, MatDividerModule, TranslocoDirective, NgTemplateOutlet, NoYearDatePipe, MoneyFormatterComponent,
     SecondsFormatterComponent, ExpandButtonComponent, ShiftStatusComponent, RemainingTimeRankComponent,
-    RechargePrepaidTariffComponent, BulkActionsComponent,
+    RechargePrepaidTariffComponent, BulkActionsComponent, BooleanIndicatorComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -76,6 +79,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   private readonly secondsFormatterSvc = inject(SecondsFormatterService);
   private readonly sorterSvc = inject(SorterService);
   private readonly tariffSvc = inject(TariffService);
+  private readonly computerStatusesSvc = inject(ComputerStatusesService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
   private readonly layoutGridRowsCssPropName = '--ccs3-op-computers-container-grid-rows';
@@ -611,6 +615,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     const currentStatusItem = currentStatusItems.find(x => x.deviceStatus.deviceId === deviceStatus.deviceId);
     deviceStatusItem.isActionsExpanded = deviceStatus.started ? false : !!currentStatusItem?.isActionsExpanded;
     deviceStatusItem.isOptionsExpanded = !deviceStatus.started ? false : !!currentStatusItem?.isOptionsExpanded;
+    deviceStatusItem.isDetailsExpanded = !!currentStatusItem?.isDetailsExpanded;
     deviceStatusItem.selectedTariffItem = currentStatusItem?.selectedTariffItem; // || this.signals.allAvailableTariffs()[0];
     deviceStatusItem.stopNote = currentStatusItem?.stopNote;
     deviceStatusItem.newDeviceNote = currentStatusItem?.newDeviceNote;
@@ -618,9 +623,13 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     deviceStatusItem.transferNote = currentStatusItem?.transferNote;
     deviceStatusItem.selectedContinueWithTariffId = currentStatusItem?.selectedContinueWithTariffId;
     deviceStatusItem.deviceConnectivity = currentStatusItem?.deviceConnectivity;
-    deviceStatusItem.optionsVisibility = currentStatusItem?.optionsVisibility ? currentStatusItem?.optionsVisibility : {
+    deviceStatusItem.optionsVisibility = currentStatusItem?.optionsVisibility || {
       continueWith: false, stop: false, transfer: false
     };
+    deviceStatusItem.detailsVisibility = currentStatusItem?.detailsVisibility || {
+      deviceConnectivityDetails: false
+    };
+    deviceStatusItem.deviceConnectivityDetails = currentStatusItem?.deviceConnectivityDetails;
   }
 
   getTariff(tariffId?: number | null): Tariff | undefined {
@@ -656,6 +665,44 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     // and section expanded, since there is selection, the transfer button is enabled, but this selection is no longer valid,
     // because now the target device is started and cannot tranfer to it
     // item.selectedTransferToDeviceId = null;
+  }
+
+  toggleDetailsExpanded(item: DeviceStatusItem): void {
+    item.isDetailsExpanded = !item.isDetailsExpanded;
+  }
+
+  onToggleDetailsDeviceConnectivityDetailsVisibility(item: DeviceStatusItem): void {
+    item.detailsVisibility = {
+      deviceConnectivityDetails: !item.detailsVisibility.deviceConnectivityDetails,
+    };
+    if (item.detailsVisibility.deviceConnectivityDetails) {
+      this.loadDeviceConnectivity(item.device.id);
+    }
+  }
+
+  onRefreshDeviceConnectivityDetails(item: DeviceStatusItem): void {
+    // item.deviceConnectivityDetails = null;
+    this.loadDeviceConnectivity(item.device.id);
+  }
+
+  loadDeviceConnectivity(deviceId: number): void {
+    const reqMsg = createGetDeviceConnectivityDetailsRequestMessage();
+    reqMsg.body.deviceId = deviceId;
+    this.messageTransportSvc.sendAndAwaitForReply(reqMsg).pipe(
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(replyMsg => this.processGetDeviceConnectivityDetailsReplyMessage(replyMsg as GetDeviceConnectivityDetailsReplyMessage));
+  }
+
+  processGetDeviceConnectivityDetailsReplyMessage(replyMsg: GetDeviceConnectivityDetailsReplyMessage): void {
+    if (replyMsg.header.failure) {
+      return;
+    }
+    const deviceStatusItems = this.signals.deviceStatusItems();
+    const deviceStatusItem = deviceStatusItems.find(x => x.device.id === replyMsg.body.deviceId);
+    if (deviceStatusItem) {
+      deviceStatusItem.deviceConnectivityDetails = this.computerStatusesSvc.createDeviceConnectivityDetailsItem(replyMsg.body);
+      this.setDeviceStatusItems(deviceStatusItems);
+    }
   }
 
   onToggleOptionStopVisibility(item: DeviceStatusItem): void {
@@ -886,6 +933,10 @@ interface Signals {
   showActionsAndOptionsAtTheEnd: WritableSignal<boolean>;
 }
 
+interface DetailsVisibility {
+  deviceConnectivityDetails: boolean | undefined | null;
+}
+
 interface OptionsVisibility {
   stop?: boolean | null;
   transfer?: boolean | null;
@@ -902,6 +953,7 @@ interface DeviceStatusItem {
   tariffId: number;
   isActionsExpanded: boolean;
   isOptionsExpanded: boolean;
+  isDetailsExpanded: boolean;
   selectedTariffItem?: Tariff | null;
   stopNote?: string | null;
   deviceNote?: string | null;
@@ -911,6 +963,8 @@ interface DeviceStatusItem {
   selectedContinueWithTariffId?: number | null;
   deviceConnectivity?: DeviceConnectivityItem | null;
   optionsVisibility: OptionsVisibility;
+  detailsVisibility: DetailsVisibility;
+  deviceConnectivityDetails?: DeviceConnectivityDetails | null;
   allowedTariffs?: Tariff[] | null;
   allowedTransferToDevices?: Device[] | null;
 }

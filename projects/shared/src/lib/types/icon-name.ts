@@ -33,4 +33,5 @@ export enum IconName {
   restart_alt = 'restart_alt',
   sort = 'sort',
   manage_accounts = 'manage_accounts',
+  link = 'link',
 }

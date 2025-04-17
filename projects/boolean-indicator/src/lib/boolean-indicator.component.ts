@@ -12,5 +12,5 @@ import { IconName } from '@ccs3-operator/shared/types';
 export class BooleanIndicatorComponent {
   value = input<boolean | undefined | null>(false);
 
-  iconName = IconName;
+  readonly iconName = IconName;
 }

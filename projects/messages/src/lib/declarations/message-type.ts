@@ -1,4 +1,6 @@
 export const enum MessageType {
+  getDeviceConnectivityDetailsRequest = 'get-device-connectivity-details-request',
+  getDeviceConnectivityDetailsReply = 'get-device-connectivity-details-reply',
   restartDevicesRequest = 'restart-devices-request',
   restartDevicesReply = 'restart-devices-reply',
   getTariffDeviceGroupsRequest = 'get-tariff-device-groups-request',

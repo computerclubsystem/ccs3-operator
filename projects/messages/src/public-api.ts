@@ -61,6 +61,7 @@ export * from './lib/filter-server-logs.messages';
 export * from './lib/shutdown-stopped.messages';
 export * from './lib/get-tariff-device-groups.messages';
 export * from './lib/restart-devices.messages';
+export * from './lib/get-device-connectivity-details.messsages';
 
 export * from './lib/entities/device-connectivity-item';
 export * from './lib/entities/device';
@@ -83,3 +84,4 @@ export * from './lib/entities/allowed-device-objects';
 export * from './lib/entities/user-with-total-and-count';
 export * from './lib/entities/device-session';
 export * from './lib/entities/filter-server-logs-item';
+export * from './lib/entities/device-connection-event-type';

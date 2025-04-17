@@ -72,6 +72,10 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   gap: var(--ccs3-op-gap);
 }
 
+.ccs3-op-span-two-grid-cols {
+  column-span: 2;
+}
+
 /* Padding */
 .ccs3-op-padding {
   padding: var(--ccs3-op-padding);

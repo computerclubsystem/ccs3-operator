@@ -89,9 +89,11 @@
   stopped: t('Stopped'),
   willStopAt: t('Will stop at'),
   tariff: t('Tariff'),
-  messages: t('Messages'),
   connections: t('Connections'),
-  timePassedSinceLastMessage: t('Time passed since last message'),
+  receivedMessages: t('Received messages'),
+  sentMessages: t('Sent messages'),
+  timePassedSinceLastReceivedMessage: t('Time passed since last received message'),
+  timePassedSinceLastSentMessage: t('Time passed since last sent message'),
   timePassedSinceLastConnection: t('Time passed since last connection'),
   actions: t('Actions'),
   options: t('Options'),
@@ -106,6 +108,12 @@
   continueWithOptions: t('Continue with options'),
   transferNote: t('Transfer note'),
   toggleDetails: t('Toggle details'),
+  deviceConnectivityDetails: t('Device connectivity details'),
+  refresh: t('Refresh'),
+  time: t('Time'),
+  type: t('Type'),
+  connectionId: t('Connection ID'),
+  note: t('Note'),
   };
 
   <ng-template #standardCardTemplate let-templateContext>
@@ -143,9 +151,8 @@
               <ng-container [ngTemplateOutlet]="actionsAndOptionsButtonsTemplate"
                 [ngTemplateOutletContext]="{ $implicit: item }"></ng-container>
               }
-              <ccs3-op-expand-button
-                (click)="detailsExpansionPanel.expanded = !detailsExpansionPanel.expanded; item.newDeviceNote = '';"
-                [isExpanded]="detailsExpansionPanel.expanded" [type]="expandButtonType.matIconButton"
+              <ccs3-op-expand-button (click)="toggleDetailsExpanded(item); item.newDeviceNote = '';"
+                [isExpanded]="item.isDetailsExpanded" [type]="expandButtonType.matIconButton"
                 [title]="tl.toggleDetails">
               </ccs3-op-expand-button>
               @if (item.deviceConnectivity) {
@@ -183,9 +190,9 @@
         </mat-card-title>
       </mat-card-header>
       <mat-card-content class="ccs3-op-mat-card-content-no-padding">
-        <mat-expansion-panel #detailsExpansionPanel class="ccs3-op-mat-expansion-panel-small-padding">
-          <ng-template matExpansionPanelContent>
-            @if (detailsExpansionPanel.expanded) {
+        <mat-expansion-panel [expanded]="item.isDetailsExpanded" class="ccs3-op-mat-expansion-panel-small-padding">
+          @if (item.isDetailsExpanded) {
+          <section class="computer-status-details-container ccs3-op-flex-column ccs3-op-align-items-flex-start">
             <section class="computer-status-details ccs3-op-two-col-grid ccs3-op-half-gap ccs3-op-align-items-center">
               <span>{{tl.total}}</span>
               <ccs3-op-money-formatter [value]="item.deviceStatus.totalSum" [title]="tl.total"
@@ -208,13 +215,13 @@
               <span class="will-stop-at">{{item.deviceStatus.expectedEndAt | noYearDate}}</span>
               }
               @if (item.deviceNote) {
-              <span>{{t('Note')}}</span>
+              <span>{{tl.note}}</span>
               <span>{{item.deviceNote}}</span>
               }
               <span>{{t('Set note')}}</span>
               <section class="device-details-note-section ccs3-op-flex-row ccs3-op-half-gap">
                 <mat-form-field subscriptSizing="dynamic" class="device-note">
-                  <mat-label>{{t('Note')}}</mat-label>
+                  <mat-label>{{tl.note}}</mat-label>
                   <input (input)="onDeviceNoteChanged($event, item)" matInput class="device-note-input" />
                 </mat-form-field>
                 <button (click)="onSetDeviceNote(item)" mat-icon-button class="set-note-button">
@@ -222,8 +229,93 @@
                 </button>
               </section>
             </section>
-            }
-          </ng-template>
+            <section class="computer-status-details-more-info ccs3-op-flex-column">
+              <section class="computer-status-details-actions ccs3-op-flex-row">
+                <ccs3-op-expand-button (click)="onToggleDetailsDeviceConnectivityDetailsVisibility(item)"
+                  [type]="expandButtonType.matStrokedButton"
+                  [isExpanded]="item.detailsVisibility.deviceConnectivityDetails"
+                  [title]="tl.deviceConnectivityDetails">
+                  <mat-icon>{{iconName.link}}</mat-icon>
+                </ccs3-op-expand-button>
+              </section>
+              @if (item.detailsVisibility.deviceConnectivityDetails) {
+              <section class="computer-status-details-more-info-sections">
+                @if (item.detailsVisibility.deviceConnectivityDetails && item.deviceConnectivityDetails) {
+                <section class="computer-status-details-device-connectivity-details">
+                  <section>
+                    <span>{{tl.deviceConnectivityDetails}}</span>
+                    <mat-divider></mat-divider>
+                  </section>
+                  <section class="ccs3-op-two-col-grid ccs3-op-half-gap">
+                    <span>{{tl.connected}}</span>
+                    <ccs3-op-boolean-indicator [value]="item.deviceConnectivityDetails.isConnected">
+                    </ccs3-op-boolean-indicator>
+                    <span>{{tl.receivedMessages}}</span>
+                    <section class="ccs3-op-flex-row">
+                      <span class="received-messages-count">{{item.deviceConnectivityDetails.receivedMessagesCount}}</span>
+                      @if (item.deviceConnectivityDetails.secondsSinceLastReceivedMessage !== null) {
+                      <section class="ccs3-op-flex-row ccs3-op-no-gap">
+                        (<ccs3-op-seconds-formatter [value]="item.deviceConnectivityDetails.secondsSinceLastReceivedMessage"
+                          [title]="tl.timePassedSinceLastReceivedMessage"></ccs3-op-seconds-formatter>)
+                      </section>
+                      }
+                    </section>
+                    <span>{{tl.sentMessages}}</span>
+                    <section class="ccs3-op-flex-row">
+                      <span class="sent-messages-count">{{item.deviceConnectivityDetails.sentMessagesCount}}</span>
+                      @if (item.deviceConnectivityDetails.secondsSinceLastSentMessage !== null) {
+                      <section class="ccs3-op-flex-row ccs3-op-no-gap">
+                        (<ccs3-op-seconds-formatter [value]="item.deviceConnectivityDetails.secondsSinceLastSentMessage"
+                          [title]="tl.timePassedSinceLastSentMessage"></ccs3-op-seconds-formatter>)
+                      </section>
+                      }
+                    </section>
+                    <span>{{tl.connections}}</span>
+                    <section class="ccs3-op-flex-row">
+                      <span class="connections-count">{{item.deviceConnectivityDetails.connectionsCount}}</span>
+                      <section class="ccs3-op-flex-row ccs3-op-no-gap">
+                        (<ccs3-op-seconds-formatter [value]="item.deviceConnectivityDetails.secondsSinceLastConnection"
+                          [title]="tl.timePassedSinceLastConnection"></ccs3-op-seconds-formatter>)
+                      </section>
+                    </section>
+                  </section>
+                  @if (item.deviceConnectivityDetails.connectionEventItems) {
+                  <section class="device-connectivity-details-connection-events">
+                    <table>
+                      <thead>
+                        <tr>
+                          <th class="ccs3-op-align-text-start">{{tl.time}}</th>
+                          <th class="ccs3-op-align-text-start">{{tl.type}}</th>
+                          <th class="ccs3-op-align-text-start">{{tl.connectionId}}</th>
+                          <th class="ccs3-op-align-text-start">{{tl.note}}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (eventItem of item.deviceConnectivityDetails.connectionEventItems; track eventItem) {
+                        <tr>
+                          <td class="ccs3-op-align-text-start">{{eventItem.timestamp | noYearDate}}</td>
+                          <td class="ccs3-op-align-text-start">{{eventItem.type}}</td>
+                          <td class="ccs3-op-align-text-start">
+                            {{eventItem.connectionId}}/{{eventItem.connectionInstanceId}}
+                          </td>
+                          <td>{{eventItem.note}}</td>
+                        </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </section>
+                  }
+                  <section class="device-connectivity-details-actions">
+                    <button (click)="onRefreshDeviceConnectivityDetails(item)"
+                      mat-stroked-button>{{tl.refresh}}</button>
+                  </section>
+                </section>
+                }
+              </section>
+              }
+            </section>
+          </section>
+          }
         </mat-expansion-panel>
       </mat-card-content>
       @if (item.isActionsExpanded || item.isOptionsExpanded) {

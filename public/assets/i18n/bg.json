@@ -255,5 +255,13 @@
   "At the start": "В началото",
   "At the end": "В края",
   "Most of the profile settings require browser refresh to take effect if changed": "За да се приложат промените на текущата ви сесия, след като запишете рефрешнете браузъра",
-  "Length must be at least {{count}} characters": "Дължината трябва да бъде поне {{count}} символа"
+  "Length must be at least {{count}} characters": "Дължината трябва да бъде поне {{count}} символа",
+  "Device connectivity details": "Детайли за връзката с устройството",
+  "Refresh": "Опресни",
+  "Time": "Време",
+  "Connection ID": "ID на връзката",
+  "Message timed out": "Съобщението таймаутна",
+  "Message was sent to the server but did not receive reply. Message type {{messageType}}": "Съобщението беше изпратено до сървъра но не получи отговор. Тип на съобщението {{messageType}}",
+  "Time passed since last received message": "Изминало време от последното получено съобщение",
+  "Time passed since last sent message": "Изминало време от последното изпратено съобщение"
 }
