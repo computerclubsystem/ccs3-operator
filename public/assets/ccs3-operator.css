@@ -272,6 +272,12 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   visibility: hidden;
 }
 
+/* Position */
+.ccs3-op-sticky-bottom {
+  position: sticky;
+  bottom: 0;
+}
+
 /* HTML Elements */
 html,
 body {
