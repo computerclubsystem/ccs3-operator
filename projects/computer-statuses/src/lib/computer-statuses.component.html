@@ -394,7 +394,7 @@
                 @if (item.deviceNote) {
                 <mat-checkbox (change)="onTransferNoteChanged($event, item)">{{tl.transferNote}}</mat-checkbox>
                 }
-                <button (click)="onTransferToAnotherDevice(item)" mat-stroked-button
+                <button (click)="onTransferToAnotherDevice(item)" mat-flat-button
                   [disabled]="!item.selectedTransferToDeviceId" class="transfer-button">
                   <span class="ccs3-op-flex-row">
                     <mat-icon>{{iconName.swap_horiz}}</mat-icon>
