@@ -241,7 +241,7 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
 
 /* Colors */
 .ccs3-op-background-color {
-  /* TODO: Assing --ccs3-op variables for all --mat variables and use --ccs3-op here instead */
+  /* TODO: Assign --ccs3-op variables for all --mat variables and use --ccs3-op here instead */
   background-color: var(--mat-sys-background);
 }
 

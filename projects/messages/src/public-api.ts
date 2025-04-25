@@ -63,6 +63,8 @@ export * from './lib/get-tariff-device-groups.messages';
 export * from './lib/restart-devices.messages';
 export * from './lib/get-device-connectivity-details.messsages';
 export * from './lib/shutdown-devices.messages';
+export * from './lib/create-sign-in-code.messages';
+export * from './lib/public-configuration-notification.message';
 
 export * from './lib/entities/device-connectivity-item';
 export * from './lib/entities/device';

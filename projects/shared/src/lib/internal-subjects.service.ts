@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { filter, first, Observable, ReplaySubject, Subject } from 'rxjs';
 
-import { AuthRequestMessage, ConfigurationMessage, GetProfileSettingsReplyMessage, ReplyMessage, SignInInformationNotificationMessage, SignOutReplyMessage } from '@ccs3-operator/messages';
+import { AuthRequestMessage, ConfigurationMessage, GetProfileSettingsReplyMessage, PublicConfigurationNotificationMessage, ReplyMessage, SignInInformationNotificationMessage, SignOutReplyMessage } from '@ccs3-operator/messages';
 import { AccountMenuItem, MainMenuItem, MessageTimedOutErrorData } from './types';
-import { NotificationItem } from '@ccs3-operator/shared';
+import { IsConnectedInfo, NotificationItem } from '@ccs3-operator/shared';
 
 @Injectable({ providedIn: 'root' })
 export class InternalSubjectsService {
   private readonly signedInSubject = new ReplaySubject<boolean>(1);
   private readonly configurationMessageSubject = new ReplaySubject<ConfigurationMessage>(1);
-  private readonly connectedSubject = new Subject<boolean>();
+  private readonly connectedSubject = new ReplaySubject<IsConnectedInfo>(1);
   private readonly notificationsChangedSubject = new ReplaySubject<NotificationItem[]>(1);
   private readonly setMainMenuItemsSubject = new Subject<MainMenuItem[]>();
   private readonly mainMenuSelectedSubject = new Subject<MainMenuItem>();
@@ -23,6 +23,15 @@ export class InternalSubjectsService {
   private readonly setFailureReplyMessageReceivedSubject = new Subject<ReplyMessage<unknown>>();
   private readonly signInInformationNotificationMessageSubject = new ReplaySubject<SignInInformationNotificationMessage | null>(1);
   private readonly profileSettingsReplyMessageSubject = new ReplaySubject<GetProfileSettingsReplyMessage | null>(1);
+  private readonly publicConfigurationNotificationMessageSubject = new ReplaySubject<PublicConfigurationNotificationMessage>(1);
+
+  setPublicConfigurationNotificationMessage(message: PublicConfigurationNotificationMessage): void {
+    this.publicConfigurationNotificationMessageSubject.next(message);
+  }
+
+  getPublicConfigurationNotificationMessage(): Observable<PublicConfigurationNotificationMessage> {
+    return this.publicConfigurationNotificationMessageSubject.asObservable();
+  }
 
   setProfileSettingsReplyMessage(replyMsg: GetProfileSettingsReplyMessage | null): void {
     this.profileSettingsReplyMessageSubject.next(replyMsg);
@@ -128,11 +137,11 @@ export class InternalSubjectsService {
     return this.notificationsChangedSubject.asObservable();
   }
 
-  setConnected(isConnected: boolean): void {
-    this.connectedSubject.next(isConnected);
+  setConnected(isConnectedInfo: IsConnectedInfo): void {
+    this.connectedSubject.next(isConnectedInfo);
   }
 
-  getConnected(): Observable<boolean> {
+  getConnected(): Observable<IsConnectedInfo> {
     return this.connectedSubject.asObservable();
   }
 

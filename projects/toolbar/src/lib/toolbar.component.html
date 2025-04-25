@@ -1,5 +1,5 @@
 <mat-toolbar class="ccs3-op-flex-justify-space-between">
-  @let isConnected = signals.isConnected();
+  @let isConnectedInfo = signals.isConnectedInfo();
   <div class="ccs3-op-flex-row ccs3-op-no-gap">
     <button mat-stroked-button [matMenuTriggerFor]="mainMenu" title="{{'Main menu' | transloco}}"
       aria-label="Main menu">
@@ -8,7 +8,7 @@
     </button>
   </div>
   <div class="ccs3-op-flex-row ccs3-op-half-gap">
-    @if(isConnected) {
+    @if(isConnectedInfo?.isConnected) {
     @let connectedText = 'Connected' | transloco;
     <mat-icon title="{{connectedText}}" class="connected-icon ccs3-op-success-color"
       [attr.aria-label]="connectedText">{{iconName.wifi}}</mat-icon>

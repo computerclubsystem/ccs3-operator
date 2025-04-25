@@ -267,4 +267,7 @@ export const en = {
   "Shutdown": "Shutdown",
   "Cancel": "Cancel",
   "OK": "OK",
+  "Remaining seconds": "Remaining seconds",
+  "Scan this QR code to sign in more secure with your device": "Scan this QR code to sign in more secure with your device",
+  "Or type your username and password": "Or type your username and password",
 };

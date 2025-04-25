@@ -14,6 +14,7 @@ import {
   NotificationMessage, createGetProfileSettingsRequestMessage, GetProfileSettingsReplyMessage,
   UserProfileSettingName, SignInInformationNotificationMessage,
   createUpdateProfileSettingsRequestMessage,
+  PublicConfigurationNotificationMessage,
 } from '@ccs3-operator/messages';
 import {
   CustomStylesService, MessageSubjectsService, NotificationType, PermissionName, PermissionsService,
@@ -280,7 +281,7 @@ export class AppComponent implements OnInit {
     // When connected and if there is a token in the storage,
     // use it to authenticate
     this.internalSubjectsSvc.getConnected().pipe(
-      filter(isConnected => isConnected),
+      filter(isConnectedInfo => isConnectedInfo.isConnected),
     ).subscribe(() => {
       const tokenData = this.getStoredTokenData();
       if (tokenData?.token) {
@@ -321,6 +322,16 @@ export class AppComponent implements OnInit {
   private processAppMessageReceived<TBody>(message: Message<TBody> | NotificationMessage<TBody> | ReplyMessage<TBody>): void {
     const type = message.header.type;
     switch (type) {
+      case MessageType.authReply:
+        if (!this.getStoredTokenData()) {
+          // We are not authenticated and we received authentication reply message
+          // Probably the user logged in with QR code
+          this.processAuthReplyMessage(message as AuthReplyMessage);
+        }
+        break;
+      case NotificationMessageType.publicConfigurationNotification:
+        this.processPublicConfigurationNotificationMessage(message as PublicConfigurationNotificationMessage);
+        break;
       case NotificationMessageType.signInInformationNotification:
         this.internalSubjectsSvc.setSignInInformationNotificationMessage(message as SignInInformationNotificationMessage);
         break;
@@ -355,6 +366,10 @@ export class AppComponent implements OnInit {
       this.removeStoredTokenData();
       this.notificationsHelperSvc.showAuthenticationErrorCantRefreshTheToken();
     }
+  }
+
+  private processPublicConfigurationNotificationMessage(message: PublicConfigurationNotificationMessage): void {
+    this.internalSubjectsSvc.setPublicConfigurationNotificationMessage(message);
   }
 
   private processConfigurationMessage(message: ConfigurationMessage): void {
@@ -532,13 +547,14 @@ export class AppComponent implements OnInit {
   private processConnectorConnected(): void {
     // TODO: This can happen faster than the translations file is loaded. If this is the case, warning will be logged in the browser console
     this.notificationsHelperSvc.showConnected();
-    this.internalSubjectsSvc.setConnected(true);
+    this.internalSubjectsSvc.setConnected({ isConnected: true, lastConnectedAt: Date.now() });
   }
 
   private processConnectorConnectionClosed(args: OnCloseEventArgs): void {
     this.notificationsHelperSvc.showDisconnected(args);
     this.stopPing();
-    this.internalSubjectsSvc.setConnected(false);
+    // TODO: Keep the lastConnectedAt
+    this.internalSubjectsSvc.setConnected({ isConnected: false });
   }
 
   private processConnectorError(args: OnErrorEventArgs): void {

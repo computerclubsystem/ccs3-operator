@@ -23,3 +23,4 @@ export * from './lib/utils';
 export { CustomStylesService } from './lib/custom-styles.service';
 export { SorterService, SortOrder } from './lib/sorter.service';
 export { GroupingService, type ItemsGroup } from './lib/grouping.service';
+export { type IsConnectedInfo } from './lib/types/is-connected-info';

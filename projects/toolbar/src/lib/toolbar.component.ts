@@ -6,7 +6,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { InternalSubjectsService } from '@ccs3-operator/shared';
+import { InternalSubjectsService, IsConnectedInfo } from '@ccs3-operator/shared';
 import { IconName, MenuItem, MainMenuItem, AccountMenuItem } from '@ccs3-operator/shared/types';
 import { GetProfileSettingsReplyMessage } from '@ccs3-operator/messages';
 
@@ -63,7 +63,7 @@ export class ToolbarComponent implements OnInit {
     const signals: Signals = {
       mainMenuItems: toSignal(this.internalSubjectsSvc.getMainMenuItems()),
       accountMenuItems: toSignal(this.internalSubjectsSvc.getAccountMenuItems()),
-      isConnected: toSignal(this.internalSubjectsSvc.getConnected()),
+      isConnectedInfo: toSignal(this.internalSubjectsSvc.getConnected()),
       username: signal(''),
     };
     return signals;
@@ -81,7 +81,7 @@ export class ToolbarComponent implements OnInit {
 interface Signals {
   mainMenuItems: Signal<MainMenuItem[] | undefined>;
   accountMenuItems: Signal<AccountMenuItem[] | undefined>;
-  isConnected: Signal<boolean | undefined>;
+  isConnectedInfo: Signal<IsConnectedInfo | undefined>;
   username: WritableSignal<string>;
 }
 

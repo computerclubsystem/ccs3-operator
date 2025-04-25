@@ -1,4 +1,6 @@
 export const enum MessageType {
+  createSignInCodeRequest = 'create-sign-in-code-request',
+  createSignInCodeReply = 'create-sign-in-code-reply',
   shutdownDevicesRequest = 'shutdown-devices-request',
   shutdownDevicesReply = 'shutdown-devices-reply',
   getDeviceConnectivityDetailsRequest = 'get-device-connectivity-details-request',
@@ -115,4 +117,5 @@ export const enum NotificationMessageType {
   deviceStatusesNotification = 'device-statuses-notification',
   deviceConnectivitiesNotification = 'device-connectivities-notification',
   signedOutNotification = 'signed-out-notification',
+  publicConfigurationNotification = 'public-configuration-notification',
 }
