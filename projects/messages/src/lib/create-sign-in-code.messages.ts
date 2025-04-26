@@ -1,4 +1,4 @@
-import { Message, MessageType, ReplyMessage } from '@ccs3-operator/messages';
+import { CodeSignInIdentifierType, Message, MessageType, ReplyMessage } from '@ccs3-operator/messages';
 
 export type CreateSignInCodeRequestMessageBody = object;
 
@@ -16,6 +16,7 @@ export function createCreateSignInCodeRequestMessage(): CreateSignInCodeRequestM
 export interface CreateSignInCodeReplyMessageBody {
     code: string;
     url: string;
+    identifierType: CodeSignInIdentifierType;
     validTo: number;
 }
 

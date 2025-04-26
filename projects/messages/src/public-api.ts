@@ -88,3 +88,4 @@ export * from './lib/entities/user-with-total-and-count';
 export * from './lib/entities/device-session';
 export * from './lib/entities/filter-server-logs-item';
 export * from './lib/entities/device-connection-event-type';
+export * from './lib/entities/code-sign-in-identifier-type';
