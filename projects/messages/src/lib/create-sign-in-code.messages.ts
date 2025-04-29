@@ -17,7 +17,7 @@ export interface CreateSignInCodeReplyMessageBody {
     code: string;
     url: string;
     identifierType: CodeSignInIdentifierType;
-    validTo: number;
+    remainingSeconds: number;
 }
 
 export type CreateSignInCodeReplyMessage = ReplyMessage<CreateSignInCodeReplyMessageBody>;

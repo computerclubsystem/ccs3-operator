@@ -89,6 +89,9 @@ export class SignInComponent implements OnInit {
       this.signals.remainingAuthenticationPercent.set(null);
       return;
     }
+    if (!this.signals.publicConfigurationNotificationMessage()) {
+      return;
+    }
 
     const authTimeout = this.signals.publicConfigurationNotificationMessage()!.body.authenticationTimeoutSeconds * 1000;
     const diff = Date.now() - this.lastConnectedAt;
