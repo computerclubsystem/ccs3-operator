@@ -67,6 +67,10 @@ export class BulkActionsComponent implements OnInit {
     this.deviceGroupSelectedActionMap.set(deviceGroupItem.deviceGroup.id, actionId);
   }
 
+  getGroupAction(groupId: number): BulkActionId | undefined {
+    return this.deviceGroupSelectedActionMap.get(groupId);
+  }
+
   onNoteChanged(deviceGroupItem: GroupWithDevices, ev: Event): void {
     const inputEv = ev as InputEvent;
     const noteText = (inputEv.target as HTMLInputElement).value;

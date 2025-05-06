@@ -45,7 +45,7 @@
       <mat-divider></mat-divider>
       <section class="groups ccs3-op-flex-column">
         @for (deviceGroupItem of signals.groupsWithDevices(); track deviceGroupItem.deviceGroup.id) {
-        <mat-expansion-panel>
+        <mat-expansion-panel class="ccs3-op-primary-border">
           <mat-expansion-panel-header>
             <span>{{deviceGroupItem.deviceGroup.name || t('~ No group ~')}}</span>
           </mat-expansion-panel-header>
@@ -87,7 +87,8 @@
                 } @else if (actionVisibility.start) {
                 }
               </section>
-              <button (click)="onExecuteAction(deviceGroupItem)" mat-flat-button>{{t('Execute')}}</button>
+              <button (click)="onExecuteAction(deviceGroupItem)"
+                [disabled]="!getGroupAction(deviceGroupItem.deviceGroup.id)" mat-flat-button>{{t('Execute')}}</button>
             </section>
           </section>
         </mat-expansion-panel>
