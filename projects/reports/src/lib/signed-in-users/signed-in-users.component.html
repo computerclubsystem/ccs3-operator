@@ -13,26 +13,30 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
-      <table>
-        <thead>
-          <tr>
-            <th class="ccs3-op-align-text-start">{{t('Connected at')}}</th>
-            <th class="ccs3-op-align-text-start">{{t('Expires at')}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (item of group.items; track item.token) {
-          <tr>
-            <td>{{item.connectedAt| noYearDate}}</td>
-            <td>{{item.tokenExpiresAt | noYearDate}}</td>
-          </tr>
-          }
-        </tbody>
-      </table>
-      <section class="signed-in-user-actions">
-        <button (click)="onSignOutAllSessions(group)" mat-flat-button>
-          {{t('Sign out all {{username}} sessions',{username: username})}}
-        </button>
+      <section class="ccs3-op-flex-column">
+        <section class="signed-in-user-sessions-table">
+          <table>
+            <thead>
+              <tr>
+                <th class="ccs3-op-align-text-start">{{t('Connected at')}}</th>
+                <th class="ccs3-op-align-text-start">{{t('Expires at')}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of group.items; track item.token) {
+              <tr>
+                <td>{{item.connectedAt| noYearDate}}</td>
+                <td>{{item.tokenExpiresAt | noYearDate}}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </section>
+        <section class="signed-in-user-actions">
+          <button (click)="onSignOutAllSessions(group)" mat-flat-button>
+            {{t('Sign out all {{username}} sessions',{username: username})}}
+          </button>
+        </section>
       </section>
     </ng-template>
   </mat-expansion-panel>
