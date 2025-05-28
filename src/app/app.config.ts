@@ -1,4 +1,4 @@
-import { ApplicationConfig, isDevMode, provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { ApplicationConfig, isDevMode, provideZonelessChangeDetection } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter } from '@angular/router';
@@ -9,7 +9,7 @@ import { TranslocoHttpLoader } from './transloco-loader';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideExperimentalZonelessChangeDetection(),
+    provideZonelessChangeDetection(),
     provideRouter(routes),
     provideAnimationsAsync(),
     provideTransloco({
