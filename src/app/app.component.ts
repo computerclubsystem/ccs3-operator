@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, OnInit, DOCUMENT } from '@angular/core';
+
 import { Params, Router, RouterOutlet } from '@angular/router';
 import { MatIconRegistry } from '@angular/material/icon';
 import { translate, TranslocoService } from '@jsverse/transloco';
