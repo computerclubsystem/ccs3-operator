@@ -34,4 +34,5 @@ export enum IconName {
   sort = 'sort',
   manage_accounts = 'manage_accounts',
   link = 'link',
+  delete = 'delete',
 }

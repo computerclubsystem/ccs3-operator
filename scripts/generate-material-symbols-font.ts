@@ -52,7 +52,7 @@ class MaterialSymbolsGenerator {
     if (!match) {
       return null;
     }
-    // The regex above is not good enough - it includes the closing brackedt and the word "fromat" of the "url(...)" - remove it
+    // The regex above is not good enough - it includes the closing bracket and the word "fromat" of the "url(...)" - remove it
     return match.substring(0, match.length - 8);
   }
 
