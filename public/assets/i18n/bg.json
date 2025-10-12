@@ -270,5 +270,6 @@
   "Remaining seconds": "Оставащи секунди",
   "Scan this QR code to sign in more secure with your device": "Сканирайте QR кода за да се логнете по-сигурно от Ваше устройство",
   "Or type your username and password": "Или се логнете с юзър и парола",
-  "Continuation data removed": "Продължението е премахнато"
+  "Continuation data removed": "Продължението е премахнато",
+  "Total amount for selected period": "Обща сума за избрания период"
 }

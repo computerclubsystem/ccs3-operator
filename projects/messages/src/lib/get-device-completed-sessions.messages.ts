@@ -1,5 +1,7 @@
 import { Message, MessageType, ReplyMessage } from '@ccs3-operator/messages';
 import { DeviceSession } from './entities/device-session';
+import { TariffUsage } from './entities/tariff-usage';
+import { DeviceUsage } from './entities/device-usage';
 
 export interface GetDeviceCompletedSessionsRequestMessageBody {
   fromDate: string;
@@ -22,6 +24,8 @@ export function createGetDeviceCompletedSessionsRequestMessage(): GetDeviceCompl
 export interface GetDeviceCompletedSessionsReplyMessageBody {
   deviceSessions: DeviceSession[];
   totalSum: number;
+  tariffUsages: TariffUsage[];
+  deviceUsages: DeviceUsage[];
 }
 
 export type GetDeviceCompletedSessionsReplyMessage = ReplyMessage<GetDeviceCompletedSessionsReplyMessageBody>;

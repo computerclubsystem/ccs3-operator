@@ -30,6 +30,8 @@
   --ccs3-op-small-text: 20ch;
   --ccs3-op-medium-text: 40ch;
   --ccs3-op-large-text: 60ch;
+  --ccs3-op-highlight-background: var(--mat-sys-primary-container);
+  --ccs3-op-table-caption-font-size: 1.5em;
 }
 
 /* Flex */
@@ -267,6 +269,10 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   background-color: var(--ccs3-op-sys-error-container);
 }
 
+.ccs3-op-highlight-background {
+  background-color: var(--ccs3-op-highlight-background);
+}
+
 /* Visibility */
 .ccs3-op-visibility-hidden {
   visibility: hidden;
@@ -298,6 +304,27 @@ fieldset {
 
 table {
   border-spacing: 0;
+  width: max-content;
+}
+
+table caption {
+  z-index: 1;
+  position: sticky;
+  top: 0;
+  color: var(--mat-sys-on-surface);
+  background-color: var(--mat-sys-background);
+  font-size: var(--ccs3-op-table-caption-font-size);
+  font-weight: bold;
+  text-align: left;
+}
+
+table thead {
+  z-index: 1;
+  position: sticky;
+  /* This must be as high as the table caption is (but only if table caption exists) */
+  top: calc(var(--ccs3-op-table-caption-font-size) + 0.3em);
+  color: var(--mat-sys-on-surface);
+  background-color: var(--mat-sys-background);
 }
 
 table th,

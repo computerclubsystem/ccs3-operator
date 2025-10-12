@@ -20,9 +20,11 @@ import {
   createGetDeviceCompletedSessionsRequestMessage, Device, DeviceSession, GetAllDevicesReplyMessage,
   GetAllDevicesRequestMessageBody, GetAllTariffsReplyMessage, GetAllTariffsRequestMessageBody,
   GetAllUsersReplyMessage, GetAllUsersRequestMessageBody, GetDeviceCompletedSessionsReplyMessage, Message,
-  ReplyMessage, Tariff, TariffType, User
+  ReplyMessage, Tariff, User
 } from '@ccs3-operator/messages';
 import { BooleanIndicatorComponent } from '@ccs3-operator/boolean-indicator';
+import { DeviceUsage } from 'projects/messages/src/lib/entities/device-usage';
+import { TariffUsage } from 'projects/messages/src/lib/entities/tariff-usage';
 
 @Component({
   selector: 'ccs3-op-device-sessions-report',
@@ -125,11 +127,11 @@ export class DeviceSessionsComponent implements OnInit {
     const chartInfo = this.createDeviceSessionChartInfos(replyMsg.body.deviceSessions, fromDate, toDate);
     this.signals.deviceSessionsUsageChartInfo.set(chartInfo);
 
-    const deviceUsageSummaryInfo = this.createDeviceUsageSummaryInfo(replyMsg.body.deviceSessions, fromDate, toDate);
+    const deviceUsageSummaryInfo = this.createDeviceUsageSummaryInfos(replyMsg.body.deviceUsages);
     this.sorterSvc.sortBy(deviceUsageSummaryInfo, x => x.totalAmount, SortOrder.descending);
     this.signals.deviceUsageSummary.set(deviceUsageSummaryInfo);
 
-    const tariffUsageSummaryInfo = this.createTariffSessionChartInfos(replyMsg.body.deviceSessions);
+    const tariffUsageSummaryInfo = this.createTariffUsageSummaryInfos(replyMsg.body.tariffUsages);
     // Sort by totalAmount, if equal - by totalSeconds, if equal again - by totalCount
     this.sorterSvc.sortByMany(tariffUsageSummaryInfo, [{
       sortOrder: SortOrder.descending,
@@ -147,84 +149,34 @@ export class DeviceSessionsComponent implements OnInit {
     this.changeDetectorRef.markForCheck();
   }
 
-  createDeviceUsageSummaryInfo(deviceSessions: DeviceSession[], fromDate: string, toDate: string): DeviceUsageSummaryInfo[] {
+  createDeviceUsageSummaryInfos(deviceUsages: DeviceUsage[]): DeviceUsageSummaryInfo[] {
     const summaryInfo: DeviceUsageSummaryInfo[] = [];
-    const periodFromSeconds = Math.round(new Date(fromDate).getTime() / 1000);
-    const periodToSeconds = Math.round(new Date(toDate).getTime() / 1000);
-    const durationSeconds = periodToSeconds - periodFromSeconds;
-    const map = new Map<number, DeviceUsageSummaryInfo>();
     const allDevicesMap = this.signals.allDevicesMap()!;
-    for (const session of deviceSessions) {
-      const startedAtTime = new Date(session.startedAt).getTime();
-      const stoppedAtTime = new Date(session.stoppedAt).getTime();
-      const sessionDurationMilliseconds = stoppedAtTime - startedAtTime;
-      const mapItem = map.get(session.deviceId);
-      if (!mapItem) {
-        const item: DeviceUsageSummaryInfo = {
-          device: allDevicesMap.get(session.deviceId)!,
-          // This will be calculated later
-          percentage: 0,
-          totalCount: 1,
-          // This will be in milliseconds - later we will convert it to seconds
-          totalSeconds: sessionDurationMilliseconds,
-          totalAmount: session.totalAmount,
-          zeroPriceCount: session.totalAmount === 0 ? 1 : 0,
-          zeroPriceTotalSeconds: session.totalAmount === 0 ? sessionDurationMilliseconds : 0,
-          zeroPricePercentage: 0,
-        };
-        map.set(session.deviceId, item);
-      } else {
-        mapItem.totalCount++;
-        mapItem.totalSeconds += sessionDurationMilliseconds;
-        mapItem.totalAmount += session.totalAmount;
-        if (session.totalAmount === 0) {
-          mapItem.zeroPriceCount++;
-          mapItem.zeroPriceTotalSeconds += sessionDurationMilliseconds;
-        }
-      }
-    }
-    for (const mapItem of map) {
-      const infoItem = mapItem[1];
-      // totalSeconds contains milliseconds - convert them to seconds
-      infoItem.totalSeconds = Math.round(infoItem.totalSeconds / 1000);
-      infoItem.zeroPriceTotalSeconds = Math.round(infoItem.zeroPriceTotalSeconds / 1000);
-      infoItem.percentage = Math.round((infoItem.totalSeconds / durationSeconds) * 100);
-      infoItem.zeroPricePercentage = Math.round((infoItem.zeroPriceTotalSeconds / infoItem.totalSeconds) * 100);
-      infoItem.totalAmount = Math.round(infoItem.totalAmount * 100) / 100;
-      summaryInfo.push(infoItem);
+    for (const deviceUsage of deviceUsages) {
+      const item: DeviceUsageSummaryInfo = {
+        device: allDevicesMap.get(deviceUsage.deviceId)!,
+        totalCount: deviceUsage.count,
+        totalSeconds: deviceUsage.totalTime,
+        totalAmount: deviceUsage.totalAmount,
+        zeroPriceCount: deviceUsage.zeroPriceSessionsCount,
+        zeroPriceTotalSeconds: deviceUsage.zeroPriceSessionsTotalTime,
+      };
+      summaryInfo.push(item);
     }
     return summaryInfo;
   }
 
-  createTariffSessionChartInfos(deviceSessions: DeviceSession[]): TariffUsageSummaryInfo[] {
+  createTariffUsageSummaryInfos(tariffUsages: TariffUsage[]): TariffUsageSummaryInfo[] {
     const summaryInfos: TariffUsageSummaryInfo[] = [];
     const allTariffsMap = this.signals.allTariffsMap()!;
-    const map = new Map<number, TariffUsageSummaryInfo>();
-    for (const session of deviceSessions) {
-      const startedAtTime = new Date(session.startedAt).getTime();
-      const stoppedAtTime = new Date(session.stoppedAt).getTime();
-      const sessionDurationMilliseconds = stoppedAtTime - startedAtTime;
-      const mapItem = map.get(session.tariffId);
-      const tariff = allTariffsMap.get(session.tariffId)!;
-      const tariffPrice = tariff.type !== TariffType.prepaid ? tariff.price : 0;
-      if (!mapItem) {
-        map.set(session.tariffId, {
-          tariff: tariff,
-          totalAmount: tariffPrice,
-          totalCount: 1,
-          totalSeconds: sessionDurationMilliseconds,
-        });
-      } else {
-        mapItem.totalAmount += tariffPrice;
-        mapItem.totalCount++;
-        mapItem.totalSeconds += sessionDurationMilliseconds;
-      }
-    }
-    for (const mapItem of map) {
-      const infoItem = mapItem[1];
-      // totalSeconds contains milliseconds - convert them to seconds
-      infoItem.totalSeconds = Math.round(infoItem.totalSeconds / 1000);
-      infoItem.totalAmount = Math.round(infoItem.totalAmount * 100) / 100;
+    for (const tariffUsage of tariffUsages) {
+      const tariff = allTariffsMap.get(tariffUsage.tariffId)!;
+      const infoItem: TariffUsageSummaryInfo = {
+        tariff: tariff,
+        totalAmount: tariffUsage.totalAmount,
+        totalCount: tariffUsage.count,
+        totalSeconds: tariffUsage.totalTime,
+      };
       summaryInfos.push(infoItem);
     }
     return summaryInfos;
@@ -451,10 +403,8 @@ interface DeviceUsageSummaryInfo {
   totalSeconds: number;
   totalCount: number;
   totalAmount: number;
-  percentage: number;
   zeroPriceCount: number;
   zeroPriceTotalSeconds: number;
-  zeroPricePercentage: number;
 }
 
 interface TariffUsageSummaryInfo {

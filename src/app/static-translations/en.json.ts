@@ -271,4 +271,5 @@ export const en = {
   "Scan this QR code to sign in more secure with your device": "Scan this QR code to sign in more secure with your device",
   "Or type your username and password": "Or type your username and password",
   "Continuation data removed": "Continuation data removed",
+  "Total amount for selected period": "Total amount for selected period",
 };
