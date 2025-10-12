@@ -155,11 +155,12 @@
       </thead>
       <tbody>
         @for (item of signals.sessionDisplayItems(); track item.deviceSession.id) {
-        <tr>
+        @let isZeroTotal = !item.deviceSession.totalAmount;
+        <tr [class.zero-total]="isZeroTotal">
           <td class="ccs3-op-align-text-start">{{item.deviceSession.id}}</td>
           <td class="ccs3-op-align-text-start">{{item.deviceName}}</td>
           <td class="ccs3-op-align-text-end ccs3-op-important-table-cell"
-            [ngClass]="{'ccs3-op-zero-value-table-cell': !item.deviceSession.totalAmount}">
+            [ngClass]="{'ccs3-op-zero-value-table-cell': isZeroTotal}">
             {{item.deviceSession.totalAmount | moneyFormat}}
           </td>
           <td class="ccs3-op-align-text-start">{{item.startedByUsername}}</td>
