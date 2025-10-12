@@ -1,0 +1,4 @@
+.ccs3-op-zero-value-table-cell {
+  color: var(--ccs3-op-sys-error);
+  background-color: var(--ccs3-op-sys-error-container);
+}

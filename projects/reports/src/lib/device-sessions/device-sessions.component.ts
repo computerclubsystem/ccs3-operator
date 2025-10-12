@@ -13,7 +13,7 @@ import { forkJoin, Observable } from 'rxjs';
 
 import {
   FullDatePipe, GroupingService, InternalSubjectsService, MessageTransportService, MoneyFormatPipe, NoYearDatePipe, SecondsToTimePipe, SorterService,
-  SortOrder
+  SortOrder, TimeConverterService
 } from '@ccs3-operator/shared';
 import {
   createGetAllDevicesRequestMessage, createGetAllTariffsRequestMessage, createGetAllUsersRequestMessage,
@@ -29,6 +29,7 @@ import { TariffUsage } from 'projects/messages/src/lib/entities/tariff-usage';
 @Component({
   selector: 'ccs3-op-device-sessions-report',
   templateUrl: 'device-sessions.component.html',
+  styleUrls: ['device-sessions.component.css'],
   imports: [
     ReactiveFormsModule, NgClass, NgStyle, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule,
     MatCheckboxModule, MatDividerModule, TranslocoDirective, MoneyFormatPipe, FullDatePipe, NoYearDatePipe,
@@ -42,12 +43,16 @@ export class DeviceSessionsComponent implements OnInit {
   readonly signals = this.createSignals();
   private readonly internalsSubjectsSvc = inject(InternalSubjectsService);
   private readonly messageTransportSvc = inject(MessageTransportService);
+  private readonly timeConverterSvc = inject(TimeConverterService);
   private readonly sorterSvc = inject(SorterService);
   private readonly groupingSvc = inject(GroupingService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
+    this.form.patchValue({
+      toDate: this.timeConverterSvc.getDateTimeForHTMLInputString(new Date()),
+    });
     this.internalsSubjectsSvc.whenSignedIn().pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(() => this.init());
