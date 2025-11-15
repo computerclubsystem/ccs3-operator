@@ -107,6 +107,10 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
   padding-block: var(--ccs3-op-padding);
 }
 
+.ccs3-op-inline-end-padding {
+  padding-inline-end: var(--ccs3-op-padding);
+}
+
 /* Borders */
 .ccs3-op-primary-border {
   border-width: 1px;

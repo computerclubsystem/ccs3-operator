@@ -20,6 +20,7 @@ import {
 import { InternalSubjectsService, MessageTransportService, NotificationType, ValidatorsService } from '@ccs3-operator/shared';
 import { IconName } from '@ccs3-operator/shared/types';
 import { NotificationsService } from '@ccs3-operator/notifications';
+import { LinkedListsComponent } from '@ccs3-operator/linked-lists';
 import { FormControls } from './declarations';
 
 @Component({
@@ -27,7 +28,7 @@ import { FormControls } from './declarations';
   templateUrl: 'create-role.component.html',
   imports: [
     ReactiveFormsModule, MatCardModule, MatCheckboxModule, MatButtonModule, MatIconModule, MatFormFieldModule,
-    MatInputModule, MatDividerModule, TranslocoDirective,
+    MatInputModule, MatDividerModule, TranslocoDirective, LinkedListsComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -46,6 +47,7 @@ export class CreateRoleComponent implements OnInit {
   iconName = IconName;
 
   ngOnInit(): void {
+    this.signals.isLoading.set(true);
     this.internalSubjectsSvc.whenSignedIn().pipe(
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(() => this.init());
@@ -114,31 +116,6 @@ export class CreateRoleComponent implements OnInit {
     this.signals.availablePermissions.set(getAllPermissionsReplyMsg.body.permissions);
   }
 
-  onAddPermission(permission: Permission): void {
-    const availablePermissions = this.signals.availablePermissions();
-    const rolePermissions = this.signals.rolePermissions();
-    this.transferPermission(permission, availablePermissions, rolePermissions);
-    this.sortPermissions(rolePermissions);
-    this.sortPermissions(availablePermissions);
-    this.signals.availablePermissions.set(availablePermissions);
-    this.signals.rolePermissions.set(rolePermissions);
-  }
-
-  onRemovePermission(permission: Permission): void {
-    const availablePermissions = this.signals.availablePermissions();
-    const rolePermissions = this.signals.rolePermissions();
-    this.transferPermission(permission, rolePermissions, availablePermissions);
-    this.sortPermissions(rolePermissions);
-    this.sortPermissions(availablePermissions);
-    this.signals.availablePermissions.set(availablePermissions);
-    this.signals.rolePermissions.set(rolePermissions);
-  }
-
-  transferPermission(permission: Permission, sourceArray: Permission[], destinationArray: Permission[]): void {
-    sourceArray.splice(sourceArray.findIndex(x => x.id === permission.id), 1);
-    destinationArray.push(permission);
-  }
-
   onSave(): void {
     const isCreate = this.signals.isCreate();
     const role = {
@@ -164,7 +141,6 @@ export class CreateRoleComponent implements OnInit {
         this.messageTransportSvc.sendAndAwaitForReply(requestMsg).pipe(
           takeUntilDestroyed(this.destroyRef)
         ).subscribe(updateRoleWithPermissionsReplyMsg => this.processUpdateRoleWithPermissionsReplyMessage(updateRoleWithPermissionsReplyMsg as UpdateRoleWithPermissionsReplyMessage));
-
       } else {
         // The role was not loaded
         this.notificationsSvc.show(NotificationType.error, translate(`The role was not loaded`), null, IconName.error, null);

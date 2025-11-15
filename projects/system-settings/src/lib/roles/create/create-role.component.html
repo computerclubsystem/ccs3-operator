@@ -28,51 +28,10 @@
       <mat-checkbox [formControl]="form.controls.enabled">{{t('Active')}}</mat-checkbox>
     </form>
     <section class="permissions-selection ccs3-op-flex-row ccs3-op-align-items-flex-start">
-      <section class="available-permissions">
-        <h2>{{t('Available permissions')}}</h2>
-        <div
-          class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
-          @for (availablePermission of signals.availablePermissions(); track availablePermission.id) {
-          <section class="ccs3-op-flex-column">
-            <section class="ccs3-op-flex-row ccs3-op-flex-no-wrap ccs3-op-half-gap">
-              <button (click)="onAddPermission(availablePermission)" mat-icon-button>
-                <mat-icon class="ccs3-op-success-color">{{iconName.add}}</mat-icon>
-              </button>
-              <span class="permission-name">{{availablePermission.name}}</span>
-            </section>
-            <span class="permission-description">{{availablePermission.description}}</span>
-          </section>
-          <mat-divider></mat-divider>
-          }
-        </div>
-      </section>
-      <section class="role-permissions">
-        <h2>{{t('Role permissions')}}</h2>
-        <div
-          class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
-          @for (rolePermission of signals.rolePermissions(); track rolePermission.id) {
-          <section class="ccs3-op-flex-column">
-            <section class="ccs3-op-flex-row ccs3-op-flex-no-wrap ccs3-op-half-gap">
-              <button (click)="onRemovePermission(rolePermission)" mat-icon-button>
-                <mat-icon class="ccs3-op-error-color">{{iconName.remove}}</mat-icon>
-              </button>
-              <span class="permission-name">{{rolePermission.name}}</span>
-            </section>
-            <span class="permission-description">{{rolePermission.description}}</span>
-          </section>
-          <!-- <div class="ccs3-op-flex-row">
-            <button (click)="onRemovePermission(rolePermission)" mat-icon-button>
-              <mat-icon class="ccs3-op-error-color">{{iconName.remove}}</mat-icon>
-            </button>
-            <div class="ccs3-op-flex-column">
-              <div class="permission-name">{{rolePermission.name}}</div>
-              <div class="permission-description">{{rolePermission.description}}</div>
-            </div>
-          </div> -->
-          <mat-divider></mat-divider>
-          }
-        </div>
-      </section>
+      <ccs3-op-linked-lists [availableItemsTitle]="t('Available permissions')"
+        [availableItems]="signals.availablePermissions()" [selectedItemsTitle]="t('Role permissions')"
+        [selectedItems]="signals.rolePermissions()">
+      </ccs3-op-linked-lists>
     </section>
     }
   </mat-card-content>

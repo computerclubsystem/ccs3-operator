@@ -272,4 +272,7 @@ export const en = {
   "Or type your username and password": "Or type your username and password",
   "Continuation data removed": "Continuation data removed",
   "Total amount for selected period": "Total amount for selected period",
+  "The role was updated": "The role was updated",
+  "The role was created": "The role was created",
+  "The role was not loaded": "The role was not loaded",
 };

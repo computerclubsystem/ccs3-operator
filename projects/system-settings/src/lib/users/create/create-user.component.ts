@@ -22,13 +22,14 @@ import {
 } from '@ccs3-operator/messages';
 import { IconName } from '@ccs3-operator/shared/types';
 import { NotificationsService } from '@ccs3-operator/notifications';
+import { LinkedListsComponent } from '@ccs3-operator/linked-lists';
 
 @Component({
   selector: 'ccs3-op-system-settings-users-create',
   templateUrl: 'create-user.component.html',
   imports: [
     ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatInputModule,
-    MatCheckboxModule, MatCardModule, MatDividerModule, MatIconModule, TranslocoDirective,
+    MatCheckboxModule, MatCardModule, MatDividerModule, MatIconModule, TranslocoDirective, LinkedListsComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -158,31 +159,6 @@ export class CreateUserComponent implements OnInit {
     this.signals.allRoles.set(getAllRolesReplyMsg.body.roles);
     this.signals.availableRoles.set(getAllRolesReplyMsg.body.roles);
     this.signals.isLoading.set(false);
-  }
-
-  onAddRole(role: Role): void {
-    const availableRoles = this.signals.availableRoles();
-    const userRoles = this.signals.userRoles();
-    this.transferRole(role, availableRoles, userRoles);
-    this.sortRoles(userRoles);
-    this.sortRoles(availableRoles);
-    this.signals.availableRoles.set(availableRoles);
-    this.signals.userRoles.set(userRoles);
-  }
-
-  onRemoveRole(Role: Role): void {
-    const availableRoles = this.signals.availableRoles();
-    const userRoles = this.signals.userRoles();
-    this.transferRole(Role, userRoles, availableRoles);
-    this.sortRoles(userRoles);
-    this.sortRoles(availableRoles);
-    this.signals.availableRoles.set(availableRoles);
-    this.signals.userRoles.set(userRoles);
-  }
-
-  transferRole(role: Role, sourceArray: Role[], destinationArray: Role[]): void {
-    sourceArray.splice(sourceArray.findIndex(x => x.id === role.id), 1);
-    destinationArray.push(role);
   }
 
   sortRoles(roles: Role[]): void {

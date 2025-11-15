@@ -46,44 +46,10 @@
       }
       <mat-checkbox [formControl]="form.controls.enabled">{{t('Active')}}</mat-checkbox>
     </form>
-    <section class="roles-selection ccs3-op-flex-row ccs3-op-align-items-flex-start">
-      <section class="available-roles">
-        <h2>{{t('Available roles')}}</h2>
-        <div
-          class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
-          @for (availableRole of signals.availableRoles(); track availableRole.id) {
-          <div class="ccs3-op-flex-row">
-            <button (click)="onAddRole(availableRole)" mat-icon-button>
-              <mat-icon>{{iconName.add}}</mat-icon>
-            </button>
-            <div class="ccs3-op-flex-column">
-              <div class="role-name">{{availableRole.name}}</div>
-              <div class="role-description">{{availableRole.description}}</div>
-            </div>
-          </div>
-          <mat-divider></mat-divider>
-          }
-        </div>
-      </section>
-      <section class="user-roles">
-        <h2>{{t('User roles')}}</h2>
-        <div
-          class="ccs3-op-flex-column ccs3-op-max-width-medium-text ccs3-op-max-height-medium-text ccs3-op-overflow-auto">
-          @for (userRole of signals.userRoles(); track userRole.id) {
-          <div class="ccs3-op-flex-row">
-            <button (click)="onRemoveRole(userRole)" mat-icon-button>
-              <mat-icon>{{iconName.remove}}</mat-icon>
-            </button>
-            <div class="ccs3-op-flex-column">
-              <div class="role-name">{{userRole.name}}</div>
-              <div class="role-description">{{userRole.description}}</div>
-            </div>
-          </div>
-          <mat-divider></mat-divider>
-          }
-        </div>
-      </section>
-    </section>
+    <ccs3-op-linked-lists [availableItemsTitle]="t('Available roles')"
+        [availableItems]="signals.availableRoles()" [selectedItemsTitle]="t('User roles')"
+        [selectedItems]="signals.userRoles()">
+      </ccs3-op-linked-lists>
     }
   </mat-card-content>
   <mat-card-actions>
