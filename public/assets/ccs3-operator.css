@@ -252,7 +252,7 @@ a[mat-raised-button].ccs3-op-router-link.ccs3-op-router-link-active {
 }
 
 .ccs3-op-error-color {
-  color: var(--mat-sys-error-container);
+  color: var(--mat-sys-error);
 }
 
 .ccs3-op-success-color {
