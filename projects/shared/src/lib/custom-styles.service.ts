@@ -1,14 +1,12 @@
-import { Inject, Injectable, DOCUMENT } from '@angular/core';
+import { Injectable, DOCUMENT, inject } from '@angular/core';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class CustomStylesService {
+  private readonly doc = inject(DOCUMENT);
   private readonly stylElementAttributeName = 'ccs3-op-profile-style';
-  constructor(
-    @Inject(DOCUMENT) private readonly doc: Document
-  ) { }
 
   applyStyleText(css: string): void {
     let styleEl = this.doc.head.querySelector(`[${this.stylElementAttributeName}]`) as HTMLStyleElement;
