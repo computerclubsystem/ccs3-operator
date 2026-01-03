@@ -1,16 +1,17 @@
 {
   "name": "ccs3-operator",
-  "version": "0.0.0",
+  "version": "3.1.9",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --no-live-reload",
     "build": "ng build --source-map",
-    "build-image": "nerdctl --namespace buildkit build --tag ccs3/operator-web-app-static-files:latest --file devops/Dockerfile .",
+    "build-image": "nerdctl build -t docker.io/computerclubsystem/operator-web-app-static-files:dev -f devops/Dockerfile .",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
     "tsx": "tsx",
-    "scripts:generate-material-symbols-font": "tsx scripts/generate-material-symbols-font"
+    "scripts:generate-material-symbols-font": "tsx scripts/generate-material-symbols-font",
+    "update-version": "npm version --allow-same-version --no-git-tag-version --include-workspace-root --workspaces"
   },
   "private": true,
   "dependencies": {
