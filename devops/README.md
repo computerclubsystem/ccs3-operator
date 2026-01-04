@@ -2,5 +2,5 @@
 - Navigate to project root folder
 - Build the image
 ```bash
-docker buildx build --no-cache -t computerclubsystem/operator-web-app-static-files:dev -f devops/Dockerfile .
+docker buildx build --load -t computerclubsystem/operator-web-app-static-files:dev -f devops/Dockerfile .
 ```

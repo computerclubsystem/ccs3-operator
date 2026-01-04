@@ -461,3 +461,12 @@ mat-expansion-panel.ccs3-op-mat-expansion-panel-small-padding .mat-expansion-pan
 mat-expansion-panel.ccs3-op-mat-expansion-panel-no-padding .mat-expansion-panel-body {
   padding: 0;
 }
+
+mat-dialog-container .mat-mdc-dialog-surface {
+  border: var(--ccs3-op-active-border-width) solid var(--ccs3-op-primary-color);
+  background-color: var(--mat-sys-surface-container-high);
+}
+
+[mat-dialog-title] {
+  padding-inline: var(--ccs3-op-padding);
+}
