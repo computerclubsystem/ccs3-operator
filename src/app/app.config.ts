@@ -1,12 +1,12 @@
 import { ApplicationConfig, isDevMode, provideZonelessChangeDetection } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { provideRouter } from '@angular/router';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldDefaultOptions } from '@angular/material/form-field';
 import { provideTransloco, TRANSLOCO_MISSING_HANDLER, TranslocoMissingHandler, TranslocoMissingHandlerData } from '@jsverse/transloco';
 import { provideTranslocoMessageformat } from '@jsverse/transloco-messageformat';
 
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './transloco-loader';
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldDefaultOptions } from '@angular/material/form-field';
 
 export class IgnoreEnglishMissingHandler implements TranslocoMissingHandler {
   handle(key: string, config: TranslocoMissingHandlerData) {
