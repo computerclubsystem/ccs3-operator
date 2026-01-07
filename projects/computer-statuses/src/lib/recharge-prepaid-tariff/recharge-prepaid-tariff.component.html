@@ -5,7 +5,7 @@
   <ng-template matExpansionPanelContent>
     <form [formGroup]="form" class="ccs3-op-flex-column">
       <section class="ccs3-op-flex-row">
-        <mat-form-field subscriptSizing="dynamic">
+        <mat-form-field>
           <mat-label>{{t('Tariff')}}</mat-label>
           <mat-select [formControl]="form.controls.tariff">
             @for (tariff of signals.sortedPrepaidTariffs(); track tariff.id) {

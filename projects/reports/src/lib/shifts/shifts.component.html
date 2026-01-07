@@ -11,7 +11,7 @@
           <mat-label>{{t('To date')}}</mat-label>
           <input [formControl]="form.controls.toDate" type="datetime-local" class="ccs3-op-font-size-double" />
         </section>
-        <mat-form-field subscriptSizing="dynamic">
+        <mat-form-field>
           <mat-label>{{t('User')}}</mat-label>
           <mat-select [formControl]="form.controls.userId">
             <mat-option [value]="">{{t('All users')}}</mat-option>

@@ -6,6 +6,7 @@ import { provideTranslocoMessageformat } from '@jsverse/transloco-messageformat'
 
 import { routes } from './app.routes';
 import { TranslocoHttpLoader } from './transloco-loader';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldDefaultOptions } from '@angular/material/form-field';
 
 export class IgnoreEnglishMissingHandler implements TranslocoMissingHandler {
   handle(key: string, config: TranslocoMissingHandlerData) {
@@ -43,6 +44,10 @@ export const appConfig: ApplicationConfig = {
     {
       provide: TRANSLOCO_MISSING_HANDLER,
       useClass: IgnoreEnglishMissingHandler,
+    },
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: { subscriptSizing: 'dynamic' } as MatFormFieldDefaultOptions
     },
     DatePipe,
   ]

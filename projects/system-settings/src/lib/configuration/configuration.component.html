@@ -11,7 +11,7 @@
         {{setting.description}}
       </span>
       <section class="system-setting-field-container">
-        <mat-form-field subscriptSizing="dynamic" class="ccs3-op-full-width ccs3-op-max-width-medium-text">
+        <mat-form-field class="ccs3-op-full-width ccs3-op-max-width-medium-text">
           <input (input)="onSettingValueChanged(setting, $event)" [value]="setting.value" matInput type="text" />
         </mat-form-field>
       </section>

@@ -3,7 +3,7 @@
     <mat-card-header></mat-card-header>
     <mat-card-content>
       <form [formGroup]="form" class="ccs3-op-flex-row">
-        <mat-form-field subscriptSizing="dynamic">
+        <mat-form-field>
           <mat-label>{{t('Service')}}</mat-label>
           <mat-select [formControl]="form.controls.serviceName">
             @for (serverItem of signals.serverItems(); track serverItem.serviceName) {
@@ -11,7 +11,7 @@
             }
           </mat-select>
         </mat-form-field>
-        <mat-form-field subscriptSizing="dynamic">
+        <mat-form-field>
           <mat-label>{{t('Log message filter')}}</mat-label>
           <input [formControl]="form.controls.messageFilter" matInput />
         </mat-form-field>

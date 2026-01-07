@@ -17,7 +17,7 @@
   </mat-card-header>
   @if (!signals.isLoading()) {
   <mat-card-content>
-    <form [formGroup]="form" class="ccs3-op-flex-column ccs3-op-no-gap ccs3-op-max-width-large-text">
+    <form [formGroup]="form" class="ccs3-op-flex-column ccs3-op-max-width-large-text">
       <mat-form-field>
         <mat-label>{{t('Name')}}</mat-label>
         <input matInput type="text" [formControl]="form.controls.name" />

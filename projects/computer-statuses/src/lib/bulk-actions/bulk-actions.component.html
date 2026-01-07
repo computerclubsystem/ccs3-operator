@@ -5,7 +5,7 @@
   <ng-template matExpansionPanelContent>
     <section class="ccs3-op-bulk-actions ccs3-op-flex-column">
       <section class="global-actions ccs3-op-flex-column">
-        <mat-form-field subscriptSizing="dynamic">
+        <mat-form-field>
           <mat-label>{{t('Global action')}}</mat-label>
           <mat-select (valueChange)="onGlobalActionChanged($event)">
             <mat-select-trigger>
@@ -67,7 +67,7 @@
               </mat-selection-list>
             </section>
             <section class="ccs3-op-flex-column">
-              <mat-form-field subscriptSizing="dynamic">
+              <mat-form-field>
                 <mat-label>{{t('Action')}}</mat-label>
                 <mat-select (valueChange)="onGroupActionChanged(deviceGroupItem, $event)">
                   @for (actionItem of bulkActions; track actionItem.id) {
@@ -78,7 +78,7 @@
               <section class="action-options">
                 @let actionVisibility = getActionOptionsVisibility(deviceGroupItem.deviceGroup.id);
                 @if (actionVisibility.setNote) {
-                <mat-form-field subscriptSizing="dynamic" class="ccs3-op-full-width">
+                <mat-form-field class="ccs3-op-full-width">
                   <mat-label>{{t('Note')}}</mat-label>
                   <input (input)="onNoteChanged(deviceGroupItem, $event)" matInput />
                 </mat-form-field>
