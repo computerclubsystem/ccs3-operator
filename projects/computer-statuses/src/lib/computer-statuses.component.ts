@@ -140,7 +140,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       if (msg.header.failure) {
         return;
       }
-      const notificationMessage = translate('Shutdown message was sent to {count} computers', { count: msg.body.targetsCount });
+      const notificationMessage = translate('Shutdown message was sent to (count) computers', { count: msg.body.targetsCount });
       this.notificationsSvc.show(NotificationType.success, notificationMessage, null, IconName.check, replyMsg);
     });
   }
@@ -170,7 +170,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       if (msg.header.failure) {
         return;
       }
-      const notificationMessage = translate('Shutdown message was sent to {count} computers', { count: msg.body.targetsCount });
+      const notificationMessage = translate('Shutdown message was sent to (count) computers', { count: msg.body.targetsCount });
       this.notificationsSvc.show(NotificationType.success, notificationMessage, null, IconName.check, replyMsg);
     });
   }
