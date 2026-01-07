@@ -85,11 +85,11 @@ export class BulkActionsComponent implements OnInit {
     if (!this.selectedGlobalActionItem) {
       return;
     }
-    const confirmationMessage = translate(`Do you want to execute global action '{{action}}'`, {
+    const confirmationMessage = translate(`Do you want to execute global action '(action)'`, {
       action: this.selectedGlobalActionItem.name,
     });
     const confirmationComponentData: ConfirmationComponentData = {
-      title: translate(`Global bulk action '{{action}}'`, { action: this.selectedGlobalActionItem.name }),
+      title: translate(`Global bulk action '(action)'`, { action: this.selectedGlobalActionItem.name }),
       message: confirmationMessage,
     };
     this.matDialog.open(ConfirmationComponent, {
@@ -125,12 +125,12 @@ export class BulkActionsComponent implements OnInit {
     const deviceNames: string[] = Array.from(this.allDevicesMap()!.values()).filter(x => deviceIds.includes(x.id)).map(x => x.name!);
     const deviceNamesText = deviceNames.join(', ');
     const actionName = this.bulkActions.find(x => x.id === actionId)!.name;
-    const confirmationMessage = translate(`Do you want to execute action '{{action}}' on devices {{names}}`, {
+    const confirmationMessage = translate(`Do you want to execute action '(action)' on devices (names)`, {
       action: actionName,
       names: deviceNamesText
     });
     const confirmationComponentData: ConfirmationComponentData = {
-      title: translate(`Bulk action '{{action}}'`, { action: actionName }),
+      title: translate(`Bulk action '(action)'`, { action: actionName }),
       message: confirmationMessage,
     };
     this.matDialog.open(ConfirmationComponent, {

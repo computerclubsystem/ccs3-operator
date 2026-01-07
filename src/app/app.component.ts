@@ -111,9 +111,9 @@ export class AppComponent implements OnInit {
     const errors = msg.header.errors;
     const type = msg.header.type;
     const errorItems = errors?.map(x => translate('Error code') + ` '${x.code || ""}'` + (x.description ? `: ${x.description}` : ''));
-    const requestType = msg.header.requestType ? translate(`Request message type '{{requestMessageType}}'`, { requestMessageType: msg.header.requestType }) + '.' : '';
+    const requestType = msg.header.requestType ? translate(`Request message type '(requestMessageType)'`, { requestMessageType: msg.header.requestType }) + '.' : '';
     const errorsText = errorItems?.join(' ; ') + (requestType ? '. ' + requestType : '');
-    this.notificationsSvc.show(NotificationType.error, translate(`Reply message '{{messageType}}' indicates failure`, { messageType: type }), errorsText, IconName.error, msg);
+    this.notificationsSvc.show(NotificationType.error, translate(`Reply message '(messageType)' indicates failure`, { messageType: type }), errorsText, IconName.error, msg);
   }
 
   processNavigateToEditRoleRequested(roleId: number): void {

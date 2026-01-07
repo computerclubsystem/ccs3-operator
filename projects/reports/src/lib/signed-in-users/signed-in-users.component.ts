@@ -54,9 +54,9 @@ export class SignedInUsersComponent implements OnInit {
     if (replyMsg.header.failure) {
       return;
     }
-    const title = translate('User {{username}} signed out', { username });
+    const title = translate('User (username) signed out', { username });
     const description = translate(
-      `{{sessionsCount}} sessions and {{connectionsCount}} connections were removed`,
+      `(sessionsCount) sessions and (connectionsCount) connections were removed`,
       {
         sessionsCount: replyMsg.body.sessionsCount,
         connectionsCount: replyMsg.body.connectionsCount,

@@ -282,7 +282,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
       this.notificationsSvc.show(
         NotificationType.success,
         translate('Tariff recharged'),
-        translate('New remaining time {{remainingTime}}', { remainingTime: remainingTimeString }),
+        translate('New remaining time (remainingTime)', { remainingTime: remainingTimeString }),
         IconName.check,
         replyMsg
       );
@@ -330,7 +330,7 @@ export class CreatePrepaidTariffComponent implements OnInit {
 
   processCreatePrepaidTariffReplyMessage(createPrepaidTariffReplyMsg: CreatePrepaidTariffReplyMessage): void {
     if (!createPrepaidTariffReplyMsg.header.failure) {
-      this.notificationsSvc.show(NotificationType.success, translate('Tariff with ID {{id}} created', { id: createPrepaidTariffReplyMsg.body.tariff.id }), null, IconName.check, createPrepaidTariffReplyMsg);
+      this.notificationsSvc.show(NotificationType.success, translate('Tariff with ID (id) created', { id: createPrepaidTariffReplyMsg.body.tariff.id }), null, IconName.check, createPrepaidTariffReplyMsg);
       this.signals.createdTariff.set(createPrepaidTariffReplyMsg.body.tariff);
     }
   }

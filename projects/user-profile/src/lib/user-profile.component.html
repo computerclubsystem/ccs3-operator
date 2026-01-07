@@ -25,7 +25,7 @@
               @if (passwordsAreDifferent){
               <mat-error>{{t('Passwords do not match')}}</mat-error>
               } @else if (hasMinLengthError(changePasswordForm.controls.newPassword)){
-              <mat-error>{{t('Length must be at least {{count}} characters', {count: minPasswordLength})}}</mat-error>
+              <mat-error>{{t('Length must be at least (count) characters', {count: minPasswordLength})}}</mat-error>
               }
             </mat-form-field>
             <mat-form-field>
@@ -35,7 +35,7 @@
               @if (passwordsAreDifferent){
               <mat-error>{{t('Passwords do not match')}}</mat-error>
               } @else if (hasMinLengthError(changePasswordForm.controls.confirmNewPassword)){
-              <mat-error>{{t('Length must be at least {{count}} characters', {count: minPasswordLength})}}</mat-error>
+              <mat-error>{{t('Length must be at least (count) characters', {count: minPasswordLength})}}</mat-error>
               }
             </mat-form-field>
           </form>

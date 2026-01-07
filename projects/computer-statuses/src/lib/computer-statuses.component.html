@@ -12,7 +12,7 @@
             date: signInNotificationMsgBody.lastShiftCompletedAt | noYearDate,
             username: signInNotificationMsgBody.lastShiftCompletedByUsername
             };
-            <span>{{t('Last shift completed at {{date}} by {{username}}', lastShiftTranslationParams)}}</span>
+            <span>{{t('Last shift completed at (date) by (username)', lastShiftTranslationParams)}}</span>
           </section>
           }
         </section>
@@ -177,7 +177,7 @@
             }
             @if (item.deviceStatus.continuationTariffId) {
             <mat-icon
-              [title]="t('Will continue with tariff {{tariffName}}', {tariffName: getTariffName(item.deviceStatus.continuationTariffId)})"
+              [title]="t('Will continue with tariff (tariffName)', {tariffName: getTariffName(item.deviceStatus.continuationTariffId)})"
               class="has-continuation-icon ccs3-op-warn-container">{{iconName.fast_forward}}</mat-icon>
             }
             @if (signals.showActionsAndOptionsAtTheEnd()) {

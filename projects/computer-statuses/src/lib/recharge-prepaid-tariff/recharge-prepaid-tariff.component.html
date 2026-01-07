@@ -23,7 +23,7 @@
       @if (tariffInfo) {
       <button (click)="onRecharge(form.value.tariff!); rechargeCheckbox.checked = false;"
         [disabled]="!rechargeCheckbox.checked" mat-flat-button>
-        {{t('Recharge duration {{duration}} for price {{price}}', tariffInfo)}}
+        {{t('Recharge duration (duration) for price (price)', tariffInfo)}}
       </button>
       }
       @let resultDesc = resultDescription();

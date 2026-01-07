@@ -204,7 +204,7 @@
             date: lastShiftCompletedAtValue | noYearDate,
             username: lastShiftCompletedByUsernameValue
             };
-            <span>{{t('Last shift completed at {{date}} by {{username}}', lastShiftTranslationParams)}}</span>
+            <span>{{t('Last shift completed at (date) by (username)', lastShiftTranslationParams)}}</span>
           </section>
           <button (click)="allowShiftCompletionCheckbox.checked = false; onCompleteShift()"
             [disabled]="!allowShiftCompletionCheckbox.checked || !replyMessage" mat-flat-button>

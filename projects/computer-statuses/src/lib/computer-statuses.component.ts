@@ -140,7 +140,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       if (msg.header.failure) {
         return;
       }
-      const notificationMessage = translate('Shutdown message was sent to {{count}} computers', { count: msg.body.targetsCount });
+      const notificationMessage = translate('Shutdown message was sent to {count} computers', { count: msg.body.targetsCount });
       this.notificationsSvc.show(NotificationType.success, notificationMessage, null, IconName.check, replyMsg);
     });
   }
@@ -170,7 +170,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       if (msg.header.failure) {
         return;
       }
-      const notificationMessage = translate('Shutdown message was sent to {{count}} computers', { count: msg.body.targetsCount });
+      const notificationMessage = translate('Shutdown message was sent to {count} computers', { count: msg.body.targetsCount });
       this.notificationsSvc.show(NotificationType.success, notificationMessage, null, IconName.check, replyMsg);
     });
   }
@@ -185,7 +185,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
       if (msg.header.failure) {
         return;
       }
-      const notificationMessage = translate('Restart message was sent to {{count}} computers', { count: msg.body.targetsCount });
+      const notificationMessage = translate('Restart message was sent to (count) computers', { count: msg.body.targetsCount });
       this.notificationsSvc.show(NotificationType.success, notificationMessage, null, IconName.check, replyMsg);
     });
   }
@@ -400,7 +400,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
     }
     const remainingSecondsComputedValue = this.secondsFormatterSvc.getComputedValue(replyMsg.body.remainingSeconds);
     const remainingTimeString = this.secondsFormatterSvc.computedValueResultToString(remainingSecondsComputedValue);
-    const description = translate('New remaining time {{remainingTime}}', { remainingTime: remainingTimeString });
+    const description = translate('New remaining time (remainingTime)', { remainingTime: remainingTimeString });
     this.notificationsSvc.show(
       NotificationType.success,
       translate('Tariff recharged'),
@@ -414,7 +414,7 @@ export class ComputerStatusesComponent implements OnInit, AfterViewInit {
   onTariffSelected(selectedTariff: Tariff, item: DeviceStatusItem): void {
     const canUseTariff = this.tariffSvc.canUseTariff(selectedTariff);
     if (!canUseTariff.canUse) {
-      this.notificationsSvc.show(NotificationType.warn, translate(`The tariff '{{tariffName}}' can't be used right now`, { tariffName: selectedTariff.name }), `Current time is not in the tariff's From-To period`, IconName.priority_high, item);
+      this.notificationsSvc.show(NotificationType.warn, translate(`The tariff '(tariffName)' can't be used right now`, { tariffName: selectedTariff.name }), `Current time is not in the tariff's From-To period`, IconName.priority_high, item);
     }
   }
 
