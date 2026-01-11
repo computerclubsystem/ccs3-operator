@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "notifications",
+  "projectType": "library",
+  "sourceRoot": "projects/notifications/src",
+  "prefix": "ccs3-op",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:ng-packagr",
+      "options": {
+        "project": "projects/notifications/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/notifications/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/notifications/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": [
+        "{workspaceRoot}/dist/notifications"
+      ]
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "tsConfig": "projects/notifications/tsconfig.spec.json",
+        "polyfills": []
+      }
+    },
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "projects/notifications/**/*.ts",
+          "projects/notifications/**/*.html"
+        ],
+        "eslintConfig": "projects/notifications/eslint.config.js"
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "connector",
+  "projectType": "library",
+  "sourceRoot": "projects/connector/src",
+  "prefix": "ccs3-op",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:ng-packagr",
+      "options": {
+        "project": "projects/connector/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/connector/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/connector/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": [
+        "{workspaceRoot}/dist/connector"
+      ]
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "tsConfig": "projects/connector/tsconfig.spec.json",
+        "polyfills": []
+      }
+    },
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "projects/connector/**/*.ts",
+          "projects/connector/**/*.html"
+        ],
+        "eslintConfig": "projects/connector/eslint.config.js"
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    }
+  }
+}

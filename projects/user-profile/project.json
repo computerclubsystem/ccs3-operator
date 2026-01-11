@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "user-profile",
+  "projectType": "library",
+  "sourceRoot": "projects/user-profile/src",
+  "prefix": "ccs3-op",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:ng-packagr",
+      "options": {
+        "project": "projects/user-profile/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/user-profile/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/user-profile/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": [
+        "{workspaceRoot}/dist/user-profile"
+      ]
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "tsConfig": "projects/user-profile/tsconfig.spec.json",
+        "polyfills": []
+      }
+    },
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "projects/user-profile/**/*.ts",
+          "projects/user-profile/**/*.html"
+        ],
+        "eslintConfig": "projects/user-profile/eslint.config.js"
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    }
+  }
+}

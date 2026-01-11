@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "signed-out-session-stats",
+  "projectType": "library",
+  "sourceRoot": "projects/signed-out-session-stats/src",
+  "prefix": "ccs3-op",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:ng-packagr",
+      "options": {
+        "project": "projects/signed-out-session-stats/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/signed-out-session-stats/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/signed-out-session-stats/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": [
+        "{workspaceRoot}/dist/signed-out-session-stats"
+      ]
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "tsConfig": "projects/signed-out-session-stats/tsconfig.spec.json",
+        "polyfills": []
+      }
+    },
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "projects/signed-out-session-stats/**/*.ts",
+          "projects/signed-out-session-stats/**/*.html"
+        ],
+        "eslintConfig": "projects/signed-out-session-stats/eslint.config.js"
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    }
+  }
+}

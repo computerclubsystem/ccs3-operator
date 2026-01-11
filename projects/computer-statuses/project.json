@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "computer-statuses",
+  "projectType": "library",
+  "sourceRoot": "projects/computer-statuses/src",
+  "prefix": "ccs3-op",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:ng-packagr",
+      "options": {
+        "project": "projects/computer-statuses/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/computer-statuses/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/computer-statuses/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": [
+        "{workspaceRoot}/dist/computer-statuses"
+      ]
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "tsConfig": "projects/computer-statuses/tsconfig.spec.json",
+        "polyfills": []
+      }
+    },
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "projects/computer-statuses/**/*.ts",
+          "projects/computer-statuses/**/*.html"
+        ],
+        "eslintConfig": "projects/computer-statuses/eslint.config.js"
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    }
+  }
+}

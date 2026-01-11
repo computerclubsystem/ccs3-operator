@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "messages",
+  "projectType": "library",
+  "sourceRoot": "projects/messages/src",
+  "prefix": "ccs3-op",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:ng-packagr",
+      "options": {
+        "project": "projects/messages/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/messages/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/messages/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": [
+        "{workspaceRoot}/dist/messages"
+      ]
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "tsConfig": "projects/messages/tsconfig.spec.json",
+        "polyfills": []
+      }
+    },
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "projects/messages/**/*.ts",
+          "projects/messages/**/*.html"
+        ],
+        "eslintConfig": "projects/messages/eslint.config.js"
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    }
+  }
+}

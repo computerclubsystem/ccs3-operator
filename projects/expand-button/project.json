@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "expand-button",
+  "projectType": "library",
+  "sourceRoot": "projects/expand-button/src",
+  "prefix": "ccs3-op",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:ng-packagr",
+      "options": {
+        "project": "projects/expand-button/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/expand-button/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/expand-button/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": [
+        "{workspaceRoot}/dist/expand-button"
+      ]
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "tsConfig": "projects/expand-button/tsconfig.spec.json",
+        "polyfills": []
+      }
+    },
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "projects/expand-button/**/*.ts",
+          "projects/expand-button/**/*.html"
+        ],
+        "eslintConfig": "projects/expand-button/eslint.config.js"
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    }
+  }
+}

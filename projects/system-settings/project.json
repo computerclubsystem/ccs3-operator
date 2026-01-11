@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "system-settings",
+  "projectType": "library",
+  "sourceRoot": "projects/system-settings/src",
+  "prefix": "ccs3-op",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:ng-packagr",
+      "options": {
+        "project": "projects/system-settings/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/system-settings/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/system-settings/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": [
+        "{workspaceRoot}/dist/system-settings"
+      ]
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "tsConfig": "projects/system-settings/tsconfig.spec.json",
+        "polyfills": []
+      }
+    },
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "projects/system-settings/**/*.ts",
+          "projects/system-settings/**/*.html"
+        ],
+        "eslintConfig": "projects/system-settings/eslint.config.js"
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    }
+  }
+}

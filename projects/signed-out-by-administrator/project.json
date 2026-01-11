@@ -1,0 +1,47 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "signed-out-by-administrator",
+  "projectType": "library",
+  "sourceRoot": "projects/signed-out-by-administrator/src",
+  "prefix": "ccs3-op",
+  "targets": {
+    "build": {
+      "executor": "@angular/build:ng-packagr",
+      "options": {
+        "project": "projects/signed-out-by-administrator/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/signed-out-by-administrator/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/signed-out-by-administrator/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": [
+        "{workspaceRoot}/dist/signed-out-by-administrator"
+      ]
+    },
+    "test": {
+      "executor": "@angular/build:karma",
+      "options": {
+        "tsConfig": "projects/signed-out-by-administrator/tsconfig.spec.json",
+        "polyfills": []
+      }
+    },
+    "lint": {
+      "executor": "@angular-eslint/builder:lint",
+      "options": {
+        "lintFilePatterns": [
+          "projects/signed-out-by-administrator/**/*.ts",
+          "projects/signed-out-by-administrator/**/*.html"
+        ],
+        "eslintConfig": "projects/signed-out-by-administrator/eslint.config.js"
+      },
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    }
+  }
+}
