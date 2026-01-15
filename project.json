@@ -1,18 +1,18 @@
 {
-  "$schema": "node_modules/nx/schemas/project-schema.json",
   "name": "ccs3-operator",
+  "$schema": "node_modules/nx/schemas/project-schema.json",
+  "includedScripts": [],
   "projectType": "application",
-  "generators": {},
-  "sourceRoot": "src",
   "prefix": "ccs3-op",
+  "sourceRoot": "./src",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/ccs3-operator",
-        "index": "src/index.html",
-        "browser": "src/main.ts",
-        "polyfills": [],
+        "browser": "./src/main.ts",
         "tsConfig": "tsconfig.app.json",
         "assets": [
           {
@@ -20,34 +20,23 @@
             "input": "public"
           }
         ],
-        "styles": [
-          "src/styles.css"
-        ],
-        "scripts": []
+        "styles": ["./src/styles.css"]
       },
       "configurations": {
         "production": {
           "budgets": [
             {
               "type": "initial",
-              "maximumWarning": "1MB",
-              "maximumError": "2MB"
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
             },
             {
               "type": "anyComponentStyle",
-              "maximumWarning": "4kB",
-              "maximumError": "8kB"
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
             }
           ],
-          "outputHashing": "all",
-          "optimization": {
-            "fonts": true,
-            "scripts": true,
-            "styles": {
-              "minify": true,
-              "inlineCritical": false
-            }
-          }
+          "outputHashing": "all"
         },
         "development": {
           "optimization": false,
@@ -55,12 +44,10 @@
           "sourceMap": true
         }
       },
-      "defaultConfiguration": "production",
-      "outputs": [
-        "{options.outputPath}"
-      ]
+      "defaultConfiguration": "production"
     },
     "serve": {
+      "continuous": true,
       "executor": "@angular/build:dev-server",
       "configurations": {
         "production": {
@@ -72,37 +59,25 @@
       },
       "defaultConfiguration": "development"
     },
-    "extract-i18n": {
-      "executor": "@angular/build:extract-i18n"
-    },
-    "test": {
-      "executor": "@angular/build:karma",
+    "lint": {
+      "executor": "@nx/eslint:lint",
       "options": {
-        "polyfills": [],
-        "tsConfig": "tsconfig.spec.json",
-        "assets": [
-          {
-            "glob": "**/*",
-            "input": "public"
-          }
-        ],
-        "styles": [
-          "src/styles.css"
-        ],
-        "scripts": []
+        "lintFilePatterns": ["./src"]
       }
     },
-    "lint": {
-      "executor": "@angular-eslint/builder:lint",
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {}
+    },
+    "serve-static": {
+      "continuous": true,
+      "executor": "@nx/web:file-server",
       "options": {
-        "lintFilePatterns": [
-          "src/**/*.ts",
-          "src/**/*.html"
-        ]
-      },
-      "outputs": [
-        "{options.outputFile}"
-      ]
+        "buildTarget": "ccs3-operator:build",
+        "port": 4200,
+        "staticFilePath": "dist/ccs3-operator/browser",
+        "spa": true
+      }
     }
   }
 }

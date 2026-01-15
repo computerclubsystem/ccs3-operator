@@ -1,5 +1,11 @@
 # CCS3 Operator
 
+## Adding new library/component
+```bash
+npm run nx -- g @nx/angular:library --name=library-name --directory=libs/library-name --tags=type:lib
+```
+Change `eslint.config.mjs` and `project.json` by setting `prefix: "ccs3-op"`. Open `tsconfig.lib.json` and remove the `"inlineSources": true` line.
+
 ## Debug
 - Build in production watch mode:
 ```bash
@@ -39,6 +45,3 @@ Manual procedure would be:
 - Paste the content of the downloaded CSS into `public/assets/fonts/material-symbols-outlined.css`
 - Download the font file referred in the CSS (https://fonts.gstatic.com/icon/font...) (name it `ccs3-op-material-symbols.woff2`) and put it in the folder `public/assets/fonts/material-symbols-outlined` overwriting existing file 
 - Modify `public/assets/fonts/material-symbols-outlined.css` to point to local folder by changing the line `src: url(https://fonts.gstatic.com...` to `src: url(material-symbols-outlined/ccs3-op-material-symbols.woff2) format('woff2');`
-
-  
-

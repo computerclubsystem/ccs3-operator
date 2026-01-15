@@ -1,0 +1,20 @@
+{
+  "name": "sign-in",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/sign-in/src",
+  "prefix": "ccs3-op",
+  "projectType": "library",
+  "tags": ["type:lib"],
+  "targets": {
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../coverage/libs/sign-in"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

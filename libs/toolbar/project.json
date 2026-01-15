@@ -1,0 +1,20 @@
+{
+  "name": "toolbar",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/toolbar/src",
+  "prefix": "ccs3-op",
+  "projectType": "library",
+  "tags": ["type:lib"],
+  "targets": {
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../coverage/libs/toolbar"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

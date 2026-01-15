@@ -1,0 +1,20 @@
+{
+  "name": "system-settings",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/system-settings/src",
+  "prefix": "ccs3-op",
+  "projectType": "library",
+  "tags": ["type:lib"],
+  "targets": {
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../../coverage/libs/system-settings"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

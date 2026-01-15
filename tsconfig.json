@@ -1,138 +1,22 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "@ccs3-operator/connector": [
-        "projects/connector/src/public-api.ts"
-      ],
-      "@ccs3-operator/messages": [
-        "projects/messages/src/public-api.ts"
-      ],
-      "@ccs3-operator/sign-in": [
-        "projects/sign-in/src/public-api.ts"
-      ],
-      "@ccs3-operator/shared": [
-        "projects/shared/src/public-api.ts"
-      ],
-      "@ccs3-operator/shared/types": [
-        "projects/shared/src/lib/types/index.ts"
-      ],
-      "@ccs3-operator/toolbar": [
-        "projects/toolbar/src/public-api.ts"
-      ],
-      "@ccs3-operator/notifications": [
-        "projects/notifications/src/public-api.ts"
-      ],
-      "@ccs3-operator/computer-statuses": [
-        "projects/computer-statuses/src/public-api.ts"
-      ],
-      "@ccs3-operator/signed-out-session-stats": [
-        "projects/signed-out-session-stats/src/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings": [
-        "projects/system-settings/src/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/device-groups": [
-        "projects/system-settings/src/lib/device-groups/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/device-groups/create": [
-        "projects/system-settings/src/lib/device-groups/create/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/devices": [
-        "projects/system-settings/src/lib/devices/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/devices/create": [
-        "projects/system-settings/src/lib/devices/create/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/tariffs": [
-        "projects/system-settings/src/lib/tariffs/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/tariffs/create": [
-        "projects/system-settings/src/lib/tariffs/create/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/prepaid-tariffs": [
-        "projects/system-settings/src/lib/prepaid-tariffs/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/prepaid-tariffs/create": [
-        "projects/system-settings/src/lib/prepaid-tariffs/create/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/users": [
-        "projects/system-settings/src/lib/users/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/users/create": [
-        "projects/system-settings/src/lib/users/create/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/roles": [
-        "projects/system-settings/src/lib/roles/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/roles/create": [
-        "projects/system-settings/src/lib/roles/create/public-api.ts"
-      ],
-      "@ccs3-operator/system-settings/configuration": [
-        "projects/system-settings/src/lib/configuration/public-api.ts"
-      ],
-      "@ccs3-operator/money-formatter": [
-        "projects/money-formatter/src/public-api.ts"
-      ],
-      "@ccs3-operator/seconds-formatter": [
-        "projects/seconds-formatter/src/public-api.ts"
-      ],
-      "@ccs3-operator/expand-button": [
-        "projects/expand-button/src/public-api.ts"
-      ],
-      "@ccs3-operator/boolean-indicator": [
-        "projects/boolean-indicator/src/public-api.ts"
-      ],
-      "@ccs3-operator/reports": [
-        "projects/reports/src/public-api.ts"
-      ],
-      "@ccs3-operator/reports/signed-in-users": [
-        "projects/reports/src/lib/signed-in-users/public-api.ts"
-      ],
-      "@ccs3-operator/reports/shifts": [
-        "projects/reports/src/lib/shifts/public-api.ts"
-      ],
-      "@ccs3-operator/reports/device-sessions": [
-        "projects/reports/src/lib/device-sessions/public-api.ts"
-      ],
-      "@ccs3-operator/signed-out-by-administrator": [
-        "projects/signed-out-by-administrator/src/public-api.ts"
-      ],
-      "@ccs3-operator/user-profile": [
-        "projects/user-profile/src/public-api.ts"
-      ],
-      "@ccs3-operator/diagnostics": [
-        "projects/diagnostics/src/public-api.ts"
-      ],
-      "@ccs3-operator/diagnostics/filter-server-logs": [
-        "projects/diagnostics/src/lib/filter-server-logs/public-api.ts"
-      ],
-      "@ccs3-operator/linked-lists": [
-        "projects/linked-lists/src/public-api.ts"
-      ],
-    },
-    "outDir": "./dist/out-tsc",
-    "strict": true,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "moduleResolution": "bundler",
-    "importHelpers": true,
-    "target": "ES2022",
-    "module": "ES2022"
+    "isolatedModules": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
     "strictTemplates": true
-  }
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ],
+  "extends": "./tsconfig.base.json"
 }

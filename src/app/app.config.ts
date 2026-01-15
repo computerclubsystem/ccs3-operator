@@ -1,3 +1,28 @@
+// import { ApplicationConfig, provideBrowserGlobalErrorListeners, isDevMode } from '@angular/core';
+// import { provideHttpClient } from '@angular/common/http';
+// import { provideRouter } from '@angular/router';
+// import { provideTransloco } from '@jsverse/transloco';
+
+// import { appRoutes } from './app.routes';
+// import { TranslocoHttpLoader } from './transloco-loader';
+
+// export const appConfig: ApplicationConfig = {
+//   providers: [
+//     provideBrowserGlobalErrorListeners(), 
+//     provideRouter(appRoutes), 
+//     provideHttpClient(), 
+//     provideTransloco({
+//     config: {
+//       availableLangs: ['en', 'bg'],
+//       defaultLang: 'en',
+//       // Remove this option if your application doesn't support changing language in runtime.
+//       reRenderOnLangChange: true,
+//       prodMode: !isDevMode(),
+//     },
+//     loader: TranslocoHttpLoader
+//   })],
+// };
+
 import { ApplicationConfig, isDevMode, provideZonelessChangeDetection } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { provideRouter } from '@angular/router';

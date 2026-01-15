@@ -1,0 +1,43 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "emitDecoratorMetadata": false,
+    "target": "es2022",
+    "module": "preserve",
+    "lib": ["es2020", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@ccs3-operator/messages": ["libs/messages/src/index.ts"],
+      "@ccs3-operator/shared": ["libs/shared/src/index.ts"],
+      "@ccs3-operator/boolean-indicator": [
+        "libs/boolean-indicator/src/index.ts"
+      ],
+      "@ccs3-operator/computer-statuses": [
+        "libs/computer-statuses/src/index.ts"
+      ],
+      "@ccs3-operator/connector": ["libs/connector/src/index.ts"],
+      "@ccs3-operator/diagnostics": ["libs/diagnostics/src/index.ts"],
+      "@ccs3-operator/expand-button": ["libs/expand-button/src/index.ts"],
+      "@ccs3-operator/linked-lists": ["libs/linked-lists/src/index.ts"],
+      "@ccs3-operator/money-formatter": ["libs/money-formatter/src/index.ts"],
+      "@ccs3-operator/notifications": ["libs/notifications/src/index.ts"],
+      "@ccs3-operator/reports": ["libs/reports/src/index.ts"],
+      "@ccs3-operator/seconds-formatter": [
+        "libs/seconds-formatter/src/index.ts"
+      ],
+      "@ccs3-operator/sign-in": ["libs/sign-in/src/index.ts"],
+      "@ccs3-operator/signed-out-by-administrator": [
+        "libs/signed-out-by-administrator/src/index.ts"
+      ],
+      "@ccs3-operator/signed-out-session-stats": [
+        "libs/signed-out-session-stats/src/index.ts"
+      ],
+      "@ccs3-operator/system-settings": ["libs/system-settings/src/index.ts"],
+      "@ccs3-operator/notification": ["libs/notification/src/index.ts"],
+      "@ccs3-operator/toolbar": ["libs/toolbar/src/index.ts"],
+      "@ccs3-operator/user-profile": ["libs/user-profile/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

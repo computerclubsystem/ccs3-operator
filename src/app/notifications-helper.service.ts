@@ -1,15 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { translate } from '@jsverse/transloco';
 
-import { NotificationsService } from '@ccs3-operator/notifications';
-import { IconName, MessageTimedOutErrorData } from '@ccs3-operator/shared/types';
+import { NotificationService } from '@ccs3-operator/notification';
+import { IconName, MessageTimedOutErrorData, NotificationType } from '@ccs3-operator/shared';
 import { NotAuthenticatedMessage, SignOutReplyMessage } from '@ccs3-operator/messages';
 import { OnCloseEventArgs, OnErrorEventArgs } from '@ccs3-operator/connector';
-import { NotificationType } from '@ccs3-operator/shared';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsHelperService {
-  private readonly ntfSvc = inject(NotificationsService);
+  private readonly ntfSvc = inject(NotificationService);
 
   showSignedOutByNotificationMessage(): void {
     this.ntfSvc.show(NotificationType.warn, translate('You have been signed out by administrator'), null, IconName.priority_high, null);

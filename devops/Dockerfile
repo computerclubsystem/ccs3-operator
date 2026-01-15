@@ -3,9 +3,8 @@ FROM node:24.12.0-alpine3.23 AS build
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 COPY . .
-RUN npm run ng -- analytics disable
 RUN npm run build
 
 # Create scratch file-hosting only from the published output

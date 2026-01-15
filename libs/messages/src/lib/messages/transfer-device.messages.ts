@@ -1,0 +1,26 @@
+import { Message, ReplyMessage, MessageType } from '../index-declarations';
+import { DeviceStatus } from '../index-entities';
+
+export interface TransferDeviceRequestMessageBody {
+  sourceDeviceId: number;
+  targetDeviceId: number;
+  transferNote?: boolean | null;
+}
+
+export type TransferDeviceRequestMessage = Message<TransferDeviceRequestMessageBody>;
+
+export function createTransferDeviceRequestMessage(): TransferDeviceRequestMessage {
+  const msg: TransferDeviceRequestMessage = {
+    header: { type: MessageType.transferDeviceRequest },
+    body: {} as TransferDeviceRequestMessageBody,
+  };
+  return msg;
+}
+
+export interface TransferDeviceReplyMessageBody {
+  sourceDeviceStatus: DeviceStatus;
+  targetDeviceStatus: DeviceStatus;
+}
+
+export type TransferDeviceReplyMessage = ReplyMessage<TransferDeviceReplyMessageBody>;
+

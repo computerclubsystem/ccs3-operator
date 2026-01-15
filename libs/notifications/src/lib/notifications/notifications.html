@@ -1,0 +1,31 @@
+<div class="ccs3-op-notifications-component">
+  <mat-accordion multi>
+    @for (item of signals.notifications(); track item.id) {
+      <mat-expansion-panel togglePosition="before">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="ccs3-op-flex-row ccs3-op-flex-no-wrap">
+              <span>{{item.addedAt | date:'MMM-dd HH:mm:ss'}}</span>
+              @if (item.icon) {
+                <mat-icon class="ccs3-op-notification-icon">{{item.icon}}</mat-icon>
+              }
+              <span>{{item.title}}</span>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <ng-template matExpansionPanelContent>
+          <div class="ccs3-op-two-col-grid">
+            <span>{{'Type' | transloco}}</span>
+            <span>{{item.type}}</span>
+            <span>{{'Title' | transloco}}</span>
+            <span>{{item.title}}</span>
+            <span>{{'Description' | transloco}}</span>
+            <span>{{item.description}}</span>
+            <span>{{'Custom data' | transloco}}</span>
+            <span>{{item.customData | json}}</span>
+          </div>
+        </ng-template>
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+</div>

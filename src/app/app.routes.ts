@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import {authGuard} from '@ccs3-operator/shared';
+
 export enum QueryParamName {
   returnUrl = 'returnUrl',
 }
@@ -31,6 +33,7 @@ export enum RouteName {
 
 export const routes: Routes = [
   {
+    canMatch: [authGuard],
     path: RouteName.profileSettings,
     loadComponent: () => import('@ccs3-operator/user-profile').then(x => x.UserProfileComponent),
   },
@@ -48,6 +51,7 @@ export const routes: Routes = [
     loadComponent: () => import('@ccs3-operator/notifications').then(x => x.NotificationListComponent),
   },
   {
+    canMatch: [authGuard],
     path: RouteName.computerStatuses,
     loadComponent: () => import('@ccs3-operator/computer-statuses').then(x => x.ComputerStatusesComponent),
   },
@@ -56,112 +60,115 @@ export const routes: Routes = [
     loadComponent: () => import('@ccs3-operator/signed-out-session-stats').then(x => x.SignedOutSessionStatsComponent),
   },
   {
+    canMatch: [authGuard],
     path: RouteName.diagnostics,
     loadComponent: () => import('@ccs3-operator/diagnostics').then(x => x.DiagnosticsComponent),
     children: [
       {
         path: RouteName.diagnosticsFilterServerLogs,
-        loadComponent: () => import('@ccs3-operator/diagnostics/filter-server-logs').then(x => x.FilterServerLogsComponent),
+        loadComponent: () => import('@ccs3-operator/diagnostics').then(x => x.FilterServerLogsComponent),
       },
     ],
   },
   {
     path: RouteName.systemSettings,
+    canMatch: [authGuard],
     loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.SystemSettingsComponent),
     children: [
       {
         path: RouteName.systemSettingsDeviceGroups,
-        loadComponent: () => import('@ccs3-operator/system-settings/device-groups').then(x => x.DeviceGroupsComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.DeviceGroupsComponent),
       },
       {
         path: `${RouteName.systemSettingsDeviceGroups}/${RouteName.sharedRouteCreate}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/device-groups/create').then(x => x.CreateDeviceGroupComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreateDeviceGroupComponent),
       },
       {
         path: `${RouteName.systemSettingsDeviceGroups}/:deviceGroupId/${RouteName.sharedRouteEdit}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/device-groups/create').then(x => x.CreateDeviceGroupComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreateDeviceGroupComponent),
       },
       {
         path: RouteName.systemSettingsDevices,
-        loadComponent: () => import('@ccs3-operator/system-settings/devices').then(x => x.DevicesComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.DevicesComponent),
       },
       {
         path: `${RouteName.systemSettingsDevices}/${RouteName.sharedRouteCreate}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/devices/create').then(x => x.CreateDeviceComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreateDeviceComponent),
       },
       {
         path: `${RouteName.systemSettingsDevices}/:deviceId/${RouteName.sharedRouteEdit}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/devices/create').then(x => x.CreateDeviceComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreateDeviceComponent),
       },
       {
         path: RouteName.systemSettingsTariffs,
-        loadComponent: () => import('@ccs3-operator/system-settings/tariffs').then(x => x.TariffsComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.TariffsComponent),
       },
       {
         path: `${RouteName.systemSettingsTariffs}/${RouteName.sharedRouteCreate}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/tariffs/create').then(x => x.CreateTariffComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreateTariffComponent),
       },
       {
         path: `${RouteName.systemSettingsTariffs}/:tariffId/${RouteName.sharedRouteEdit}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/tariffs/create').then(x => x.CreateTariffComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreateTariffComponent),
       },
       {
         path: RouteName.systemSettingsPrepaidTariffs,
-        loadComponent: () => import('@ccs3-operator/system-settings/prepaid-tariffs').then(x => x.PrepaidTariffsComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.PrepaidTariffsComponent),
       },
       {
         path: `${RouteName.systemSettingsPrepaidTariffs}/${RouteName.sharedRouteCreate}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/prepaid-tariffs/create').then(x => x.CreatePrepaidTariffComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreatePrepaidTariffComponent),
       },
       {
         path: `${RouteName.systemSettingsPrepaidTariffs}/:tariffId/${RouteName.sharedRouteEdit}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/prepaid-tariffs/create').then(x => x.CreatePrepaidTariffComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreatePrepaidTariffComponent),
       },
       {
         path: RouteName.systemSettingsUsers,
-        loadComponent: () => import('@ccs3-operator/system-settings/users').then(x => x.UsersComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.UsersComponent),
       },
       {
         path: `${RouteName.systemSettingsUsers}/${RouteName.sharedRouteCreate}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/users/create').then(x => x.CreateUserComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreateUserComponent),
       },
       {
         path: `${RouteName.systemSettingsUsers}/:userId/${RouteName.sharedRouteEdit}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/users/create').then(x => x.CreateUserComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreateUserComponent),
       },
       {
         path: RouteName.systemSettingsRoles,
-        loadComponent: () => import('@ccs3-operator/system-settings/roles').then(x => x.RolesComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.RolesComponent),
       },
       {
         path: `${RouteName.systemSettingsRoles}/${RouteName.sharedRouteCreate}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/roles/create').then(x => x.CreateRoleComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreateRoleComponent),
       },
       {
         path: `${RouteName.systemSettingsRoles}/:roleId/${RouteName.sharedRouteEdit}`,
-        loadComponent: () => import('@ccs3-operator/system-settings/roles/create').then(x => x.CreateRoleComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.CreateRoleComponent),
       },
       {
         path: RouteName.systemSettingsConfiguration,
-        loadComponent: () => import('@ccs3-operator/system-settings/configuration').then(x => x.ConfigurationComponent),
+        loadComponent: () => import('@ccs3-operator/system-settings').then(x => x.ConfigurationComponent),
       },
     ]
   },
   {
+    canMatch: [authGuard],
     path: RouteName.reports,
     loadComponent: () => import('@ccs3-operator/reports').then(x => x.ReportsComponent),
     children: [
       {
         path: RouteName.reportsSignedInUsers,
-        loadComponent: () => import('@ccs3-operator/reports/signed-in-users').then(x => x.SignedInUsersComponent),
+        loadComponent: () => import('@ccs3-operator/reports').then(x => x.SignedInUsersComponent),
       },
       {
         path: RouteName.reportsShifts,
-        loadComponent: () => import('@ccs3-operator/reports/shifts').then(x => x.ShiftsComponent),
+        loadComponent: () => import('@ccs3-operator/reports').then(x => x.ShiftsComponent),
       },
       {
         path: RouteName.reportsDeviceSessions,
-        loadComponent: () => import('@ccs3-operator/reports/device-sessions').then(x => x.DeviceSessionsComponent),
+        loadComponent: () => import('@ccs3-operator/reports').then(x => x.DeviceSessionsComponent),
       },
     ],
   }
