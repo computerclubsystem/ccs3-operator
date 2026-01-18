@@ -1,5 +1,5 @@
 {
-  "name": "@ccs3-operator/source",
+  "name": "ccs3-operator-web-app",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
@@ -8,7 +8,8 @@
     "watch": "nx build --watch --configuration development",
     "test": "nx test",
     "nx": "nx",
-    "ng": "ng"
+    "ng": "ng",
+    "update-version": "npm version --allow-same-version --no-git-tag-version --include-workspace-root --workspaces"
   },
   "private": true,
   "dependencies": {
