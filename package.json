@@ -1,6 +1,6 @@
 {
   "name": "ccs3-operator-web-app",
-  "version": "0.0.0",
+  "version": "3.1.11",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -9,7 +9,8 @@
     "test": "nx test",
     "nx": "nx",
     "ng": "ng",
-    "update-version": "npm version --allow-same-version --no-git-tag-version --include-workspace-root --workspaces"
+    "update-version": "npm version --allow-same-version --no-git-tag-version --include-workspace-root --workspaces",
+    "build-image": "docker buildx build --load -t computerclubsystem/operator-web-app-static-files:dev -f devops/Dockerfile ."
   },
   "private": true,
   "dependencies": {

@@ -1,6 +1,9 @@
 .git/
 .angular/
+.vscode/
+.nx/
 node_modules/
 dist/
 devops/
 tmp/
+scripts/
