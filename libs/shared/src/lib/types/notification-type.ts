@@ -4,4 +4,4 @@ export const NotificationType = {
   warn: 'warn',
   error: 'error',
 } as const;
-export type NotificationType = typeof NotificationType[keyof typeof NotificationType];
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType];

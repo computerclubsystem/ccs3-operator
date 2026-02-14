@@ -201,9 +201,6 @@ export class AppComponent implements OnInit {
 
   processAccountMenuSelected(accountMenuItem: AccountMenuItem): void {
     switch (accountMenuItem.id) {
-      case AccountMenuItemId.signIn:
-        this.navigateToSignIn();
-        break;
       case AccountMenuItemId.signOut:
         this.processSignOutAccountMenuSelected();
         break;
@@ -480,9 +477,7 @@ export class AppComponent implements OnInit {
   }
 
   private setNotSignedInAccountMenuItems(): void {
-    const notSignedInAccountMenuItems: AccountMenuItem[] = [
-      { id: AccountMenuItemId.signIn, icon: IconName.login, translationKey: 'Sign in' },
-    ];
+    const notSignedInAccountMenuItems: AccountMenuItem[] = [];
     this.internalSubjectsSvc.setAccountMenuItems(notSignedInAccountMenuItems);
   }
 
@@ -511,10 +506,6 @@ export class AppComponent implements OnInit {
 
   private navigateToComputerStatuses(): void {
     this.router.navigate([RouteName.computerStatuses]);
-  }
-
-  private navigateToSignIn(): void {
-    this.router.navigate([RouteName.signIn]);
   }
 
   private stopRefreshTokenTimer(): void {

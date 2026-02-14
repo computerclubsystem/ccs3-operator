@@ -4,10 +4,10 @@ export const UserProfileSettingName = {
   language: 'language',
   actionsAndOptionsButtonsPlacement: `actions_and_options_buttons_placement`,
 } as const;
-export type UserProfileSettingName = typeof UserProfileSettingName[keyof typeof UserProfileSettingName];
+export type UserProfileSettingName = (typeof UserProfileSettingName)[keyof typeof UserProfileSettingName];
 
 export const UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue = {
   start: 'start',
   end: 'end',
 } as const;
-export type UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue = typeof UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue[keyof typeof UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue];
+export type UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue = (typeof UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue)[keyof typeof UserProfileSettingActionsAndOptionsButtonsPlacementsPossibleValue];

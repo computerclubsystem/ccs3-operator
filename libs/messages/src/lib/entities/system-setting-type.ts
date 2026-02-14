@@ -4,4 +4,4 @@ export const SystemSettingType = {
   text: 'text',
   dateTime: 'dateTime'
 } as const;
-export type SystemSettingType = typeof SystemSettingType[keyof typeof SystemSettingType];
+export type SystemSettingType = (typeof SystemSettingType)[keyof typeof SystemSettingType];

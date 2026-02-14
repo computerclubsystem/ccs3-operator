@@ -2,34 +2,36 @@ import { Routes } from '@angular/router';
 
 import {authGuard} from '@ccs3-operator/shared';
 
-export enum QueryParamName {
-  returnUrl = 'returnUrl',
-}
+export const QueryParamName = {
+  returnUrl: 'returnUrl',
+} as const;
+export type QueryParamName = (typeof QueryParamName)[keyof typeof QueryParamName];
 
-export enum RouteName {
-  diagnostics = 'diagnostics',
-  diagnosticsFilterServerLogs = 'filter-server-logs',
-  signIn = 'sign-in',
-  notifications = 'notifications',
-  computerStatuses = 'computer-statuses',
-  signedOutSessionStats = 'signed-out-session-stats',
-  systemSettings = 'system-settings',
-  systemSettingsDeviceGroups = 'device-groups',
-  systemSettingsDevices = 'devices',
-  systemSettingsTariffs = 'tariffs',
-  systemSettingsPrepaidTariffs = 'prepaid-tariffs',
-  systemSettingsUsers = 'users',
-  systemSettingsRoles = 'roles',
-  systemSettingsConfiguration = 'configuration',
-  sharedRouteCreate = 'create',
-  sharedRouteEdit = 'edit',
-  reports = 'reports',
-  reportsSignedInUsers = 'signed-in-users',
-  reportsShifts = 'shifts',
-  reportsDeviceSessions = 'device-sessions',
-  signedOutByAdministrator = 'signed-out-by-administrator',
-  profileSettings = 'user-profile',
-}
+export const RouteName = {
+  diagnostics: 'diagnostics',
+  diagnosticsFilterServerLogs: 'filter-server-logs',
+  signIn: 'sign-in',
+  notifications: 'notifications',
+  computerStatuses: 'computer-statuses',
+  signedOutSessionStats: 'signed-out-session-stats',
+  systemSettings: 'system-settings',
+  systemSettingsDeviceGroups: 'device-groups',
+  systemSettingsDevices: 'devices',
+  systemSettingsTariffs: 'tariffs',
+  systemSettingsPrepaidTariffs: 'prepaid-tariffs',
+  systemSettingsUsers: 'users',
+  systemSettingsRoles: 'roles',
+  systemSettingsConfiguration: 'configuration',
+  sharedRouteCreate: 'create',
+  sharedRouteEdit: 'edit',
+  reports: 'reports',
+  reportsSignedInUsers: 'signed-in-users',
+  reportsShifts: 'shifts',
+  reportsDeviceSessions: 'device-sessions',
+  signedOutByAdministrator: 'signed-out-by-administrator',
+  profileSettings: 'user-profile',
+} as const;
+export type RouteName = (typeof RouteName)[keyof typeof RouteName];
 
 export const routes: Routes = [
   {

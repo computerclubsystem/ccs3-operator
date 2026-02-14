@@ -84,11 +84,12 @@ export class FilterServerLogsComponent implements OnInit {
   }
 }
 
-const enum ServiceName {
-  operatorConnector = 'ccs3/operator-connector',
-  pcConnector = 'ccs3/pc-connector',
-  stateManager = 'ccs3/state-manager',
-}
+const ServiceName = {
+  operatorConnector: 'ccs3/operator-connector',
+  pcConnector: 'ccs3/pc-connector',
+  stateManager: 'ccs3/state-manager',
+} as const;
+type ServiceName = (typeof ServiceName)[keyof typeof ServiceName];
 
 interface ServerItem {
   serviceName: ServiceName;

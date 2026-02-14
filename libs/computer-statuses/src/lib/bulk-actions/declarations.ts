@@ -1,7 +1,8 @@
-export enum GlobalBulkActionId {
-  shutdownStopped = 'shutdownStopped',
+export const GlobalBulkActionId = {
+  shutdownStopped: 'shutdownStopped',
   // restartStopped = 'restartStopped',
-}
+} as const;
+export type GlobalBulkActionId = (typeof GlobalBulkActionId)[keyof typeof GlobalBulkActionId];
 
 // TODO: Add interfaces for the different actions
 export type GlobalActionData = object;
@@ -11,12 +12,13 @@ export interface GlobalBulkActionData {
   data?: GlobalActionData | null;
 }
 
-export enum BulkActionId {
-  setNote = 'setNote',
-  restart = 'restart',
-  start = 'start',
-  shutdown = 'shutdown',
-}
+export const BulkActionId = {
+  setNote: 'setNote',
+  restart: 'restart',
+  start: 'start',
+  shutdown: 'shutdown',
+} as const;
+export type BulkActionId = (typeof BulkActionId)[keyof typeof BulkActionId];
 
 export interface BulkActionSetNoteData {
   note: string | null;

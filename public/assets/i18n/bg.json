@@ -277,5 +277,6 @@
   "The role was not loaded": "Ролята не беше заредена",
   "Error code": "Код за грешка",
   "Title": "Заглавие",
-  "Custom data": "Специфични данни"
+  "Custom data": "Специфични данни",
+  "Cannot update the tariff. The following devices are using it:": "Тарифата не може да се промени. Използва се от тези устройства:"
 }

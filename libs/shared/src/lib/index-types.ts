@@ -9,3 +9,4 @@ export * from './types/notification-item';
 export * from './types/notification-type';
 export * from './types/numeric-id-with-name';
 export * from './types/permission-name';
+// export * from './types/value-of';

@@ -305,10 +305,12 @@ interface FormControls {
   enabled: FormControl<boolean | null>;
 }
 
-const enum FormControlErrorName {
-  notEqual = 'notEqual',
-  minlength = 'minlength',
-}
+const FormControlErrorName = {
+  notEqual: 'notEqual',
+  minlength: 'minlength',
+} as const;
+type FormControlErrorName = (typeof FormControlErrorName)[keyof typeof FormControlErrorName];
+
 interface NotEqualFormValidationError {
   [FormControlErrorName.notEqual]: boolean;
 }

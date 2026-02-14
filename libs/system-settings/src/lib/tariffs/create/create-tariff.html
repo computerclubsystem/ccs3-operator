@@ -1,7 +1,15 @@
 <mat-card *transloco="let t;">
   @let durationFormControls = getDurationFormControls();
   @let fromToFormControls = getFromToFormControls();
+  @let deviceNamesUsingTheTariff = signals.deviceNamesUsingTheTariff();
   <mat-card-header>
+    @if (deviceNamesUsingTheTariff) {
+      <mat-card-title>
+        <mat-error>
+          {{t('Cannot update the tariff. The following devices are using it:')}} {{deviceNamesUsingTheTariff}}
+        </mat-error>
+      </mat-card-title>
+    }
     <mat-card-title>
       @if (signals.isCreate()){
       {{t('Create tariff')}}
@@ -94,10 +102,15 @@
       </ccs3-op-linked-lists>
       }
     </section>
+    @if (deviceNamesUsingTheTariff) {
+      <mat-error>
+        {{t('Cannot update the tariff. The following devices are using it:')}} {{deviceNamesUsingTheTariff}}
+      </mat-error>
+    }
   </mat-card-content>
   <mat-card-actions>
     <section class="ccs3-op-flex-row">
-      <button (click)="onSave()" mat-flat-button [disabled]="form.invalid">{{t('Save')}}</button>
+      <button (click)="onSave()" mat-flat-button [disabled]="form.invalid || signals.isTariffInUse()">{{t('Save')}}</button>
       <button (click)="onGoToList()" mat-raised-button>{{t('Go back to list')}}</button>
     </section>
   </mat-card-actions>

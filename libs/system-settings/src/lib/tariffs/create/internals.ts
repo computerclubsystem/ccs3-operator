@@ -40,4 +40,6 @@ export interface Signals {
   tariff: WritableSignal<Tariff | null>;
   tariffDeviceGroups: WritableSignal<DeviceGroup[]>;
   availableDeviceGroups: WritableSignal<DeviceGroup[]>;
+  deviceNamesUsingTheTariff: WritableSignal<string>;
+  isTariffInUse: WritableSignal<boolean>;
 }

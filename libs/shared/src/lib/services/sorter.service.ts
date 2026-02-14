@@ -72,7 +72,7 @@ export const SortOrder = {
   ascending: 1,
   descending: 2,
 } as const;
-export type SortOrder = typeof SortOrder[keyof typeof SortOrder];
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
 
 export interface SortInfo<TItem> {
   valueSelector: (item: TItem) => SortableValueType,

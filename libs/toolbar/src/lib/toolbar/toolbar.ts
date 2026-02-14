@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal, Signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, output, signal, Signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,7 +6,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslocoPipe } from '@jsverse/transloco';
 
-import { InternalSubjectsService, IsConnectedInfo, IconName, MenuItem, MainMenuItem, AccountMenuItem } from '@ccs3-operator/shared';
+import {
+  InternalSubjectsService, IsConnectedInfo, IconName, MenuItem, MainMenuItem, AccountMenuItem, RouteNavigationService
+} from '@ccs3-operator/shared';
 import { GetProfileSettingsReplyMessage } from '@ccs3-operator/messages';
 
 @Component({
@@ -17,11 +19,14 @@ import { GetProfileSettingsReplyMessage } from '@ccs3-operator/messages';
 })
 export class ToolbarComponent implements OnInit {
   readonly internalSubjectsSvc = inject(InternalSubjectsService);
+  readonly isSignedIn = toSignal(this.internalSubjectsSvc.getSignedIn());
   readonly signals = this.createSignals();
   readonly languageMenuItems = this.createLanguageMenuItems();
   iconName = IconName;
+  readonly signIn = output();
 
   private readonly destroyRef = inject(DestroyRef);
+  private readonly routeNavigationSvc = inject(RouteNavigationService);
 
   ngOnInit(): void {
     this.internalSubjectsSvc.getSignedIn().pipe(
@@ -44,6 +49,10 @@ export class ToolbarComponent implements OnInit {
     if (!isSignedIn) {
       this.signals.username.set('');
     }
+  }
+
+  onSignIn(): void {
+    this.routeNavigationSvc.navigateToSignInRequested();
   }
 
   onMainMenuItemClick(mainMenuItem: MainMenuItem): void {
@@ -86,7 +95,8 @@ interface Signals {
 
 type LanguageMenuItem = MenuItem<LanguageMenuItemId>;
 
-const enum LanguageMenuItemId {
-  en = 'en',
-  bg = 'bg',
-}
+const LanguageMenuItemId = {
+  en: 'en',
+  bg: 'bg',
+} as const;
+type LanguageMenuItemId = (typeof LanguageMenuItemId)[keyof typeof LanguageMenuItemId];

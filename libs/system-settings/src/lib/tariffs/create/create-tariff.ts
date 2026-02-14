@@ -9,13 +9,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { translate, TranslocoDirective } from '@jsverse/transloco';
-import { forkJoin, Observable } from 'rxjs';
+import { combineLatest, EMPTY, forkJoin, Observable, of, switchMap } from 'rxjs';
 
 import {
   createCreateTariffRequestMessage, createGetAllDeviceGroupsRequestMessage, createGetTariffByIdRequestMessage,
   createGetTariffDeviceGroupsRequestMessage, CreateTariffReplyMessage, createUpdateTariffRequestMessage,
   DeviceGroup, GetAllDeviceGroupsReplyMessage, GetTariffByIdReplyMessage, GetTariffDeviceGroupsReplyMessage,
-  Message, ReplyMessage, Tariff, TariffType, UpdateTariffReplyMessage
+  Message, ReplyMessage, Tariff, TariffType, UpdateTariffReplyMessage, createGetTariffCurrentUsageRequestMessage,
+  GetTariffCurrentUsageReplyMessage,
+  createGetAllDevicesRequestMessage,
+  GetAllDevicesReplyMessage
 } from '@ccs3-operator/messages';
 import {
   MessageTransportService, NotificationType, SorterService, TimeConverterService, IconName, NumericIdWithName
@@ -56,13 +59,45 @@ export class CreateTariffComponent implements OnInit {
   }
 
   init(): void {
-    const tariffId = this.activatedRoute.snapshot.paramMap.get('tariffId');
-    this.signals.isCreate.set(!tariffId);
-    if (tariffId) {
-      this.loadTariff(+tariffId);
+    const tariffIdParam = this.activatedRoute.snapshot.paramMap.get('tariffId');
+    this.signals.isCreate.set(!tariffIdParam);
+    if (tariffIdParam) {
+      const tariffId = +tariffIdParam;
+      this.loadTariff(tariffId);
+      this.checkTariffCurrentUsage(tariffId);
     } else {
       this.loadNewTariffData();
     }
+  }
+
+  checkTariffCurrentUsage(tariffId: number): void {
+    const getTariffCurrentUsageRequestMsg = createGetTariffCurrentUsageRequestMessage();
+    getTariffCurrentUsageRequestMsg.body.tariffId = tariffId;
+    this.messageTransportSvc.sendAndAwaitForReply(getTariffCurrentUsageRequestMsg).pipe(
+      switchMap(tariffUsageReplyMsg => {
+        const tariffUsageReplyMessage = tariffUsageReplyMsg as GetTariffCurrentUsageReplyMessage;
+        if (tariffUsageReplyMessage.header.failure || !tariffUsageReplyMessage.body?.devicesWithTariffs?.length) {
+          return EMPTY;
+        }
+        return combineLatest([of(tariffUsageReplyMessage), this.messageTransportSvc.sendAndAwaitForReply(createGetAllDevicesRequestMessage())]);
+      }),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(([tariffUsageReplyMsg, getAllDevicesReplyMsg]) => this.processGetTariffCurrentUsageLoaded(tariffUsageReplyMsg, getAllDevicesReplyMsg as GetAllDevicesReplyMessage));
+  }
+
+  processGetTariffCurrentUsageLoaded(getTariffUsageReplyMsg: GetTariffCurrentUsageReplyMessage, getAllDevicesReplyMsg: GetAllDevicesReplyMessage): void {
+    if (getTariffUsageReplyMsg.header.failure || !getTariffUsageReplyMsg.body?.devicesWithTariffs?.length) {
+      return;
+    }
+
+    const devices = getAllDevicesReplyMsg.body?.devices || [];
+    this.signals.isTariffInUse.set(!!devices.length);
+    const deviceIdsUsingTheTariff = getTariffUsageReplyMsg.body.devicesWithTariffs.map(x => x.deviceId);
+    const deviceNamesUsingTheTariff = deviceIdsUsingTheTariff.map(deviceIdUsingTheTariff => {
+      const foundDevice = devices.find(device => device.id === deviceIdUsingTheTariff);
+      return foundDevice?.name || deviceIdUsingTheTariff.toString();
+    });
+    this.signals.deviceNamesUsingTheTariff.set(deviceNamesUsingTheTariff.join(', '));
   }
 
   loadNewTariffData(): void {
@@ -293,6 +328,8 @@ export class CreateTariffComponent implements OnInit {
       tariff: signal(null),
       tariffDeviceGroups: signal([]),
       availableDeviceGroups: signal([]),
+      deviceNamesUsingTheTariff: signal(''),
+      isTariffInUse: signal(false),
     };
     return signals;
   }

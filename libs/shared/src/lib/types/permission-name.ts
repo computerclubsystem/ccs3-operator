@@ -27,4 +27,4 @@ export const PermissionName = {
   reportsDeviceSessions: 'reports:device-sessions',
   diagnosticsFilterServerLogs: 'diagnostics:filter-server-logs',
 } as const;
-export type PermissionName = typeof PermissionName[keyof typeof PermissionName];
+export type PermissionName = (typeof PermissionName)[keyof typeof PermissionName];

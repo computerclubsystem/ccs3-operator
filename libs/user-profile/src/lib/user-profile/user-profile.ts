@@ -242,10 +242,12 @@ interface Signals {
   actionsAndOptionsButtonsPlacementSetting: WritableSignal<UserProfileSettingWithValue | undefined | null>;
 }
 
-const enum FormControlErrorName {
-  notEqual = 'notEqual',
-  minlength = 'minlength',
-}
+const FormControlErrorName = {
+  notEqual: 'notEqual',
+  minlength: 'minlength',
+} as const;
+type FormControlErrorName = (typeof FormControlErrorName)[keyof typeof FormControlErrorName];
+
 interface NotEqualFormValidationError {
   [FormControlErrorName.notEqual]: boolean;
 }

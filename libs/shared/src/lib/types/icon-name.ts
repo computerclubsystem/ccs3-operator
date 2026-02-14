@@ -36,4 +36,4 @@ export const IconName = {
   link: 'link',
   delete: 'delete',
 } as const;
-export type IconName = typeof IconName[keyof typeof IconName];
+export type IconName = (typeof IconName)[keyof typeof IconName];

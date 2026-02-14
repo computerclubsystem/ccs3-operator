@@ -20,17 +20,21 @@
     <button mat-icon-button [matMenuTriggerFor]="languageMenu" title="{{'Language' | transloco}}" aria-label="Language">
       <mat-icon>{{iconName.language}}</mat-icon>
     </button>
-    @let username = signals.username();
-    <button mat-stroked-button [matMenuTriggerFor]="accountMenu" title="{{'Account menu' | transloco}} {{username}}"
-      aria-label="Account menu">
-      <section class="account-button-section ccs3-op-flex-row">
-        <mat-icon>{{iconName.account_circle}}</mat-icon>
-        @if (username) {
-        <span
-          class="signed-in-username ccs3-op-max-width-small-text ccs3-op-overflow-ellipsis">{{signals.username()}}</span>
-        }
-      </section>
-    </button>
+    @if (!isSignedIn()) {
+      <button (click)="onSignIn()" mat-flat-button>{{'Sign in' | transloco}}</button>
+    } @else {
+      @let username = signals.username();
+      <button mat-stroked-button [matMenuTriggerFor]="accountMenu" title="{{'Account menu' | transloco}} {{username}}"
+        aria-label="Account menu">
+        <section class="account-button-section ccs3-op-flex-row">
+          <mat-icon>{{iconName.account_circle}}</mat-icon>
+          @if (username) {
+          <span
+            class="signed-in-username ccs3-op-max-width-small-text ccs3-op-overflow-ellipsis">{{signals.username()}}</span>
+          }
+        </section>
+      </button>
+    }
   </div>
 </mat-toolbar>
 

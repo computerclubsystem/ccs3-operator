@@ -121,7 +121,8 @@ interface PrepaidTariffInfo {
   price: number;
 }
 
-const enum TariffSortProperty {
-  name = 'name',
-  id = 'id',
-}
+const TariffSortProperty = {
+  name: 'name',
+  id: 'id',
+} as const;
+type TariffSortProperty = (typeof TariffSortProperty)[keyof typeof TariffSortProperty];

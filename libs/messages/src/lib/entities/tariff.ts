@@ -3,7 +3,7 @@ export const TariffType = {
   fromTo: 2,
   prepaid: 3,
 } as const;
-export type TariffType = typeof TariffType[keyof typeof TariffType];
+export type TariffType = (typeof TariffType)[keyof typeof TariffType];
 
 export interface Tariff {
   id: number;

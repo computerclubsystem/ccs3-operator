@@ -39,10 +39,11 @@ export class ExpandButtonComponent {
   btnType = ExpandButtonType;
 }
 
-export enum ExpandButtonType {
-  matButton = 'mat-button',
-  matFlatButton = 'mat-flat-button',
-  matRaisedButton = 'mat-raised-button',
-  matStrokedButton = 'mat-stroked-button',
-  matIconButton = 'mat-icon-button',
-}
+export const ExpandButtonType = {
+  matButton: 'mat-button',
+  matFlatButton: 'mat-flat-button',
+  matRaisedButton: 'mat-raised-button',
+  matStrokedButton: 'mat-stroked-button',
+  matIconButton: 'mat-icon-button',
+} as const;
+export type ExpandButtonType = (typeof ExpandButtonType)[keyof typeof ExpandButtonType];

@@ -4,4 +4,4 @@ export const DeviceConnectivityConnectionEventType = {
   idleTimeout: 'idle-timeout',
   noMessagesReceived: 'no-messages-received',
 }as const;
-export type DeviceConnectivityConnectionEventType = typeof DeviceConnectivityConnectionEventType[keyof typeof DeviceConnectivityConnectionEventType];
+export type DeviceConnectivityConnectionEventType = (typeof DeviceConnectivityConnectionEventType)[keyof typeof DeviceConnectivityConnectionEventType];

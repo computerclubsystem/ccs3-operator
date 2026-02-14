@@ -7,6 +7,6 @@ export const MainMenuItemId = {
   reports: 'reports',
   diagnostics: 'diagnostics',
 } as const;
-export type MainMenuItemId = typeof MainMenuItemId[keyof typeof MainMenuItemId];
+export type MainMenuItemId = (typeof MainMenuItemId)[keyof typeof MainMenuItemId];
 
 export type MainMenuItem = MenuItem<MainMenuItemId>;

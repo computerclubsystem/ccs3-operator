@@ -106,12 +106,14 @@ export const MessageType = {
   completeShiftReply: 'complete-shift-reply',
   getShiftsRequest: 'get-shifts-request',
   getShiftsReply: 'get-shifts-reply',
+  getTariffCurrentUsageRequest: 'get-tariff-current-usage-request',
+  getTariffCurrentUsageReply: 'get-tariff-current-usage-reply',
 } as const;
 export type MessageType = typeof MessageType[keyof typeof MessageType];
 
 export const ReplyMessageType = {
 };
-export type ReplyMessageType = typeof ReplyMessageType[keyof typeof ReplyMessageType];
+export type ReplyMessageType = (typeof ReplyMessageType)[keyof typeof ReplyMessageType];
 
 export const NotificationMessageType = {
   signInInformationNotification: 'sign-in-information-notification',
@@ -120,4 +122,4 @@ export const NotificationMessageType = {
   signedOutNotification: 'signed-out-notification',
   publicConfigurationNotification: 'public-configuration-notification',
 };
-export type NotificationMessageType = typeof NotificationMessageType[keyof typeof NotificationMessageType];
+export type NotificationMessageType = (typeof NotificationMessageType)[keyof typeof NotificationMessageType];

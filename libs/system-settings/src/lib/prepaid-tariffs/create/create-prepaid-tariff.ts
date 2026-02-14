@@ -413,10 +413,12 @@ interface LoadDataMessagesObject extends Record<string, ReplyMessage<unknown>> {
   allDeviceGroups: GetAllDeviceGroupsReplyMessage;
 }
 
-const enum FormControlErrorName {
-  notEqual = 'notEqual',
-  minlength = 'minlength',
-}
+const FormControlErrorName = {
+  notEqual: 'notEqual',
+  minlength: 'minlength',
+} as const;
+type FormControlErrorName = (typeof FormControlErrorName)[keyof typeof FormControlErrorName];
+
 interface NotEqualFormValidationError {
   [FormControlErrorName.notEqual]: boolean;
 }
